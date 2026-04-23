@@ -1,0 +1,8 @@
+__pycache__/
+.venv/
+venv/
+scratch/
+*.mp4
+*.json
+transcript.txt
+description.txt
