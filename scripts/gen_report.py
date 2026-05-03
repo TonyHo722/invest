@@ -46,7 +46,8 @@ def map_exchange(yf_exchange):
         'NYQ': 'NYSE',
         'NYS': 'NYSE',
         'ASE': 'AMEX',
-        'BTS': 'BATS'
+        'BTS': 'BATS',
+        'TAI': 'TWSE'
     }
     return mapping.get(yf_exchange, "NYSE")
 
@@ -57,26 +58,37 @@ def build_md(s):
     eff_headers = ["Year / Status","Gross Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
     val_headers = ["Year / Status","P/S","P/E","P/B"]
 
+    is_us_stock = s.get("exchange") in ["NYSE", "NASDAQ", "AMEX", "BATS"]
+    if is_us_stock:
+        charts_md = f"""### 📈 1-Year Price Chart ({t})
+[![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})
+
+*Source: Finviz — Click chart to open interactive view*
+
+### 📈 5-Year Price Chart ({t})
+[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})
+
+*Source: Finviz — Click chart to open interactive view*
+
+> **Chart Notes:**
+> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.
+> - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.
+"""
+    else:
+        charts_md = f"""### 📈 Price Charts ({t})
+
+*Note: Finviz charts are not available for non-US stocks. Please view charts on Yahoo Finance:*
+
+[View {t} on Yahoo Finance](https://finance.yahoo.com/quote/{t}/chart)
+"""
+
     lines = [
         f"# {s['company']} ({t}) Detailed Financial Data",
         f'Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout',
         "",
         "## 0. Stock Price Charts",
         "",
-        f"### 📈 1-Year Price Chart ({t})",
-        f"[![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})",
-        "",
-        "*Source: Finviz — Click chart to open interactive view*",
-        "",
-        f"### 📈 5-Year Price Chart ({t})",
-        f"[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})",
-        "",
-        "*Source: Finviz — Click chart to open interactive view*",
-        "",
-        "> **Chart Notes:**",
-        "> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.",
-        "> - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.",
-        "",
+        charts_md,
         "---",
         "",
         f'## 1. Market Position ("Big / 又大")',
@@ -129,7 +141,8 @@ def build_md(s):
 def build_html(s):
     """Generates HTML report based on company data."""
     t = s["ticker"]
-    ex_enc = f"{s['exchange']}:{t}"
+    tv_symbol = s.get("tv_symbol", t)
+    ex_enc = f"{s['exchange']}:{tv_symbol}"
     css_extra = """
         .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
         .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
@@ -380,19 +393,32 @@ def fetch_and_generate(ticker_sym):
         
         val_trends = ["⚠️ MIXED", "⚠️ MIXED", "⚠️ MIXED"]
         
+        # Currency symbol handling
+        currency = info.get('currency', 'USD')
+        currency_symbols = {'USD': '$', 'TWD': 'NT$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CNY': '¥', 'HKD': 'HK$'}
+        cur_sym = currency_symbols.get(currency, f"{currency} ")
+        
+        # TradingView Symbol
+        exchange_mapped = map_exchange(info.get('exchange'))
+        tv_symbol = ticker_sym
+        if '.' in ticker_sym and exchange_mapped not in ["NYSE", "NASDAQ", "AMEX", "BATS"]:
+            tv_symbol = ticker_sym.split('.')[0]
+            
         s = {
             "ticker": ticker_sym,
             "company": company_name,
-            "exchange": map_exchange(info.get('exchange')),
+            "exchange": exchange_mapped,
+            "tv_symbol": tv_symbol,
+            "currency_sym": cur_sym,
             "sector": info.get('sector', 'N/A'),
-            "mcap": f"${mcap/1e9:.2f}B",
-            "price": f"${current_price:.2f}",
+            "mcap": f"{cur_sym}{mcap/1e9:.2f}B",
+            "price": f"{cur_sym}{current_price:.2f}",
             "high": "N/A", "low": "N/A",
             "kqj": ["✅ PASS", "📈 Good", "✅ PASS", "⚠️ MIXED"],
             "notes": [
-                f"Market Cap: ${mcap/1e9:.2f}B",
+                f"Market Cap: {cur_sym}{mcap/1e9:.2f}B",
                 f"Automated check of 4-year financial trajectory.",
-                f"Current Price: ${current_price:.2f}",
+                f"Current Price: {cur_sym}{current_price:.2f}",
                 "Further qualitative analysis required for upside potential."
             ],
             "fin": fin_data, "fin_trends": fin_trends,
