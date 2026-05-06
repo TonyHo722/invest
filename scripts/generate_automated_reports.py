@@ -54,9 +54,11 @@ def build_md(s):
         chart_5y = f"[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})"
         chart_source = "*Source: Finviz — Click chart to open interactive view*"
     else:
-        chart_1y = f"[Yahoo Finance 1-Year Chart for {t}](https://finance.yahoo.com/quote/{t}/chart)\n*(Note: Finviz charts are not available for non-US stocks)*"
-        chart_5y = f"[Yahoo Finance 5-Year Chart for {t}](https://finance.yahoo.com/quote/{t}/chart)"
-        chart_source = "*Source: Yahoo Finance — Click link to open interactive chart*"
+        tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
+        tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
+        chart_1y = f"[📈 Today's Quote — {t}]({tw_url})"
+        chart_5y = f"[📊 Long-Term Technical Analysis — {t}]({tw_ta_url})"
+        chart_source = f"*Source: Yahoo Finance TW — [Today's Chart]({tw_url}) | [Long-Term Analysis]({tw_ta_url})*"
 
     lines = [
         f"# {s['company']} ({t}) Detailed Financial Data",
@@ -64,12 +66,10 @@ def build_md(s):
         "",
         "## 0. Stock Price Charts",
         "",
-        f"### 📈 1-Year Price Chart ({t})",
+        f"### 📈 Today's Quote — {t}",
         chart_1y,
         "",
-        chart_source,
-        "",
-        f"### 📈 5-Year Price Chart ({t})",
+        f"### 📊 Long-Term Technical Analysis — {t}",
         chart_5y,
         "",
         chart_source,
@@ -175,12 +175,24 @@ def build_html(s):
         </div>
     </div>"""
     else:
+        tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
+        tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
         chart_html = f"""
-    <div class="chart-grid" style="grid-template-columns: 1fr;">
+    <div class="chart-grid">
         <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
             <p style="color: #555; text-align: center; padding: 20px;">
-                <strong>TradingView widgets do not support iframe embedding for {s['exchange']}.</strong><br><br>
-                <a href="https://finance.yahoo.com/quote/{t}/chart" target="_blank" style="display: inline-block; padding: 10px 20px; background: #38bdf8; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View Interactive Chart on Yahoo Finance</a>
+                <span style="font-size: 2rem;">📈</span><br><br>
+                <strong style="font-size: 1.1rem;">Today's Quote</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">Current price, volume &amp; intraday chart</span><br><br>
+                <a href="{tw_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📈 Today's Chart</a>
+            </p>
+        </div>
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <span style="font-size: 2rem;">📊</span><br><br>
+                <strong style="font-size: 1.1rem;">Long-Term Technical Analysis</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">Historical chart with MA &amp; indicators</span><br><br>
+                <a href="{tw_ta_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #6600cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📊 Long-Term Chart</a>
             </p>
         </div>
     </div>"""
