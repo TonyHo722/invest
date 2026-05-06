@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import argparse
 import pandas as pd
 import yfinance as yf
 from rich.console import Console
@@ -11,7 +12,6 @@ import time
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 REPORT_DIR = "/home/tonyho/workspace/invest/report"
-INPUT_CSV = os.path.join(REPORT_DIR, "dma_200_screen_results.csv")
 
 def get_trend_emoji(values, reverse=False):
     """
@@ -48,6 +48,16 @@ def build_md(s):
     eff_headers = ["Year / Status","Gross Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
     val_headers = ["Year / Status","P/S","P/E","P/B"]
 
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO'))
+    if is_us_stock:
+        chart_1y = f"[![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})"
+        chart_5y = f"[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})"
+        chart_source = "*Source: Finviz — Click chart to open interactive view*"
+    else:
+        chart_1y = f"[Yahoo Finance 1-Year Chart for {t}](https://finance.yahoo.com/quote/{t}/chart)\n*(Note: Finviz charts are not available for non-US stocks)*"
+        chart_5y = f"[Yahoo Finance 5-Year Chart for {t}](https://finance.yahoo.com/quote/{t}/chart)"
+        chart_source = "*Source: Yahoo Finance — Click link to open interactive chart*"
+
     lines = [
         f"# {s['company']} ({t}) Detailed Financial Data",
         f'Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout',
@@ -55,14 +65,14 @@ def build_md(s):
         "## 0. Stock Price Charts",
         "",
         f"### 📈 1-Year Price Chart ({t})",
-        f"[![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})",
+        chart_1y,
         "",
-        "*Source: Finviz — Click chart to open interactive view*",
+        chart_source,
         "",
         f"### 📈 5-Year Price Chart ({t})",
-        f"[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})",
+        chart_5y,
         "",
-        "*Source: Finviz — Click chart to open interactive view*",
+        chart_source,
         "",
         "> **Chart Notes:**",
         "> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.",
@@ -135,7 +145,12 @@ def map_exchange(yf_exchange):
 def build_html(s):
     """Generates HTML report based on company data."""
     t = s["ticker"]
-    ex_enc = f"{s['exchange']}:{t}"
+    if t.endswith('.TW'):
+        ex_enc = f"TWSE:{t.split('.')[0]}"
+    elif t.endswith('.TWO'):
+        ex_enc = f"TPEX:{t.split('.')[0]}"
+    else:
+        ex_enc = f"{s['exchange']}:{t}"
     css_extra = """
         .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
         .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
@@ -143,6 +158,32 @@ def build_html(s):
         .chart-box iframe { display: block; width: 100%; border: none; }
         .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
         @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
+
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO'))
+    if is_us_stock:
+        chart_html = f"""
+    <div class="chart-grid">
+        <div class="chart-box">
+            <h3>📈 1-Year Price Chart (Daily)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+        <div class="chart-box">
+            <h3>📈 5-Year Price Chart (Weekly)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+    </div>"""
+    else:
+        chart_html = f"""
+    <div class="chart-grid" style="grid-template-columns: 1fr;">
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <strong>TradingView widgets do not support iframe embedding for {s['exchange']}.</strong><br><br>
+                <a href="https://finance.yahoo.com/quote/{t}/chart" target="_blank" style="display: inline-block; padding: 10px 20px; background: #38bdf8; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View Interactive Chart on Yahoo Finance</a>
+            </p>
+        </div>
+    </div>"""
 
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
     eff_headers = ["Year","Gross Margin","Inventory Days","ROE","ROA"]
@@ -200,18 +241,7 @@ def build_html(s):
     <p>Automated Analysis Dashboard</p>
 
     <h2>0. Stock Price Charts</h2>
-    <div class="chart-grid">
-        <div class="chart-box">
-            <h3>📈 1-Year Price Chart (Daily)</h3>
-            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
-                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
-        </div>
-        <div class="chart-box">
-            <h3>📈 5-Year Price Chart (Weekly)</h3>
-            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
-                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
-        </div>
-    </div>
+    {chart_html}
 
     <h2>1. Market Position ("Big / 又大")</h2>
     <table>
@@ -407,27 +437,33 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
         return False
 
 def main():
+    parser = argparse.ArgumentParser(description="Automated Financial Report Generator")
+    parser.add_argument('--market', choices=['us', 'tw', 'all'], default='us', help='Market to scan')
+    args = parser.parse_args()
+
+    input_csv = os.path.join(REPORT_DIR, f"dma_200_screen_results_{args.market}.csv")
+
     console = Console()
-    console.print("[bold blue]Automated Financial Report Generator[/bold blue]\n")
+    console.print(f"[bold blue]Automated Financial Report Generator ({args.market.upper()})[/bold blue]\n")
     
-    if not os.path.exists(INPUT_CSV):
-        console.print(f"[red]Input file not found: {INPUT_CSV}[/red]")
+    if not os.path.exists(input_csv):
+        console.print(f"[red]Input file not found: {input_csv}[/red]")
         return
         
-    df = pd.read_csv(INPUT_CSV)
+    df = pd.read_csv(input_csv)
     tickers = df.to_dict('records')
     
     console.print(f"Loaded {len(tickers)} companies from screener output.\n")
-    
-    # LIMIT for safety/demonstration if needed, but user said "each company"
-    # To be practical for a large set, let's process them all but with clear progress.
     
     success_count = 0
     with Progress() as progress:
         task = progress.add_task("[cyan]Generating reports...", total=len(tickers))
         
         for t in tickers:
-            if fetch_and_generate(t['Ticker'], t['Name'], t['Price'], t['Market Cap']):
+            ticker_sym = t['Ticker']
+            company_name = t['Name']
+                
+            if fetch_and_generate(ticker_sym, company_name, t['Price'], t['Market Cap']):
                 success_count += 1
             progress.advance(task)
             

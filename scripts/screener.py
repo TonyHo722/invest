@@ -7,6 +7,10 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress
 import time
+import argparse
+import urllib.request
+import ssl
+import re
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -17,6 +21,38 @@ def get_nasdaq100_tickers():
     """Fetches NASDAQ-100 tickers from Wikipedia."""
     url = "https://en.wikipedia.org/wiki/Nasdaq-100"
     return fetch_wikipedia_tickers(url, "constituents")
+
+def get_tw_tickers(market_type='all'):
+    """Fetches TWSE and TPEx tickers and their Chinese names from TWSE ISIN."""
+    tickers = {}
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    modes = []
+    if market_type in ['twse', 'all']:
+        modes.append(('2', '.TW'))
+    if market_type in ['tpex', 'all']:
+        modes.append(('4', '.TWO'))
+        
+    for mode, suffix in modes:
+        url = f'https://isin.twse.com.tw/isin/C_public.jsp?strMode={mode}'
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            html = urllib.request.urlopen(req, context=ctx).read().decode('cp950', errors='ignore')
+            soup = BeautifulSoup(html, 'html.parser')
+            for row in soup.find_all('tr'):
+                cells = row.find_all('td')
+                if len(cells) > 0:
+                    text = cells[0].text.strip()
+                    match = re.match(r'^(\d{4})\s+(.+)', text)
+                    if match:
+                        ticker = match.group(1) + suffix
+                        name = match.group(2).strip()
+                        tickers[ticker] = name
+        except Exception as e:
+            print(f"Error fetching TW tickers for mode {mode}: {e}")
+    return tickers
 
 def fetch_wikipedia_tickers(url, table_id):
     """Generic helper to fetch tickers from a Wikipedia table."""
@@ -41,7 +77,7 @@ def fetch_wikipedia_tickers(url, table_id):
         print(f"Error fetching tickers from {url}: {e}")
         return []
 
-def screen_stocks(tickers, min_mcap_billion=10):
+def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd_billion=10):
     """
     Screens tickers for Price < 200-DMA and Market Cap > min_mcap_billion.
     Optimized by fetching technicals in batch before checking fundamentals.
@@ -91,13 +127,23 @@ def screen_stocks(tickers, min_mcap_billion=10):
                 t = yf.Ticker(c['symbol'])
                 info = t.info
                 mcap = info.get('marketCap', 0)
+                currency = info.get('currency', 'USD')
                 
-                if mcap >= min_mcap_billion * 1e9:
+                if currency == 'TWD':
+                    threshold = min_mcap_twd_billion * 1e9
+                else:
+                    threshold = min_mcap_usd_billion * 1e9
+                
+                if mcap >= threshold:
                     pct_diff = ((c['price'] / c['dma200']) - 1) * 100
+                    company_name = info.get('shortName', c['symbol'])
+                    if names_map and c['symbol'] in names_map:
+                        company_name = f"{company_name} ({names_map[c['symbol']]})"
                     results.append({
                         'Ticker': c['symbol'],
-                        'Name': info.get('shortName', c['symbol']),
+                        'Name': company_name,
                         'Market Cap': mcap,
+                        'Currency': currency,
                         'Price': c['price'],
                         '200-DMA': c['dma200'],
                         '% Diff': pct_diff
@@ -109,25 +155,40 @@ def screen_stocks(tickers, min_mcap_billion=10):
     return results
 
 def main():
+    parser = argparse.ArgumentParser(description="Mega-Cap 200-DMA Screener")
+    parser.add_argument('--market', choices=['us', 'tw', 'all'], default='us', help='Market to scan')
+    args = parser.parse_args()
+
     console = Console()
-    console.print("[bold blue]Mega-Cap 200-DMA Screener[/bold blue]\n")
+    console.print(f"[bold blue]Mega-Cap 200-DMA Screener ({args.market.upper()})[/bold blue]\n")
     
     start_time = time.time()
     
-    sp500_tickers = get_sp500_tickers()
-    nasdaq_tickers = get_nasdaq100_tickers()
+    tickers = []
+    if args.market in ['us', 'all']:
+        sp500_tickers = get_sp500_tickers()
+        nasdaq_tickers = get_nasdaq100_tickers()
+        tickers.extend(sp500_tickers)
+        tickers.extend(nasdaq_tickers)
+        console.print(f"Fetched {len(sp500_tickers)} S&P 500 and {len(nasdaq_tickers)} NASDAQ-100 tickers.")
+        
+    tw_names_map = {}
+    if args.market in ['tw', 'all']:
+        tw_tickers_dict = get_tw_tickers()
+        tw_names_map = tw_tickers_dict
+        tickers.extend(tw_tickers_dict.keys())
+        console.print(f"Fetched {len(tw_tickers_dict)} TWSE/TPEx tickers.")
     
     # Merge and remove duplicates
-    tickers = list(set(sp500_tickers + nasdaq_tickers))
+    tickers = list(set(tickers))
     
     if not tickers:
         console.print("[red]Could not fetch tickers from any source. Exiting.[/red]")
         return
         
-    console.print(f"Fetched {len(sp500_tickers)} S&P 500 and {len(nasdaq_tickers)} NASDAQ-100 tickers.")
     console.print(f"Unique tickers to scan: [bold cyan]{len(tickers)}[/bold cyan]\n")
     
-    matches = screen_stocks(tickers)
+    matches = screen_stocks(tickers, tw_names_map)
     
     if not matches:
         console.print("[yellow]No companies match the criteria (Market Cap > $10B and Price < 200-DMA).[/yellow]")
@@ -144,9 +205,9 @@ def main():
             table.add_row(
                 m['Ticker'],
                 m['Name'],
-                f"${m['Market Cap']/1e9:.2f}B",
-                f"${m['Price']:.2f}",
-                f"${m['200-DMA']:.2f}",
+                f"{m['Market Cap']/1e9:.2f}B {m['Currency']}",
+                f"{m['Price']:.2f} {m['Currency']}",
+                f"{m['200-DMA']:.2f} {m['Currency']}",
                 f"[red]{m['% Diff']:.2f}%[/red]"
             )
 
@@ -155,7 +216,7 @@ def main():
         # Save results to a CSV
         try:
             df = pd.DataFrame(matches)
-            csv_path = "/home/tonyho/workspace/invest/report/dma_200_screen_results.csv"
+            csv_path = f"/home/tonyho/workspace/invest/report/dma_200_screen_results_{args.market}.csv"
             df.to_csv(csv_path, index=False)
             console.print(f"\n[bold green]Results saved to {csv_path}[/bold green]")
         except Exception as e:
@@ -163,13 +224,13 @@ def main():
             
         # Generate Premium HTML Report
         try:
-            html_path = "/home/tonyho/workspace/invest/report/dma_200_screen_results.html"
+            html_path = f"/home/tonyho/workspace/invest/report/dma_200_screen_results_{args.market}.html"
             html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screener: Mega-Cap Value (S&P 500 & NASDAQ-100)</title>
+    <title>Screener: Mega-Cap Value ({args.market.upper()})</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -314,7 +375,7 @@ def main():
     <div class="container">
         <header>
             <h1>Market Value Screener</h1>
-            <p class="subtitle">Mega-Cap (S&P 500 & NASDAQ-100) Below 200-DMA</p>
+            <p class="subtitle">Mega-Cap ({args.market.upper()}) Below 200-DMA</p>
         </header>
         
         <div class="stats-grid">
@@ -349,9 +410,9 @@ def main():
                     <tr>
                         <td><span class="ticker-badge">{m['Ticker']}</span></td>
                         <td>{m['Name']}</td>
-                        <td class="mcap" style="text-align: right">${m['Market Cap']/1e9:.2f}B</td>
-                        <td class="price" style="text-align: right">${m['Price']:.2f}</td>
-                        <td class="dma-col price" style="text-align: right; color: #94a3b8">${m['200-DMA']:.2f}</td>
+                        <td class="mcap" style="text-align: right">{m['Market Cap']/1e9:.2f}B {m['Currency']}</td>
+                        <td class="price" style="text-align: right">{m['Price']:.2f} {m['Currency']}</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">{m['200-DMA']:.2f} {m['Currency']}</td>
                         <td class="pct-neg" style="text-align: right">{m['% Diff']:.2f}%</td>
                     </tr>''' for m in sorted(matches, key=lambda x: x['% Diff'])])}
                 </tbody>

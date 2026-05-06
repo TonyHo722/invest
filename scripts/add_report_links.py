@@ -1,4 +1,5 @@
 import os
+import argparse
 from bs4 import BeautifulSoup
 
 def add_links_to_report(input_path, output_path):
@@ -53,9 +54,13 @@ def add_links_to_report(input_path, output_path):
     print("Done!")
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Add links to screener report")
+    parser.add_argument('--market', choices=['us', 'tw', 'all'], default='us', help='Market to process')
+    args = parser.parse_args()
+
     # Define paths relative to the project root
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    report_in = os.path.join(base_dir, 'report', 'dma_200_screen_results.html')
-    report_out = os.path.join(base_dir, 'report', 'dma_200_screen_result_link.html')
+    report_in = os.path.join(base_dir, 'report', f'dma_200_screen_results_{args.market}.html')
+    report_out = os.path.join(base_dir, 'report', f'dma_200_screen_result_link_{args.market}.html')
 
     add_links_to_report(report_in, report_out)
