@@ -43,7 +43,7 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 | :--- | :--- | :--- | :--- |
 | **2022** | N/A | N/A | N/A |
 | **2023** | N/A | N/A | N/A |
-| **2024** | 1.38 | 23.85 | 3.86 |
+| **2024** | N/A | N/A | N/A |
 | **2025** | 1.54 | 8.98 | 2.52 |
 | **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
 

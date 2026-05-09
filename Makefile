@@ -52,6 +52,13 @@ LINKS      := scripts/add_report_links.py
 GEN_REPORT := scripts/gen_report.py
 CHECK_YF   := scripts/check_yf.py
 
+# Debug mode support
+ifdef DEBUG
+    DEBUG_ENV := YF_DEBUG=1
+else
+    DEBUG_ENV := 
+endif
+
 # ── Default target ────────────────────────────────────────────────────────────
 # Running `make` with no arguments executes the full pipeline for all markets.
 .PHONY: all
@@ -90,30 +97,30 @@ pipeline-test: screen-test reports-test links-test
 .PHONY: screen
 screen: check
 	@echo "🔍  Screening ALL markets (US + TW + JP)…"
-	$(PYTHON) $(SCREENER) --market all
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market all
 
 # Screen US only (S&P 500 + NASDAQ-100).
 .PHONY: screen-us
 screen-us: check
 	@echo "🔍  Screening US market…"
-	$(PYTHON) $(SCREENER) --market us
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market us
 
 # Screen Taiwan only (TWSE + TPEx).
 .PHONY: screen-tw
 screen-tw: check
 	@echo "🔍  Screening TW market…"
-	$(PYTHON) $(SCREENER) --market tw
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market tw
 
 # Screen Japan only (Nikkei 225).
 .PHONY: screen-jp
 screen-jp: check
 	@echo "🔍  Screening JP market…"
-	$(PYTHON) $(SCREENER) --market jp
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market jp
 
 .PHONY: screen-test
 screen-test: check
 	@echo "🔍  Screening TEST market…"
-	$(PYTHON) $(SCREENER) --market test
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market test
 
 # ── Step 2: Generate individual financial reports ─────────────────────────────
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
@@ -121,27 +128,27 @@ screen-test: check
 .PHONY: reports
 reports: check
 	@echo "📊  Generating reports for ALL markets…"
-	$(PYTHON) $(REPORTS) --market all
+	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market all
 
 .PHONY: reports-us
 reports-us: check
 	@echo "📊  Generating reports for US market…"
-	$(PYTHON) $(REPORTS) --market us
+	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market us
 
 .PHONY: reports-tw
 reports-tw: check
 	@echo "📊  Generating reports for TW market…"
-	$(PYTHON) $(REPORTS) --market tw
+	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market tw
 
 .PHONY: reports-jp
 reports-jp: check
 	@echo "📊  Generating reports for JP market…"
-	$(PYTHON) $(REPORTS) --market jp
+	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market jp
 
 .PHONY: reports-test
 reports-test: check
 	@echo "📊  Generating reports for TEST market…"
-	$(PYTHON) $(REPORTS) --market test
+	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market test
 
 # Generate manual reports for specific ticker(s).
 # Usage: make gen-report TICKER="AAPL MSFT VITL"
@@ -181,6 +188,14 @@ links-jp:
 links-test:
 	@echo "🔗  Injecting ticker links for TEST market…"
 	$(PYTHON) $(LINKS) --market test
+
+# ── Developer Tools ───────────────────────────────────────────────────────────
+.PHONY: freeze-cache
+freeze-cache:
+	@echo "❄️  Freezing today's cache as 'debug' template…"
+	@rm -rf scratch/cache/debug
+	@cp -r scratch/cache/$(shell date +%Y%m%d) scratch/cache/debug
+	@echo "✅  Cache frozen in scratch/cache/debug/"
 
 # ── Help ──────────────────────────────────────────────────────────────────────
 .PHONY: help

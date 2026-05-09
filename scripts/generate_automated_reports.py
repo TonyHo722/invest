@@ -347,23 +347,28 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             y_label = str(year.year)
             
             # Operational
-            rev = fin.get(year).get('Total Revenue', 0)
-            gp = fin.get(year).get('Gross Profit', 0)
-            op = fin.get(year).get('Operating Income', 0)
-            ni = fin.get(year).get('Net Income', 0)
-            eps = fin.get(year).get('Basic EPS', 0)
+            # Safety checks for data existence in specific years
+            y_fin = fin[year] if year in fin.columns else {}
+            y_cf = cf[year] if year in cf.columns else {}
+            y_bs = bs[year] if year in bs.columns else {}
+            
+            rev = y_fin.get('Total Revenue', 0)
+            gp = y_fin.get('Gross Profit', 0)
+            op = y_fin.get('Operating Income', 0)
+            ni = y_fin.get('Net Income', 0)
+            eps = y_fin.get('Basic EPS', 0)
             
             div = ticker.dividends.loc[str(year.year)].sum() if not ticker.dividends.empty and str(year.year) in ticker.dividends.index.year.astype(str) else 0
-            fcf = cf.get(year).get('Free Cash Flow', 0)
-            buyback = cf.get(year).get('Repurchase Of Capital Stock', 0)
+            fcf = y_cf.get('Free Cash Flow', 0)
+            buyback = y_cf.get('Repurchase Of Capital Stock', 0)
             
             fin_data.append((y_label, f"{rev/1e6:,.0f}M", f"{gp/1e6:,.0f}M", f"{op/1e6:,.0f}M", f"{ni/1e6:,.0f}M", f"{eps:.2f}", f"{div:.2f}", f"{fcf/1e6:,.0f}M", f"{abs(buyback)/1e6:,.0f}M"))
             
             # Efficiency
             gm = (gp / rev * 100) if rev else 0
-            inv = bs.get(year).get('Inventory', 0)
-            equity = bs.get(year).get('Stockholders Equity', 1)
-            assets = bs.get(year).get('Total Assets', 1)
+            inv = y_bs.get('Inventory', 0)
+            equity = y_bs.get('Stockholders Equity', 1)
+            assets = y_bs.get('Total Assets', 1)
             roe = (ni / equity * 100)
             roa = (ni / assets * 100)
             

@@ -6,13 +6,21 @@ from datetime import datetime
 
 CACHE_DIR = "scratch/cache"
 
+def get_cache_dir():
+    """Returns the effective cache directory (daily or debug)."""
+    if os.environ.get('YF_DEBUG') == '1':
+        debug_dir = os.path.join(CACHE_DIR, "debug")
+        if os.path.exists(debug_dir):
+            return debug_dir
+    return os.path.join(CACHE_DIR, datetime.now().strftime("%Y%m%d"))
+
 def get_cached_ticker(ticker_sym):
     """
     A proxy for yf.Ticker that caches data locally to disk.
     If data exists for today, it returns the cached version.
     """
-    today_str = datetime.now().strftime("%Y%m%d")
-    cache_path = os.path.join(CACHE_DIR, today_str, f"{ticker_sym}.json")
+    cache_dir = get_cache_dir()
+    cache_path = os.path.join(cache_dir, f"{ticker_sym}.json")
     
     os.makedirs(os.path.dirname(cache_path), exist_ok=True)
     
@@ -156,8 +164,8 @@ def proxy_download(tickers, **kwargs):
     key_str = f"{sorted(tickers)}_{kwargs.get('period')}_{kwargs.get('interval')}"
     key_hash = hashlib.md5(key_str.encode()).hexdigest()
     
-    today_str = datetime.now().strftime("%Y%m%d")
-    cache_path = os.path.join(CACHE_DIR, today_str, f"batch_{key_hash}.pkl")
+    cache_dir = get_cache_dir()
+    cache_path = os.path.join(cache_dir, f"batch_{key_hash}.pkl")
     
     os.makedirs(os.path.dirname(cache_path), exist_ok=True)
     
@@ -183,8 +191,8 @@ def get_cached_list(list_key, fetch_func):
     """
     Caches a list (like ticker symbols) for the day.
     """
-    today_str = datetime.now().strftime("%Y%m%d")
-    cache_path = os.path.join(CACHE_DIR, today_str, f"list_{list_key}.json")
+    cache_dir = get_cache_dir()
+    cache_path = os.path.join(cache_dir, f"list_{list_key}.json")
     
     os.makedirs(os.path.dirname(cache_path), exist_ok=True)
     

@@ -41,9 +41,9 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 ## 4. Valuations - 3P Model ("Cheap / 又便宜")
 | Year / Status | P/S | P/E | P/B |
 | :--- | :--- | :--- | :--- |
-| **2023** | 2.61 | 21.66 | 13.59 |
-| **2024** | 2.18 | 19.23 | 10.73 |
-| **2025** | 1.69 | 16.20 | 7.68 |
+| **2023** | N/A | N/A | N/A |
+| **2024** | N/A | N/A | N/A |
+| **2025** | N/A | N/A | N/A |
 | **2026** | 1.84 | 20.33 | 8.22 |
 | **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
 
