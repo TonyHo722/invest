@@ -367,21 +367,30 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             # Efficiency
             gm = (gp / rev * 100) if rev else 0
             inv = y_bs.get('Inventory', 0)
+            cogs = y_fin.get('Cost Of Revenue', 0) or (rev - gp if rev and gp else 0)
+            
+            inv_days = "N/A"
+            if inv and cogs and cogs > 0:
+                inv_days = f"{int(inv / cogs * 365)}"
+            
             equity = y_bs.get('Stockholders Equity', 1)
             assets = y_bs.get('Total Assets', 1)
-            roe = (ni / equity * 100)
-            roa = (ni / assets * 100)
+            roe = (ni / equity * 100) if equity else 0
+            roa = (ni / assets * 100) if assets else 0
             
-            eff_data.append((y_label, f"{gm:.1f}%", "N/A", f"{roe:.1f}%", f"{roa:.1f}%"))
+            eff_data.append((y_label, f"{gm:.1f}%", inv_days, f"{roe:.1f}%", f"{roa:.1f}%"))
             
             # Historical Valuations Calculation
             try:
                 # Normalize year timezone for comparison
-                year_tz = year.tz_localize('UTC')
+                if year.tz is None:
+                    year_tz = year.tz_localize('UTC')
+                else:
+                    year_tz = year.tz_convert('UTC')
                 
                 # Get price at fiscal year end
                 # Fetch a range to ensure we get a trading day
-                hist = ticker.history(start=year - pd.Timedelta(days=10), end=year + pd.Timedelta(days=2))
+                hist = ticker.history(start=year_tz - pd.Timedelta(days=10), end=year_tz + pd.Timedelta(days=2))
                 if not hist.empty:
                     # Get the closest day to the year end (last row in range)
                     ye_price = hist['Close'].iloc[-1]
@@ -401,14 +410,23 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
                 if not shares:
                     shares = info.get('sharesOutstanding', 0)
                 
-                if ye_price > 0 and shares > 0:
-                    mcap_ye = ye_price * shares
-                    ps = f"{mcap_ye / rev:.2f}" if rev and rev > 0 else "N/A"
-                    pe = f"{ye_price / eps:.2f}" if eps and eps > 0 else "N/A"
-                    pb = f"{mcap_ye / equity:.2f}" if equity and equity > 0 else "N/A"
-                    val_data.append((y_label, ps, pe, pb))
-                else:
-                    val_data.append((y_label, "N/A", "N/A", "N/A"))
+                # Valuations
+                ps = "N/A"
+                pe = "N/A"
+                pb = "N/A"
+                
+                if ye_price > 0:
+                    if eps and eps > 0:
+                        pe = f"{ye_price / eps:.2f}"
+                    
+                    if shares > 0:
+                        mcap_ye = ye_price * shares
+                        if rev and rev > 0:
+                            ps = f"{mcap_ye / rev:.2f}"
+                        if equity and equity > 0:
+                            pb = f"{mcap_ye / equity:.2f}"
+                
+                val_data.append((y_label, ps, pe, pb))
             except:
                 val_data.append((y_label, "N/A", "N/A", "N/A"))
             

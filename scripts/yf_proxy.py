@@ -68,6 +68,18 @@ def get_cached_ticker(ticker_sym):
         print(f"⚠️ Error fetching {ticker_sym}: {e}")
         return None
 
+def try_datetime(idx):
+    """Tries to convert an index/column to datetime if it looks like a date."""
+    try:
+        if len(idx) == 0: return idx
+        # Check if the first element looks like a date string (YYYY-MM-DD)
+        first_val = str(idx[0])
+        if len(first_val) >= 7 and '-' in first_val:
+            return pd.to_datetime(idx, utc=True)
+    except:
+        pass
+    return idx
+
 class ProxyTicker:
     """A wrapper that mimics yf.Ticker but uses cached data and returns proper DataFrames."""
     def __init__(self, ticker_sym):
@@ -85,17 +97,6 @@ class ProxyTicker:
 
         self.info = self.data.get("info", {})
         
-        def try_datetime(idx):
-            """Tries to convert an index/column to datetime if it looks like a date."""
-            try:
-                # Check if the first element looks like a date string (YYYY-MM-DD)
-                first_val = str(idx[0])
-                if len(first_val) >= 7 and '-' in first_val:
-                    return pd.to_datetime(idx, utc=True)
-            except:
-                pass
-            return idx
-
         # Helper to restore DataFrame and convert index/columns back to datetime
         def restore_df(key):
             d = self.data.get(key, {})
