@@ -29,7 +29,8 @@
 #                                 link to the per-ticker reports
 #
 # OUTPUT
-#   All files land in a fixed folder: ./report/
+#   All files land in a nested date-stamped folder: ./report/<YYYYMMDD>_report/
+#   e.g. ./report/20260509_report/
 #
 # REQUIREMENTS
 #   Python venv must exist at ./.venv (run `python3 -m venv .venv` if missing)
@@ -115,7 +116,7 @@ screen-test: check
 
 # ── Step 2: Generate individual financial reports ─────────────────────────────
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
-# HTML and Markdown reports into report/<TICKER>/ folders.
+# HTML and Markdown reports into report/<YYYYMMDD>_report/<TICKER>/ folders.
 # Generate individual financial reports for all markets.
 .PHONY: reports
 reports: check reports-us reports-tw reports-jp

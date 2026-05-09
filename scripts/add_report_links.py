@@ -10,7 +10,7 @@ def get_report_dir():
     """Resolves the date-stamped report directory (same convention as screener.py)."""
     project_root = Path(__file__).resolve().parent.parent
     today_str = datetime.now().strftime("%Y%m%d")
-    return project_root / "report"
+    return project_root / "report" / f"{today_str}_report"
 
 
 def add_links_and_sorting(input_path, output_path, metrics_data=None):

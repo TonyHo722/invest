@@ -17,7 +17,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Matches the same convention used by screener.py
 _project_root = Path(__file__).resolve().parent.parent
 _today_str = datetime.now().strftime("%Y%m%d")
-REPORT_DIR = str(_project_root / "report")
+REPORT_DIR = str(_project_root / "report" / f"{_today_str}_report")
 
 def get_trend_emoji(values, reverse=False):
     """

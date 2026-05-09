@@ -10,7 +10,7 @@ from yf_proxy import ProxyTicker
 
 # Determine the report directory based on today's date
 TODAY = datetime.now().strftime("%Y%m%d")
-REPORT_DIR = os.path.join(os.getcwd(), "report")
+REPORT_DIR = os.path.join(os.getcwd(), "report", f"{TODAY}_report")
 
 def get_trend_emoji(values, reverse=False):
     """

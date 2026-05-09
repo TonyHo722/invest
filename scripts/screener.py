@@ -274,7 +274,7 @@ def main():
         # Resolve output directory
         project_root = Path(__file__).resolve().parent.parent
         today_str = datetime.now().strftime("%Y%m%d")
-        report_dir = project_root / "report"
+        report_dir = project_root / "report" / f"{today_str}_report"
         report_dir.mkdir(parents=True, exist_ok=True)
         console.print(f"[dim]Output directory: {report_dir}[/dim]")
 
