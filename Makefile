@@ -48,15 +48,21 @@
 PYTHON    := ./.venv/bin/python3
 SCREENER  := scripts/screener.py
 REPORTS   := scripts/generate_automated_reports.py
-LINKS     := scripts/add_report_links.py
+LINKS      := scripts/add_report_links.py
 GEN_REPORT := scripts/gen_report.py
+CHECK_YF   := scripts/check_yf.py
 
 # ── Default target ────────────────────────────────────────────────────────────
 # Running `make` with no arguments executes the full pipeline for all markets.
 .PHONY: all
-all: screen reports links
+all: check screen reports links
 	@echo ""
 	@echo "✅  Full pipeline complete for ALL markets."
+
+# ── Step 0: Check Connectivity ────────────────────────────────────────────────
+.PHONY: check
+check:
+	@$(PYTHON) $(CHECK_YF)
 
 # ── Full pipeline shortcuts ───────────────────────────────────────────────────
 .PHONY: pipeline-us
@@ -77,25 +83,25 @@ pipeline-jp: screen-jp reports-jp links-jp
 # ── Step 1: Screener ──────────────────────────────────────────────────────────
 # Scans all markets, saves results CSV + premium HTML dashboard.
 .PHONY: screen
-screen:
+screen: check
 	@echo "🔍  Screening ALL markets (US + TW + JP)…"
 	$(PYTHON) $(SCREENER) --market all
 
 # Screen US only (S&P 500 + NASDAQ-100).
 .PHONY: screen-us
-screen-us:
+screen-us: check
 	@echo "🔍  Screening US market…"
 	$(PYTHON) $(SCREENER) --market us
 
 # Screen Taiwan only (TWSE + TPEx).
 .PHONY: screen-tw
-screen-tw:
+screen-tw: check
 	@echo "🔍  Screening TW market…"
 	$(PYTHON) $(SCREENER) --market tw
 
 # Screen Japan only (Nikkei 225).
 .PHONY: screen-jp
-screen-jp:
+screen-jp: check
 	@echo "🔍  Screening JP market…"
 	$(PYTHON) $(SCREENER) --market jp
 
@@ -103,22 +109,22 @@ screen-jp:
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
 # HTML and Markdown reports into <YYYYMMDD>_report/<TICKER>/ folders.
 .PHONY: reports
-reports:
+reports: check
 	@echo "📊  Generating reports for ALL markets…"
 	$(PYTHON) $(REPORTS) --market all
 
 .PHONY: reports-us
-reports-us:
+reports-us: check
 	@echo "📊  Generating reports for US market…"
 	$(PYTHON) $(REPORTS) --market us
 
 .PHONY: reports-tw
-reports-tw:
+reports-tw: check
 	@echo "📊  Generating reports for TW market…"
 	$(PYTHON) $(REPORTS) --market tw
 
 .PHONY: reports-jp
-reports-jp:
+reports-jp: check
 	@echo "📊  Generating reports for JP market…"
 	$(PYTHON) $(REPORTS) --market jp
 
