@@ -510,7 +510,9 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             
         return True
     except Exception as e:
-        # print(f"Error processing {ticker_sym}: {e}")
+        print(f"❌ Error generating report for {ticker_sym}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def run_for_market(market_key, console, global_metrics=None):
@@ -544,7 +546,7 @@ def run_for_market(market_key, console, global_metrics=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Automated Financial Report Generator")
-    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to scan')
+    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all', 'test'], default='us', help='Market to scan')
     args = parser.parse_args()
 
     console = Console()

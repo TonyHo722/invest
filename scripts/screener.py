@@ -14,7 +14,7 @@ import re
 import os
 from datetime import datetime
 from pathlib import Path
-from yf_proxy import ProxyTicker
+from yf_proxy import ProxyTicker, proxy_download
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -118,7 +118,7 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
         for i in range(0, len(tickers), chunk_size):
             chunk = tickers[i:i+chunk_size]
             try:
-                df_chunk = yf.download(chunk, period="1y", interval="1d", group_by='ticker', progress=False, threads=True)
+                df_chunk = proxy_download(chunk, period="1y", interval="1d", group_by='ticker', progress=False, threads=True)
                 if not df_chunk.empty:
                     data_frames.append(df_chunk)
             except Exception:
@@ -197,7 +197,7 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
 
 def main():
     parser = argparse.ArgumentParser(description="Mega-Cap 200-DMA Screener")
-    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to scan')
+    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all', 'test'], default='us', help='Market to scan')
     parser.add_argument('--min-mcap-jpy', type=float, default=100, help='Minimum market cap in billions of JPY (default 100)')
     args = parser.parse_args()
 
@@ -228,6 +228,13 @@ def main():
     
     # Merge and remove duplicates
     tickers = list(set(tickers))
+    
+    if args.market == 'test':
+        test_tickers = ['7722.TW', '2886.TW', '2884.TW', '5269.TW', '2618.TW', '2330.TW', '2317.TW', '2454.TW', '2308.TW', '2382.TW']
+        tickers = test_tickers
+        # Rebuild names map for these specific tickers
+        tw_names_map = {t: t for t in test_tickers}
+        console.print(f"[yellow]RUNNING TEST MODE with {len(tickers)} tickers...[/yellow]")
     
     if not tickers:
         console.print("[red]Could not fetch tickers from any source. Exiting.[/red]")

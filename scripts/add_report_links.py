@@ -203,7 +203,7 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Add links to screener report")
-    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to process')
+    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all', 'test'], default='us', help='Market to process')
     args = parser.parse_args()
 
     report_dir = get_report_dir()

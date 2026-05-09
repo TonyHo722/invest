@@ -80,6 +80,11 @@ pipeline-jp: screen-jp reports-jp links-jp
 	@echo ""
 	@echo "✅  Full pipeline complete for JP market."
 
+.PHONY: pipeline-test
+pipeline-test: screen-test reports-test links-test
+	@echo ""
+	@echo "✅  Full pipeline complete for TEST market."
+
 # ── Step 1: Screener ──────────────────────────────────────────────────────────
 # Scans all markets, saves results CSV + premium HTML dashboard.
 .PHONY: screen
@@ -105,6 +110,11 @@ screen-jp: check
 	@echo "🔍  Screening JP market…"
 	$(PYTHON) $(SCREENER) --market jp
 
+.PHONY: screen-test
+screen-test: check
+	@echo "🔍  Screening TEST market…"
+	$(PYTHON) $(SCREENER) --market test
+
 # ── Step 2: Generate individual financial reports ─────────────────────────────
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
 # HTML and Markdown reports into <YYYYMMDD>_report/<TICKER>/ folders.
@@ -127,6 +137,11 @@ reports-tw: check
 reports-jp: check
 	@echo "📊  Generating reports for JP market…"
 	$(PYTHON) $(REPORTS) --market jp
+
+.PHONY: reports-test
+reports-test: check
+	@echo "📊  Generating reports for TEST market…"
+	$(PYTHON) $(REPORTS) --market test
 
 # Generate manual reports for specific ticker(s).
 # Usage: make gen-report TICKER="AAPL MSFT VITL"
@@ -161,6 +176,11 @@ links-tw:
 links-jp:
 	@echo "🔗  Injecting ticker links for JP market…"
 	$(PYTHON) $(LINKS) --market jp
+
+.PHONY: links-test
+links-test:
+	@echo "🔗  Injecting ticker links for TEST market…"
+	$(PYTHON) $(LINKS) --market test
 
 # ── Help ──────────────────────────────────────────────────────────────────────
 .PHONY: help
