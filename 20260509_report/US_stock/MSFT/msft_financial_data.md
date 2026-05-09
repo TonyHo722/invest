@@ -3,19 +3,13 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 
 ## 0. Stock Price Charts
 
-### 📈 1-Year Price Chart (MSFT)
+### 📈 Today's Quote — MSFT
 [![MSFT 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=MSFT&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=MSFT)
 
-*Source: Finviz — Click chart to open interactive view*
-
-### 📈 5-Year Price Chart (MSFT)
+### 📊 Long-Term Technical Analysis — MSFT
 [![MSFT 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=MSFT&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=MSFT)
 
 *Source: Finviz — Click chart to open interactive view*
-
-> **Chart Notes:**
-> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.
-> - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.
 
 ---
 
@@ -50,7 +44,7 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 | **2022** | 9.49 | 25.95 | 11.30 |
 | **2023** | 11.70 | 34.30 | 12.02 |
 | **2024** | 13.66 | 38.00 | 12.48 |
-| **2025** | 9.69 | 24.72 | 7.44 |
+| **2025** | 9.69 | 24.75 | 7.44 |
 | **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
 
 ## 5. Automated Framework Assessment

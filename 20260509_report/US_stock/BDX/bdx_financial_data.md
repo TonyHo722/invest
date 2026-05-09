@@ -1,0 +1,56 @@
+# Becton, Dickinson and Company (BDX) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — BDX
+[![BDX 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=BDX&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=BDX)
+
+### 📊 Long-Term Technical Analysis — BDX
+[![BDX 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=BDX&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=BDX)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | Becton, Dickinson and Company (BDX) |
+| :--- | :--- |
+| Sector | Healthcare |
+| Market Cap | $41.17B |
+| Current Price | $149.43 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **2022** | 18,870M | 8,477M | 2,475M | 1,779M | 5.93 | 2.75 | 1,660M | 500M |
+| **2023** | 19,372M | 8,170M | 2,424M | 1,484M | 4.97 | 2.89 | 2,115M | nanM |
+| **2024** | 20,178M | 9,125M | 2,856M | 1,705M | 5.96 | 3.06 | 3,072M | nanM |
+| **2025** | 21,840M | 9,925M | 2,986M | 1,678M | 5.83 | 3.28 | 2,671M | nanM |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📉 Bad | 📉 Bad | 📈 Good | 📈 Good | 📉 Bad |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Inventory Days | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- |
+| **2022** | 44.9% | N/A | 7.0% | 3.4% |
+| **2023** | 42.2% | N/A | 5.8% | 2.8% |
+| **2024** | 45.2% | N/A | 6.6% | 3.0% |
+| **2025** | 45.4% | N/A | 6.6% | 3.0% |
+| **Trend** | 📈 Good | ⚠️ N/A | 📉 Bad | 📉 Bad |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **2022** | 2.51 | 27.73 | 1.87 |
+| **2023** | 2.90 | 38.95 | 2.18 |
+| **2024** | 2.63 | 30.86 | 2.05 |
+| **2025** | 1.85 | 26.08 | 1.74 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $41.17B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $149.43 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |

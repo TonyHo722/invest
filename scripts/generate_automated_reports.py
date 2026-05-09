@@ -7,6 +7,7 @@ import yfinance as yf
 from rich.console import Console
 from rich.progress import Progress
 import time
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -320,7 +321,7 @@ def build_html(s):
 </body>
 </html>"""
 
-def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
+def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_list=None):
     """Fetches data for a ticker and generates reports."""
     try:
         ticker = yf.Ticker(ticker_sym)
@@ -468,6 +469,31 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
             "note": f"Automated report generated from live data. Sector: {info.get('sector', 'N/A')}."
         }
         
+        # Save metrics for summary
+        if metrics_list is not None:
+            roe_values = {}
+            for year_label, _, _, roe_str, _ in eff_data:
+                try:
+                    roe_values[year_label] = float(roe_str.replace('%', ''))
+                except:
+                    roe_values[year_label] = 0.0
+            
+            # Calculate average of past 4 years (excluding the latest one if it's the current year)
+            # Actually let's just take the first N-1 if N >= 2
+            avg_roe = 0.0
+            if len(roe_values) >= 2:
+                # Get labels sorted by year
+                sorted_labels = sorted(roe_values.keys())
+                # Exclude the last one (latest)
+                past_labels = sorted_labels[:-1]
+                if past_labels:
+                    avg_roe = round(sum(roe_values[l] for l in past_labels) / len(past_labels), 2)
+            
+            metrics_list[ticker_sym] = {
+                "roe": roe_values,
+                "avg_roe_past": avg_roe
+            }
+
         # Determine market subfolder
         market_subfolder = "US_stock"
         if ticker_sym.endswith('.T'):
@@ -488,7 +514,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
         # print(f"Error processing {ticker_sym}: {e}")
         return False
 
-def run_for_market(market_key, console):
+def run_for_market(market_key, console, global_metrics=None):
     """Runs report generation for a single market key ('us', 'tw', or 'jp')."""
     input_csv = os.path.join(REPORT_DIR, f"dma_200_screen_results_{market_key}.csv")
     console.print(f"\n[bold blue]Automated Financial Report Generator ({market_key.upper()})[/bold blue]")
@@ -509,7 +535,7 @@ def run_for_market(market_key, console):
         for t in tickers:
             ticker_sym = t['Ticker']
             company_name = t['Name']
-            if fetch_and_generate(ticker_sym, company_name, t['Price'], t['Market Cap']):
+            if fetch_and_generate(ticker_sym, company_name, t['Price'], t['Market Cap'], global_metrics):
                 success_count += 1
             progress.advance(task)
 
@@ -527,9 +553,17 @@ def main():
     # Expand 'all' into individual market keys
     markets = ['us', 'tw', 'jp'] if args.market == 'all' else [args.market]
 
+    global_metrics = {}
     total_success = 0
     for market_key in markets:
-        total_success += run_for_market(market_key, console)
+        total_success += run_for_market(market_key, console, global_metrics)
+
+    # Save global metrics summary
+    if global_metrics:
+        metrics_path = os.path.join(REPORT_DIR, "metrics_summary.json")
+        with open(metrics_path, 'w', encoding='utf-8') as f:
+            json.dump(global_metrics, f, indent=2)
+        console.print(f"\n[bold green]Metrics summary saved to {metrics_path}[/bold green]")
 
     if len(markets) > 1:
         console.print(f"\n[bold green]Grand total: {total_success} reports generated across {len(markets)} markets.[/bold green]")

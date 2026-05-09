@@ -164,6 +164,40 @@
     <p class="subtitle">
      Mega-Cap (JP) Below 200-DMA
     </p>
+    <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+     <span style="font-weight: 600; color: #94a3b8;">
+      Sort &amp; Filter By:
+     </span>
+     <select id="sort-method" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+      <option value="discount">
+       200-DMA Discount (Technical)
+      </option>
+      <option value="roe-avg">
+       Average ROE (Past 4 Years)
+      </option>
+      <option value="roe-2026">
+       ROE in 2026
+      </option>
+      <option value="roe-2025">
+       ROE in 2025
+      </option>
+      <option value="roe-2024">
+       ROE in 2024
+      </option>
+      <option value="roe-2023">
+       ROE in 2023
+      </option>
+      <option value="roe-2022">
+       ROE in 2022
+      </option>
+      <option value="roe-2021">
+       ROE in 2021
+      </option>
+     </select>
+     <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+      Apply Sort
+     </button>
+    </div>
    </header>
    <div class="stats-grid">
     <div class="stat-card">
@@ -213,10 +247,13 @@
        <th style="text-align: right">
         % Discount
        </th>
+       <th id="dynamic-metric-header" style="text-align: right">
+        Metric
+       </th>
       </tr>
      </thead>
      <tbody>
-      <tr>
+      <tr data-discount="-31.44" data-roe-2022="23.1" data-roe-2023="19.1" data-roe-2024="18.8" data-roe-2025="10.2" data-roe-avg="20.333333333333332">
        <td>
         <a href="JP_stock/7974.T/7974.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -239,8 +276,11 @@
        <td class="pct-neg" style="text-align: right">
         -31.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-31.39">
        <td>
         <a href="JP_stock/2413.T/2413.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -263,8 +303,11 @@
        <td class="pct-neg" style="text-align: right">
         -31.39%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-29.64" data-roe-2022="40.8" data-roe-2023="33.4" data-roe-2024="29.0" data-roe-2025="37.1" data-roe-avg="34.4">
        <td>
         <a href="JP_stock/4716.T/4716.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -287,8 +330,11 @@
        <td class="pct-neg" style="text-align: right">
         -29.64%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-26.04">
        <td>
         <a href="JP_stock/4661.T/4661.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -311,8 +357,11 @@
        <td class="pct-neg" style="text-align: right">
         -26.04%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-25.92" data-roe-2022="7.8" data-roe-2023="14.6" data-roe-2024="27.2" data-roe-2025="39.0" data-roe-avg="16.533333333333335">
        <td>
         <a href="JP_stock/8136.T/8136.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -335,8 +384,11 @@
        <td class="pct-neg" style="text-align: right">
         -25.92%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-24.98">
        <td>
         <a href="JP_stock/8267.T/8267.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -359,8 +411,11 @@
        <td class="pct-neg" style="text-align: right">
         -24.98%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-21.09" data-roe-2022="5.0" data-roe-2023="7.6" data-roe-2024="11.9" data-roe-2025="18.2" data-roe-avg="8.166666666666666">
        <td>
         <a href="JP_stock/4568.T/4568.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -383,8 +438,11 @@
        <td class="pct-neg" style="text-align: right">
         -21.09%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-20.2" data-roe-2022="3.7" data-roe-2023="9.5" data-roe-2024="15.0" data-roe-2025="12.5" data-roe-avg="9.4">
        <td>
         <a href="JP_stock/7270.T/7270.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -407,8 +465,11 @@
        <td class="pct-neg" style="text-align: right">
         -20.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.62">
        <td>
         <a href="JP_stock/3626.T/3626.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -431,8 +492,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.62%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.07" data-roe-2022="15.6" data-roe-2023="15.2" data-roe-2024="12.8" data-roe-2025="14.0" data-roe-avg="14.533333333333333">
        <td>
         <a href="JP_stock/6758.T/6758.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -455,8 +519,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.07%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.02" data-roe-2022="12.7" data-roe-2023="11.8" data-roe-2024="11.5" data-roe-2025="11.6" data-roe-avg="12.0">
        <td>
         <a href="JP_stock/6869.T/6869.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -479,8 +546,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.02%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.68">
        <td>
         <a href="JP_stock/3659.T/3659.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -503,8 +573,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.68%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.68" data-roe-2022="21.1" data-roe-2023="19.1" data-roe-2024="19.9" data-roe-2025="21.6" data-roe-avg="20.033333333333335">
        <td>
         <a href="JP_stock/4307.T/4307.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -527,8 +600,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.68%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.61">
        <td>
         <a href="JP_stock/3092.T/3092.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -551,8 +627,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.61%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.38" data-roe-2022="7.5" data-roe-2023="8.2" data-roe-2024="9.9" data-roe-2025="9.1" data-roe-avg="8.533333333333333">
        <td>
         <a href="JP_stock/9602.T/9602.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -575,8 +654,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.38%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-17.51" data-roe-2022="15.9" data-roe-2023="13.9" data-roe-2024="14.5" data-roe-2025="16.3" data-roe-avg="14.766666666666666">
        <td>
         <a href="JP_stock/7832.T/7832.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -599,8 +681,11 @@
        <td class="pct-neg" style="text-align: right">
         -17.51%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.89" data-roe-2021="10.3" data-roe-2022="8.2" data-roe-2023="9.1" data-roe-2024="7.7" data-roe-avg="9.200000000000001">
        <td>
         <a href="JP_stock/3391.T/3391.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -623,8 +708,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.89%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.57" data-roe-2022="25.9" data-roe-2023="25.2" data-roe-2024="25.4" data-roe-2025="26.5" data-roe-avg="25.5">
        <td>
         <a href="JP_stock/3064.T/3064.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -647,8 +735,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.57%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.91" data-roe-2022="-47.7" data-roe-2023="-40.6" data-roe-2024="-17.5" data-roe-2025="-17.9" data-roe-avg="-35.26666666666667">
        <td>
         <a href="JP_stock/4755.T/4755.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -671,8 +762,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.91%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.65" data-roe-2022="13.2" data-roe-2024="10.7" data-roe-2025="9.1" data-roe-avg="11.95">
        <td>
         <a href="JP_stock/9843.T/9843.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -695,8 +789,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.65%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.95" data-roe-2022="7.5" data-roe-2023="8.4" data-roe-2024="10.2" data-roe-2025="10.5" data-roe-avg="8.700000000000001">
        <td>
         <a href="JP_stock/3088.T/3088.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -719,8 +816,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.95%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.82" data-roe-2022="8.8" data-roe-2023="8.0" data-roe-2024="8.0" data-roe-2025="8.5" data-roe-avg="8.266666666666667">
        <td>
         <a href="JP_stock/4543.T/4543.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -743,8 +843,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.82%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.45" data-roe-2022="6.8" data-roe-2023="5.8" data-roe-2024="8.7" data-roe-2025="6.8" data-roe-avg="7.099999999999999">
        <td>
         <a href="JP_stock/7267.T/7267.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -767,8 +870,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.45%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.14" data-roe-2022="3.4" data-roe-2023="15.2" data-roe-2024="6.3" data-roe-2025="46.0" data-roe-avg="8.299999999999999">
        <td>
         <a href="JP_stock/9024.T/9024.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -791,8 +897,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.14%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.37" data-roe-2022="-1.5" data-roe-2023="5.8" data-roe-2024="9.2" data-roe-2025="10.0" data-roe-avg="4.5">
        <td>
         <a href="JP_stock/9022.T/9022.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -815,8 +924,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.37%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.35" data-roe-2022="8.5" data-roe-2023="9.6" data-roe-2024="11.7" data-roe-2025="14.0" data-roe-avg="9.933333333333332">
        <td>
         <a href="JP_stock/7269.T/7269.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -839,8 +951,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.35%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.75" data-roe-2022="9.3" data-roe-2023="7.1" data-roe-2024="7.8" data-roe-2025="9.0" data-roe-avg="8.066666666666666">
        <td>
         <a href="JP_stock/6701.T/6701.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -863,8 +978,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.75%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.63">
        <td>
         <a href="JP_stock/9021.T/9021.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -887,8 +1005,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.63%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.53">
        <td>
         <a href="JP_stock/4204.T/4204.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -911,8 +1032,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.53%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.87" data-roe-2021="8.7" data-roe-2022="7.4" data-roe-2023="6.7" data-roe-2024="7.2" data-roe-avg="7.6000000000000005">
        <td>
         <a href="JP_stock/2502.T/2502.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -935,8 +1059,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.87%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.53" data-roe-2022="22.7" data-roe-2023="22.4" data-roe-2024="32.0" data-roe-2025="15.7" data-roe-avg="25.7">
        <td>
         <a href="JP_stock/7733.T/7733.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -959,8 +1086,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.53%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.36" data-roe-2022="15.7" data-roe-2023="9.3" data-roe-2024="13.8" data-roe-2025="15.5" data-roe-avg="12.933333333333332">
        <td>
         <a href="JP_stock/9766.T/9766.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -983,8 +1113,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.36%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.01" data-roe-2022="14.8" data-roe-2023="15.3" data-roe-2024="14.5" data-roe-2025="14.9" data-roe-avg="14.866666666666667">
        <td>
         <a href="JP_stock/4684.T/4684.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1007,8 +1140,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.01%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.55" data-roe-2022="15.8" data-roe-2023="14.6" data-roe-2024="16.5" data-roe-2025="14.9" data-roe-avg="15.633333333333333">
        <td>
         <a href="JP_stock/7532.T/7532.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1031,8 +1167,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.55%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.08" data-roe-2022="11.5" data-roe-2023="13.6" data-roe-2024="14.5" data-roe-2025="12.6" data-roe-avg="13.200000000000001">
        <td>
         <a href="JP_stock/6702.T/6702.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1055,8 +1194,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.08%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.76" data-roe-2022="18.7" data-roe-2023="16.0" data-roe-2024="15.5" data-roe-2025="12.8" data-roe-avg="16.733333333333334">
        <td>
         <a href="JP_stock/9435.T/9435.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1079,8 +1221,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.76%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.6" data-roe-2022="1.2" data-roe-2023="3.5" data-roe-2024="8.1" data-roe-2025="9.6" data-roe-avg="4.266666666666667">
        <td>
         <a href="JP_stock/9005.T/9005.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1103,8 +1248,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.60%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.48" data-roe-2022="8.1" data-roe-2023="2.2" data-roe-2024="4.6" data-roe-2025="5.0" data-roe-avg="4.966666666666666">
        <td>
         <a href="JP_stock/7259.T/7259.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1127,8 +1275,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.48%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.16" data-roe-2022="7.8" data-roe-2023="7.9" data-roe-2024="4.7" data-roe-2025="9.5" data-roe-avg="6.8">
        <td>
         <a href="JP_stock/7751.T/7751.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1151,8 +1302,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.16%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.11">
        <td>
         <a href="JP_stock/6988.T/6988.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1175,8 +1329,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.11%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.09" data-roe-2022="22.2" data-roe-2023="22.8" data-roe-2024="22.2" data-roe-2025="21.4" data-roe-avg="22.400000000000002">
        <td>
         <a href="JP_stock/9697.T/9697.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1199,8 +1356,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.09%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.07">
        <td>
         <a href="JP_stock/9201.T/9201.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1223,8 +1383,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.07%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.98" data-roe-2022="6.5" data-roe-2023="5.5" data-roe-2024="6.5" data-roe-2025="5.9" data-roe-avg="6.166666666666667">
        <td>
         <a href="JP_stock/8951.T/8951.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1247,8 +1410,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.98%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.85" data-roe-2022="7.1" data-roe-2023="8.1" data-roe-2024="6.0" data-roe-2025="4.3" data-roe-avg="7.066666666666666">
        <td>
         <a href="JP_stock/3382.T/3382.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1271,8 +1437,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.85%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.99" data-roe-2022="8.4" data-roe-2023="7.9" data-roe-2024="7.7" data-roe-2025="7.8" data-roe-avg="8.0">
        <td>
         <a href="JP_stock/4901.T/4901.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1295,8 +1464,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.99%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.69" data-roe-2022="11.2" data-roe-2023="13.5" data-roe-2024="12.3" data-roe-2025="12.4" data-roe-avg="12.333333333333334">
        <td>
         <a href="JP_stock/1925.T/1925.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1319,8 +1491,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.69%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.65">
        <td>
         <a href="JP_stock/4452.T/4452.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1343,8 +1518,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.65%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.63" data-roe-2022="6.1" data-roe-2023="7.2" data-roe-2024="5.7" data-roe-2025="8.4" data-roe-avg="6.333333333333333">
        <td>
         <a href="JP_stock/6902.T/6902.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1367,8 +1545,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.63%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.5" data-roe-2022="10.9" data-roe-2023="8.7" data-roe-2024="14.4" data-roe-2025="13.3" data-roe-avg="11.333333333333334">
        <td>
         <a href="JP_stock/7203.T/7203.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1391,8 +1572,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.50%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.44" data-roe-2022="6.9" data-roe-2023="8.7" data-roe-2024="11.3" data-roe-2025="7.0" data-roe-avg="8.966666666666667">
        <td>
         <a href="JP_stock/4612.T/4612.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1415,8 +1599,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.22" data-roe-2022="7.0" data-roe-2023="9.7" data-roe-2024="7.0" data-roe-2025="7.5" data-roe-avg="7.8999999999999995">
        <td>
         <a href="JP_stock/4151.T/4151.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1439,8 +1626,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.22%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.97" data-roe-2022="4.7" data-roe-2023="4.3" data-roe-2024="7.1" data-roe-2025="-13.5" data-roe-avg="5.366666666666667">
        <td>
         <a href="JP_stock/7201.T/7201.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1463,8 +1653,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.97%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.38" data-roe-2022="8.5" data-roe-2023="7.6" data-roe-2024="7.7" data-roe-2025="6.7" data-roe-avg="7.933333333333334">
        <td>
         <a href="JP_stock/2587.T/2587.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1487,8 +1680,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.38%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.94" data-roe-2022="14.5" data-roe-2023="7.7" data-roe-2024="8.0" data-roe-2025="3.6" data-roe-avg="10.066666666666666">
        <td>
         <a href="JP_stock/5411.T/5411.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1511,8 +1707,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.94%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.46">
        <td>
         <a href="JP_stock/8473.T/8473.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1535,8 +1734,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.46%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.55" data-roe-2022="18.4" data-roe-2023="16.6" data-roe-2024="11.5" data-roe-2025="6.5" data-roe-avg="15.5">
        <td>
         <a href="JP_stock/5401.T/5401.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1559,8 +1761,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.55%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.48" data-roe-2022="13.4" data-roe-2023="11.5" data-roe-2024="14.3" data-roe-2025="16.4" data-roe-avg="13.066666666666668">
        <td>
         <a href="JP_stock/7550.T/7550.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1583,8 +1788,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.48%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.32" data-roe-2022="10.1" data-roe-2023="9.9" data-roe-2024="7.6" data-roe-2025="8.9" data-roe-avg="9.200000000000001">
        <td>
         <a href="JP_stock/5108.T/5108.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1607,8 +1815,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.32%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.31" data-roe-2022="-18.0" data-roe-2023="10.4" data-roe-2024="15.0" data-roe-2025="13.5" data-roe-avg="2.466666666666667">
        <td>
         <a href="JP_stock/9202.T/9202.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1631,8 +1842,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.31%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.88" data-roe-2022="6.3" data-roe-2023="6.8" data-roe-2024="7.2" data-roe-2025="7.9" data-roe-avg="6.766666666666667">
        <td>
         <a href="JP_stock/8801.T/8801.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1655,8 +1869,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.88%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.71" data-roe-2022="10.6" data-roe-2023="11.6" data-roe-2024="12.2" data-roe-2025="10.2" data-roe-avg="11.466666666666667">
        <td>
         <a href="JP_stock/7202.T/7202.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1679,8 +1896,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.71%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.6" data-roe-2022="14.3" data-roe-2023="14.2" data-roe-2024="13.0" data-roe-2025="9.8" data-roe-avg="13.833333333333334">
        <td>
         <a href="JP_stock/9432.T/9432.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1703,8 +1923,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.60%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.6" data-roe-2022="12.4" data-roe-2023="12.3" data-roe-2024="11.6" data-roe-2025="10.8" data-roe-avg="12.1">
        <td>
         <a href="JP_stock/7701.T/7701.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1727,8 +1950,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.60%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.46" data-roe-2022="10.9" data-roe-2023="12.4" data-roe-2024="10.6" data-roe-2025="8.2" data-roe-avg="11.299999999999999">
        <td>
         <a href="JP_stock/8113.T/8113.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1751,8 +1977,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.46%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.13" data-roe-2022="18.1" data-roe-2023="14.7" data-roe-2024="9.3" data-roe-2025="1.4" data-roe-avg="14.033333333333333">
        <td>
         <a href="JP_stock/7272.T/7272.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1775,8 +2004,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.13%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.02" data-roe-2022="21.8" data-roe-2023="16.6" data-roe-2024="17.7" data-roe-2025="25.3" data-roe-avg="18.7">
        <td>
         <a href="JP_stock/6098.T/6098.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1799,8 +2031,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.02%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.71" data-roe-2022="13.5" data-roe-2023="12.9" data-roe-2024="11.6" data-roe-2025="13.0" data-roe-avg="12.666666666666666">
        <td>
         <a href="JP_stock/9433.T/9433.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1823,8 +2058,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.71%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.61">
        <td>
         <a href="JP_stock/9020.T/9020.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1847,8 +2085,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.61%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.17" data-roe-2022="12.5" data-roe-2023="13.8" data-roe-2024="14.4" data-roe-2025="16.3" data-roe-avg="13.566666666666668">
        <td>
         <a href="JP_stock/4768.T/4768.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1871,6 +2112,9 @@
        <td class="pct-neg" style="text-align: right">
         -0.17%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
      </tbody>
     </table>
@@ -1881,5 +2125,54 @@
     </p>
    </footer>
   </div>
+  <script>
+   document.getElementById('apply-sort').addEventListener('click', function() {
+            const method = document.getElementById('sort-method').value;
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const header = document.getElementById('dynamic-metric-header');
+            
+            // Update header text
+            const select = document.getElementById('sort-method');
+            header.innerText = select.options[select.selectedIndex].text.replace('Sort by ', '');
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
+                let valB = parseFloat(b.getAttribute('data-' + method)) || 0;
+                
+                // For discount, lower is better (more negative)
+                if (method === 'discount') return valA - valB;
+                // For ROE, higher is better
+                return valB - valA;
+            });
+
+            // Update visible cells and re-append rows
+            rows.forEach(row => {
+                const cell = row.querySelector('.dynamic-metric-cell');
+                const val = row.getAttribute('data-' + method);
+                
+                if (val !== null && val !== undefined) {
+                    const numVal = parseFloat(val);
+                    cell.innerText = numVal.toFixed(1) + '%';
+                    // Color coding for ROE
+                    if (method.includes('roe')) {
+                        cell.style.color = numVal > 0 ? '#4ade80' : '#f87171';
+                    } else {
+                        cell.style.color = '#38bdf8';
+                    }
+                } else {
+                    cell.innerText = 'N/A';
+                    cell.style.color = '#94a3b8';
+                }
+                tbody.appendChild(row);
+            });
+        });
+        
+        // Default sort on load
+        window.addEventListener('load', () => {
+            document.getElementById('apply-sort').click();
+        });
+  </script>
  </body>
 </html>

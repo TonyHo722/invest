@@ -164,6 +164,40 @@
     <p class="subtitle">
      Mega-Cap (TW) Below 200-DMA
     </p>
+    <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+     <span style="font-weight: 600; color: #94a3b8;">
+      Sort &amp; Filter By:
+     </span>
+     <select id="sort-method" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+      <option value="discount">
+       200-DMA Discount (Technical)
+      </option>
+      <option value="roe-avg">
+       Average ROE (Past 4 Years)
+      </option>
+      <option value="roe-2026">
+       ROE in 2026
+      </option>
+      <option value="roe-2025">
+       ROE in 2025
+      </option>
+      <option value="roe-2024">
+       ROE in 2024
+      </option>
+      <option value="roe-2023">
+       ROE in 2023
+      </option>
+      <option value="roe-2022">
+       ROE in 2022
+      </option>
+      <option value="roe-2021">
+       ROE in 2021
+      </option>
+     </select>
+     <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+      Apply Sort
+     </button>
+    </div>
    </header>
    <div class="stats-grid">
     <div class="stat-card">
@@ -213,10 +247,13 @@
        <th style="text-align: right">
         % Discount
        </th>
+       <th id="dynamic-metric-header" style="text-align: right">
+        Metric
+       </th>
       </tr>
      </thead>
      <tbody>
-      <tr>
+      <tr data-discount="-46.25" data-roe-2022="9.0" data-roe-2023="8.9" data-roe-2024="6.3" data-roe-2025="4.7" data-roe-avg="8.066666666666666">
        <td>
         <a href="TW_stock/7722.TW/7722.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -239,8 +276,11 @@
        <td class="pct-neg" style="text-align: right">
         -46.25%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-43.56" data-roe-2022="-13.3" data-roe-2023="-20.2" data-roe-2024="-37.4" data-roe-2025="-74.2" data-roe-avg="-23.633333333333336">
        <td>
         <a href="TW_stock/6550.TW/6550.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -263,8 +303,11 @@
        <td class="pct-neg" style="text-align: right">
         -43.56%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-42.21" data-roe-2022="-14.6" data-roe-2023="-15.7" data-roe-2024="-17.7" data-roe-2025="-4.2" data-roe-avg="-16.0">
        <td>
         <a href="TW_stock/7799.TW/7799.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -287,8 +330,11 @@
        <td class="pct-neg" style="text-align: right">
         -42.21%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-37.75" data-roe-2022="16.5" data-roe-2023="8.2" data-roe-2024="-3.6" data-roe-2025="6.2" data-roe-avg="7.033333333333332">
        <td>
         <a href="TW_stock/9914.TW/9914.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -311,8 +357,11 @@
        <td class="pct-neg" style="text-align: right">
         -37.75%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-34.63" data-roe-2022="9.3" data-roe-2023="16.8" data-roe-2024="29.2" data-roe-2025="14.2" data-roe-avg="18.433333333333334">
        <td>
         <a href="TW_stock/2543.TW/2543.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -335,8 +384,11 @@
        <td class="pct-neg" style="text-align: right">
         -34.63%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-31.81" data-roe-2022="36.3" data-roe-2023="21.5" data-roe-2024="21.9" data-roe-2025="19.5" data-roe-avg="26.566666666666663">
        <td>
         <a href="TW_stock/9910.TW/9910.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -359,8 +411,11 @@
        <td class="pct-neg" style="text-align: right">
         -31.81%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-31.68" data-roe-2022="14.3" data-roe-2023="7.8" data-roe-2024="15.6" data-roe-2025="13.4" data-roe-avg="12.566666666666668">
        <td>
         <a href="TW_stock/6890.TW/6890.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -383,8 +438,11 @@
        <td class="pct-neg" style="text-align: right">
         -31.68%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-30.75" data-roe-2022="5.3" data-roe-2023="11.8" data-roe-2024="13.9" data-roe-2025="14.8" data-roe-avg="10.333333333333334">
        <td>
         <a href="TW_stock/9958.TW/9958.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -407,8 +465,11 @@
        <td class="pct-neg" style="text-align: right">
         -30.75%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-30.35" data-roe-2022="-24.6" data-roe-2023="-13.1" data-roe-2024="-6.1" data-roe-2025="-3.7" data-roe-avg="-14.6">
        <td>
         <a href="TW_stock/6919.TW/6919.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -431,8 +492,11 @@
        <td class="pct-neg" style="text-align: right">
         -30.35%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-29.91" data-roe-2022="26.5" data-roe-2023="38.2" data-roe-2024="42.7" data-roe-2025="11.7" data-roe-avg="35.800000000000004">
        <td>
         <a href="TW_stock/5508.TWO/5508.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -455,8 +519,11 @@
        <td class="pct-neg" style="text-align: right">
         -29.91%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-28.64" data-roe-2022="17.5" data-roe-2023="10.1" data-roe-2024="3.7" data-roe-2025="2.1" data-roe-avg="10.433333333333334">
        <td>
         <a href="TW_stock/9921.TW/9921.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -479,8 +546,11 @@
        <td class="pct-neg" style="text-align: right">
         -28.64%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-28.26" data-roe-2022="26.9" data-roe-2023="20.3" data-roe-2024="18.9" data-roe-2025="15.3" data-roe-avg="22.03333333333333">
        <td>
         <a href="TW_stock/6469.TWO/6469.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -503,8 +573,11 @@
        <td class="pct-neg" style="text-align: right">
         -28.26%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-27.99" data-roe-2022="-30.4" data-roe-2023="-17.0" data-roe-2024="-22.2" data-roe-2025="-22.6" data-roe-avg="-23.2">
        <td>
         <a href="TW_stock/6535.TWO/6535.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -527,8 +600,11 @@
        <td class="pct-neg" style="text-align: right">
         -27.99%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-27.44" data-roe-2022="30.7" data-roe-2023="33.4" data-roe-2024="30.1" data-roe-2025="19.4" data-roe-avg="31.400000000000002">
        <td>
         <a href="TW_stock/6472.TW/6472.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -551,8 +627,11 @@
        <td class="pct-neg" style="text-align: right">
         -27.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-26.62" data-roe-2022="35.7" data-roe-2023="50.7" data-roe-2024="51.4" data-roe-2025="30.3" data-roe-avg="45.93333333333334">
        <td>
         <a href="TW_stock/4763.TW/4763.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -575,8 +654,11 @@
        <td class="pct-neg" style="text-align: right">
         -26.62%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-25.26" data-roe-2022="7.2" data-roe-2023="-20.1" data-roe-2024="-24.3" data-roe-2025="-12.7" data-roe-avg="-12.4">
        <td>
         <a href="TW_stock/6901.TW/6901.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -599,8 +681,11 @@
        <td class="pct-neg" style="text-align: right">
         -25.26%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-24.89" data-roe-2022="-9.9" data-roe-2023="-7.6" data-roe-2024="-5.0" data-roe-2025="-4.3" data-roe-avg="-7.5">
        <td>
         <a href="TW_stock/4147.TWO/4147.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -623,8 +708,11 @@
        <td class="pct-neg" style="text-align: right">
         -24.89%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-24.84" data-roe-2022="19.4" data-roe-2023="14.7" data-roe-2024="13.4" data-roe-2025="4.8" data-roe-avg="15.833333333333334">
        <td>
         <a href="TW_stock/6873.TW/6873.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -647,8 +735,11 @@
        <td class="pct-neg" style="text-align: right">
         -24.84%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-24.64" data-roe-2022="-5.5" data-roe-2023="26.4" data-roe-2024="15.2" data-roe-2025="13.2" data-roe-avg="12.033333333333331">
        <td>
         <a href="TW_stock/6620.TWO/6620.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -671,8 +762,11 @@
        <td class="pct-neg" style="text-align: right">
         -24.64%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-24.41" data-roe-2022="10.5" data-roe-2023="11.9" data-roe-2024="15.2" data-roe-2025="5.9" data-roe-avg="12.533333333333333">
        <td>
         <a href="TW_stock/1522.TW/1522.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -695,8 +789,11 @@
        <td class="pct-neg" style="text-align: right">
         -24.41%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-23.44" data-roe-2022="-10.3" data-roe-2023="-10.1" data-roe-2024="-12.5" data-roe-2025="-28.0" data-roe-avg="-10.966666666666667">
        <td>
         <a href="TW_stock/2258.TW/2258.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -719,8 +816,11 @@
        <td class="pct-neg" style="text-align: right">
         -23.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-23.18" data-roe-2022="-117.9" data-roe-2023="-260.3" data-roe-2024="-154.7" data-roe-2025="-26.3" data-roe-avg="-177.63333333333333">
        <td>
         <a href="TW_stock/6541.TW/6541.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -743,8 +843,11 @@
        <td class="pct-neg" style="text-align: right">
         -23.18%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-21.89" data-roe-2022="-2.2" data-roe-2023="17.2" data-roe-2024="60.1" data-roe-2025="88.1" data-roe-avg="25.03333333333333">
        <td>
         <a href="TW_stock/5314.TWO/5314.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -767,8 +870,11 @@
        <td class="pct-neg" style="text-align: right">
         -21.89%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-21.55" data-roe-2022="12.1" data-roe-2023="14.0" data-roe-2024="14.5" data-roe-2025="11.5" data-roe-avg="13.533333333333333">
        <td>
         <a href="TW_stock/2247.TW/2247.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -791,8 +897,11 @@
        <td class="pct-neg" style="text-align: right">
         -21.55%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-21.02" data-roe-2022="4.4" data-roe-2023="4.9" data-roe-2024="15.5" data-roe-2025="16.9" data-roe-avg="8.266666666666667">
        <td>
         <a href="TW_stock/2530.TW/2530.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -815,8 +924,11 @@
        <td class="pct-neg" style="text-align: right">
         -21.02%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-20.37" data-roe-2022="17.0" data-roe-2023="26.0" data-roe-2024="17.8" data-roe-2025="-11.8" data-roe-avg="20.266666666666666">
        <td>
         <a href="TW_stock/6869.TW/6869.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -839,8 +951,11 @@
        <td class="pct-neg" style="text-align: right">
         -20.37%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.25" data-roe-2022="12.6" data-roe-2023="23.4" data-roe-2024="18.3" data-roe-2025="18.8" data-roe-avg="18.099999999999998">
        <td>
         <a href="TW_stock/3078.TWO/3078.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -863,8 +978,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.25%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.24" data-roe-2022="15.1" data-roe-2023="16.2" data-roe-2024="19.8" data-roe-2025="23.0" data-roe-avg="17.033333333333335">
        <td>
         <a href="TW_stock/2539.TW/2539.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -887,8 +1005,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.24%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.15" data-roe-2022="-13.3" data-roe-2023="-14.9" data-roe-2024="-16.0" data-roe-2025="22.7" data-roe-avg="-14.733333333333334">
        <td>
         <a href="TW_stock/2498.TW/2498.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -911,8 +1032,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-19.04" data-roe-2022="16.9" data-roe-2023="16.8" data-roe-2024="17.5" data-roe-2025="15.7" data-roe-avg="17.066666666666666">
        <td>
         <a href="TW_stock/1231.TW/1231.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -935,8 +1059,11 @@
        <td class="pct-neg" style="text-align: right">
         -19.04%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.96" data-roe-2022="11.6" data-roe-2023="8.2" data-roe-2024="16.3" data-roe-2025="10.6" data-roe-avg="12.033333333333333">
        <td>
         <a href="TW_stock/9945.TW/9945.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -959,8 +1086,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.96%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-18.12" data-roe-2022="22.9" data-roe-2023="25.2" data-roe-2024="28.1" data-roe-2025="25.7" data-roe-avg="25.400000000000002">
        <td>
         <a href="TW_stock/1477.TW/1477.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -983,8 +1113,11 @@
        <td class="pct-neg" style="text-align: right">
         -18.12%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-17.6" data-roe-2022="13.0" data-roe-2023="17.5" data-roe-2024="18.1" data-roe-2025="20.0" data-roe-avg="16.2">
        <td>
         <a href="TW_stock/3005.TW/3005.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1007,8 +1140,11 @@
        <td class="pct-neg" style="text-align: right">
         -17.60%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-17.42" data-roe-2022="10.4" data-roe-2023="5.9" data-roe-2024="3.4" data-roe-2025="1.5" data-roe-avg="6.566666666666666">
        <td>
         <a href="TW_stock/5371.TWO/5371.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1031,8 +1167,11 @@
        <td class="pct-neg" style="text-align: right">
         -17.42%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-17.28" data-roe-2022="2.5" data-roe-2023="-9.3" data-roe-2024="-9.5" data-roe-2025="-10.1" data-roe-avg="-5.433333333333334">
        <td>
         <a href="TW_stock/4743.TWO/4743.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1055,8 +1194,11 @@
        <td class="pct-neg" style="text-align: right">
         -17.28%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-17.1" data-roe-2022="22.7" data-roe-2023="16.0" data-roe-2024="15.5" data-roe-2025="15.3" data-roe-avg="18.066666666666666">
        <td>
         <a href="TW_stock/8069.TWO/8069.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1079,8 +1221,11 @@
        <td class="pct-neg" style="text-align: right">
         -17.10%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.87" data-roe-2022="53.1" data-roe-2023="43.3" data-roe-2024="42.3" data-roe-2025="36.9" data-roe-avg="46.23333333333333">
        <td>
         <a href="TW_stock/6409.TW/6409.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1103,8 +1248,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.87%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.55" data-roe-2022="15.3" data-roe-2023="7.8" data-roe-2024="13.3" data-roe-2025="9.4" data-roe-avg="12.133333333333333">
        <td>
         <a href="TW_stock/2915.TW/2915.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1127,8 +1275,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.55%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.21" data-roe-2022="11.9" data-roe-2023="8.6" data-roe-2024="7.8" data-roe-2025="9.5" data-roe-avg="9.433333333333334">
        <td>
         <a href="TW_stock/2607.TW/2607.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1151,8 +1302,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.21%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.11" data-roe-2022="26.8" data-roe-2023="12.1" data-roe-2024="9.8" data-roe-2025="8.8" data-roe-avg="16.233333333333334">
        <td>
         <a href="TW_stock/9802.TW/9802.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1175,8 +1329,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.11%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-16.08" data-roe-2022="12.1" data-roe-2023="12.0" data-roe-2024="6.8" data-roe-2025="7.9" data-roe-avg="10.299999999999999">
        <td>
         <a href="TW_stock/6188.TWO/6188.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1199,8 +1356,11 @@
        <td class="pct-neg" style="text-align: right">
         -16.08%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.69" data-roe-2022="-307.9" data-roe-2023="43.2" data-roe-2024="36.3" data-roe-2025="33.7" data-roe-avg="-76.13333333333333">
        <td>
         <a href="TW_stock/6757.TW/6757.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1223,8 +1383,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.69%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.55" data-roe-2022="9.1" data-roe-2023="11.9" data-roe-2024="15.9" data-roe-2025="13.6" data-roe-avg="12.299999999999999">
        <td>
         <a href="TW_stock/1319.TW/1319.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1247,8 +1410,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.55%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.37" data-roe-2022="12.8" data-roe-2023="4.0" data-roe-2024="10.5" data-roe-2025="9.0" data-roe-avg="9.1">
        <td>
         <a href="TW_stock/6768.TW/6768.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1271,8 +1437,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.37%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-15.01" data-roe-2022="4.5" data-roe-2023="7.4" data-roe-2024="20.2" data-roe-2025="20.0" data-roe-avg="10.700000000000001">
        <td>
         <a href="TW_stock/1736.TW/1736.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1295,8 +1464,11 @@
        <td class="pct-neg" style="text-align: right">
         -15.01%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.91" data-roe-2022="19.8" data-roe-2023="15.4" data-roe-2024="19.2" data-roe-2025="12.1" data-roe-avg="18.133333333333333">
        <td>
         <a href="TW_stock/6176.TW/6176.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1319,8 +1491,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.91%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.2" data-roe-2022="12.9" data-roe-2023="5.0" data-roe-2024="10.7" data-roe-2025="9.2" data-roe-avg="9.533333333333333">
        <td>
         <a href="TW_stock/9938.TW/9938.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1343,8 +1518,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.19" data-roe-2022="17.5" data-roe-2023="17.2" data-roe-2024="13.2" data-roe-2025="11.5" data-roe-avg="15.966666666666667">
        <td>
         <a href="TW_stock/9941.TW/9941.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1367,8 +1545,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.19%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.15" data-roe-2022="1.7" data-roe-2023="4.5" data-roe-2024="5.9" data-roe-2025="0.6" data-roe-avg="4.033333333333333">
        <td>
         <a href="TW_stock/2106.TW/2106.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1391,8 +1572,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-14.03" data-roe-2022="16.1" data-roe-2023="23.5" data-roe-2024="25.3" data-roe-2025="13.0" data-roe-avg="21.633333333333336">
        <td>
         <a href="TW_stock/2348.TW/2348.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1415,8 +1599,11 @@
        <td class="pct-neg" style="text-align: right">
         -14.03%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.85" data-roe-2022="13.9" data-roe-2023="15.5" data-roe-2024="12.5" data-roe-2025="12.0" data-roe-avg="13.966666666666667">
        <td>
         <a href="TW_stock/6191.TW/6191.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1439,8 +1626,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.85%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.75" data-roe-2022="18.3" data-roe-2023="4.8" data-roe-2024="21.3" data-roe-2025="-24.0" data-roe-avg="14.799999999999999">
        <td>
         <a href="TW_stock/2371.TW/2371.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1463,8 +1653,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.75%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.71" data-roe-2022="10.4" data-roe-2023="14.2" data-roe-2024="12.9" data-roe-2025="1.6" data-roe-avg="12.5">
        <td>
         <a href="TW_stock/9940.TW/9940.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1487,8 +1680,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.71%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.51" data-roe-2022="27.0" data-roe-2023="20.2" data-roe-2024="23.0" data-roe-2025="18.6" data-roe-avg="23.400000000000002">
        <td>
         <a href="TW_stock/1476.TW/1476.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1511,8 +1707,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.51%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.41" data-roe-2022="11.9" data-roe-2023="10.5" data-roe-2024="11.9" data-roe-2025="7.6" data-roe-avg="11.433333333333332">
        <td>
         <a href="TW_stock/2439.TW/2439.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1535,8 +1734,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.41%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.13" data-roe-2022="12.6" data-roe-2023="12.0" data-roe-2024="22.6" data-roe-2025="6.4" data-roe-avg="15.733333333333334">
        <td>
         <a href="TW_stock/2520.TW/2520.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1559,8 +1761,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.13%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-13.11" data-roe-2022="-9.8" data-roe-2023="7.8" data-roe-2024="6.2" data-roe-2025="1.5" data-roe-avg="1.3999999999999997">
        <td>
         <a href="TW_stock/2201.TW/2201.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1583,8 +1788,11 @@
        <td class="pct-neg" style="text-align: right">
         -13.11%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.92" data-roe-2022="13.0" data-roe-2023="19.8" data-roe-2024="-3.1" data-roe-2025="0.6" data-roe-avg="9.9">
        <td>
         <a href="TW_stock/6125.TWO/6125.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1607,8 +1815,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.92%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.76" data-roe-2022="6.5" data-roe-2023="5.2" data-roe-2024="6.1" data-roe-2025="4.0" data-roe-avg="5.933333333333334">
        <td>
         <a href="TW_stock/5530.TWO/5530.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1631,8 +1842,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.76%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.59" data-roe-2022="-89.2" data-roe-2023="1.3" data-roe-2024="4.4" data-roe-2025="0.9" data-roe-avg="-27.833333333333332">
        <td>
         <a href="TW_stock/2646.TW/2646.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1655,8 +1869,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.45" data-roe-2022="2.6" data-roe-2023="57.0" data-roe-2024="15.5" data-roe-2025="10.1" data-roe-avg="25.03333333333333">
        <td>
         <a href="TW_stock/1808.TW/1808.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1679,8 +1896,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.45%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.36" data-roe-2022="20.3" data-roe-2023="8.0" data-roe-2024="6.1" data-roe-2025="4.0" data-roe-avg="11.466666666666667">
        <td>
         <a href="TW_stock/2352.TW/2352.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1703,8 +1923,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.36%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-12.05" data-roe-2022="5.8" data-roe-2023="2.5" data-roe-2024="13.8" data-roe-2025="3.0" data-roe-avg="7.366666666666667">
        <td>
         <a href="TW_stock/2524.TW/2524.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1727,8 +1950,11 @@
        <td class="pct-neg" style="text-align: right">
         -12.05%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.74" data-roe-2022="-46.3" data-roe-2023="34.5" data-roe-2024="26.1" data-roe-2025="21.9" data-roe-avg="4.766666666666668">
        <td>
         <a href="TW_stock/2207.TW/2207.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1751,8 +1977,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.74%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.73" data-roe-2022="14.9" data-roe-2023="15.8" data-roe-2024="14.6" data-roe-2025="13.4" data-roe-avg="15.1">
        <td>
         <a href="TW_stock/9939.TW/9939.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1775,8 +2004,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.73%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.56" data-roe-2022="29.5" data-roe-2023="17.6" data-roe-2024="18.6" data-roe-2025="14.4" data-roe-avg="21.900000000000002">
        <td>
         <a href="TW_stock/4536.TW/4536.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1799,8 +2031,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.56%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.47" data-roe-2022="11.8" data-roe-2023="8.4" data-roe-2024="11.4" data-roe-2025="8.6" data-roe-avg="10.533333333333333">
        <td>
         <a href="TW_stock/9904.TW/9904.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1823,8 +2058,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.47%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.2" data-roe-2022="37.5" data-roe-2023="35.6" data-roe-2024="10.9" data-roe-2025="13.7" data-roe-avg="28.0">
        <td>
         <a href="TW_stock/8478.TW/8478.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1847,8 +2085,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-11.15" data-roe-2022="39.6" data-roe-2023="64.8" data-roe-2024="8.2" data-roe-2025="6.2" data-roe-avg="37.53333333333333">
        <td>
         <a href="TW_stock/7780.TW/7780.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1871,8 +2112,11 @@
        <td class="pct-neg" style="text-align: right">
         -11.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.69" data-roe-2022="28.7" data-roe-2023="22.9" data-roe-2024="25.0" data-roe-2025="22.0" data-roe-avg="25.53333333333333">
        <td>
         <a href="TW_stock/8464.TW/8464.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1895,8 +2139,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.69%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.47" data-roe-2022="6.2" data-roe-2023="6.0" data-roe-2024="6.4" data-roe-2025="-13.9" data-roe-avg="6.2">
        <td>
         <a href="TW_stock/2392.TW/2392.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1919,8 +2166,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.47%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.39" data-roe-2022="7.3" data-roe-2023="7.8" data-roe-2024="16.4" data-roe-2025="15.9" data-roe-avg="10.5">
        <td>
         <a href="TW_stock/3013.TW/3013.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1943,8 +2193,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.39%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.37" data-roe-2022="35.0" data-roe-2023="35.9" data-roe-2024="34.5" data-roe-2025="30.8" data-roe-avg="35.13333333333333">
        <td>
         <a href="TW_stock/8454.TW/8454.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1967,8 +2220,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.37%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.16" data-roe-2022="31.9" data-roe-2023="32.9" data-roe-2024="29.4" data-roe-2025="25.9" data-roe-avg="31.399999999999995">
        <td>
         <a href="TW_stock/3218.TWO/3218.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -1991,8 +2247,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.16%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-10.01" data-roe-2022="0.7" data-roe-2023="7.1" data-roe-2024="3.4" data-roe-2025="-2.8" data-roe-avg="3.733333333333333">
        <td>
         <a href="TW_stock/8937.TWO/8937.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2015,8 +2274,11 @@
        <td class="pct-neg" style="text-align: right">
         -10.01%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.98" data-roe-2022="52.7" data-roe-2023="1.7" data-roe-2024="18.8" data-roe-2025="5.2" data-roe-avg="24.400000000000002">
        <td>
         <a href="TW_stock/2609.TW/2609.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2039,8 +2301,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.98%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.44" data-roe-2022="15.5" data-roe-2023="16.7" data-roe-2024="15.0" data-roe-2025="19.0" data-roe-avg="15.733333333333334">
        <td>
         <a href="TW_stock/3029.TW/3029.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2063,8 +2328,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.4" data-roe-2022="11.2" data-roe-2023="29.3" data-roe-2024="20.5" data-roe-2025="28.1" data-roe-avg="20.333333333333332">
        <td>
         <a href="TW_stock/6712.TWO/6712.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2087,8 +2355,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.40%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.36" data-roe-2022="1.1" data-roe-2023="2.8" data-roe-2024="2.1" data-roe-2025="-7.1" data-roe-avg="2.0">
        <td>
         <a href="TW_stock/2457.TW/2457.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2111,8 +2382,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.36%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.34" data-roe-2022="11.6" data-roe-2023="13.9" data-roe-2024="16.5" data-roe-2025="11.6" data-roe-avg="14.0">
        <td>
         <a href="TW_stock/6605.TW/6605.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2135,8 +2409,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.34%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.25" data-roe-2022="5.7" data-roe-2023="2.3" data-roe-2024="1.2" data-roe-2025="2.1" data-roe-avg="3.0666666666666664">
        <td>
         <a href="TW_stock/2511.TW/2511.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2159,8 +2436,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.25%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.17" data-roe-2022="10.7" data-roe-2023="13.7" data-roe-2024="8.5" data-roe-2025="7.4" data-roe-avg="10.966666666666667">
        <td>
         <a href="TW_stock/2608.TW/2608.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2183,8 +2463,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.17%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-9.03" data-roe-2022="10.4" data-roe-2023="9.1" data-roe-2024="8.0" data-roe-2025="8.0" data-roe-avg="9.166666666666666">
        <td>
         <a href="TW_stock/1229.TW/1229.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2207,8 +2490,11 @@
        <td class="pct-neg" style="text-align: right">
         -9.03%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.91" data-roe-2022="26.4" data-roe-2023="22.6" data-roe-2024="20.8" data-roe-2025="9.9" data-roe-avg="23.266666666666666">
        <td>
         <a href="TW_stock/4770.TW/4770.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2231,8 +2517,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.91%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.73" data-roe-2022="1.9" data-roe-2023="-3.7" data-roe-2024="-9.7" data-roe-2025="-12.6" data-roe-avg="-3.8333333333333335">
        <td>
         <a href="TW_stock/8054.TWO/8054.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2255,8 +2544,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.73%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.66" data-roe-2022="9.3" data-roe-2023="10.2" data-roe-2024="2.5" data-roe-2025="3.7" data-roe-avg="7.333333333333333">
        <td>
         <a href="TW_stock/2359.TW/2359.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2279,8 +2571,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.66%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.61" data-roe-2022="5.2" data-roe-2023="4.0" data-roe-2024="3.1" data-roe-2025="3.8" data-roe-avg="4.1000000000000005">
        <td>
         <a href="TW_stock/3059.TW/3059.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2303,8 +2598,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.61%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.51" data-roe-2022="2.3" data-roe-2023="-10.1" data-roe-2024="6.1" data-roe-2025="8.9" data-roe-avg="-0.5666666666666668">
        <td>
         <a href="TW_stock/4968.TW/4968.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2327,8 +2625,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.51%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.44" data-roe-2022="25.6" data-roe-2023="9.7" data-roe-2024="11.0" data-roe-2025="10.9" data-roe-avg="15.433333333333332">
        <td>
         <a href="TW_stock/5306.TW/5306.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2351,8 +2652,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.44%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.39" data-roe-2022="7.1" data-roe-2023="3.8" data-roe-2024="2.2" data-roe-2025="-9.8" data-roe-avg="4.366666666666666">
        <td>
         <a href="TW_stock/1536.TW/1536.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2375,8 +2679,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.39%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.33" data-roe-2022="15.2" data-roe-2023="14.6" data-roe-2024="14.4" data-roe-2025="11.8" data-roe-avg="14.733333333333334">
        <td>
         <a href="TW_stock/1707.TW/1707.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2399,8 +2706,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.33%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.24" data-roe-2022="20.6" data-roe-2023="15.0" data-roe-2024="12.8" data-roe-2025="10.5" data-roe-avg="16.133333333333336">
        <td>
         <a href="TW_stock/2377.TW/2377.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2423,8 +2733,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.24%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.22" data-roe-2022="0.3" data-roe-2023="-1.3" data-roe-2024="0.3" data-roe-2025="-3.9" data-roe-avg="-0.23333333333333336">
        <td>
         <a href="TW_stock/1314.TW/1314.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2447,8 +2760,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.22%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.13" data-roe-2022="4.4" data-roe-2023="6.9" data-roe-2024="5.2" data-roe-2025="-4.4" data-roe-avg="5.5">
        <td>
         <a href="TW_stock/2723.TW/2723.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2471,8 +2787,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.13%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.08" data-roe-2021="nan" data-roe-2022="4.1" data-roe-2023="9.1" data-roe-2024="16.7" data-roe-avg="nan">
        <td>
         <a href="TW_stock/2610.TW/2610.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2495,8 +2814,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.08%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-8.03" data-roe-2022="4.2" data-roe-2023="7.1" data-roe-2024="-1.9" data-roe-2025="-0.9" data-roe-avg="3.1333333333333333">
        <td>
         <a href="TW_stock/1440.TW/1440.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2519,8 +2841,11 @@
        <td class="pct-neg" style="text-align: right">
         -8.03%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.93" data-roe-2022="4.1" data-roe-2023="2.0" data-roe-2024="-0.4" data-roe-2025="6.1" data-roe-avg="1.8999999999999997">
        <td>
         <a href="TW_stock/1903.TW/1903.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2543,8 +2868,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.93%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.9" data-roe-2022="25.6" data-roe-2023="23.9" data-roe-2024="21.5" data-roe-2025="13.6" data-roe-avg="23.666666666666668">
        <td>
         <a href="TW_stock/6412.TW/6412.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2567,8 +2895,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.90%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.84" data-roe-2022="11.0" data-roe-2023="6.3" data-roe-2024="4.3" data-roe-2025="5.3" data-roe-avg="7.2">
        <td>
         <a href="TW_stock/3703.TW/3703.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2591,8 +2922,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.84%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.77" data-roe-2022="25.3" data-roe-2023="25.5" data-roe-2024="27.6" data-roe-2025="33.8" data-roe-avg="26.133333333333336">
        <td>
         <a href="TW_stock/6561.TWO/6561.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2615,8 +2949,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.77%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.7" data-roe-2022="4.3" data-roe-2023="7.3" data-roe-2024="7.6" data-roe-2025="5.7" data-roe-avg="6.3999999999999995">
        <td>
         <a href="TW_stock/1504.TW/1504.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2639,8 +2976,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.70%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.52" data-roe-2022="8.1" data-roe-2023="8.7" data-roe-2024="8.6" data-roe-2025="8.8" data-roe-avg="8.466666666666667">
        <td>
         <a href="TW_stock/4104.TW/4104.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2663,8 +3003,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.52%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.26" data-roe-2022="-3.8" data-roe-2023="-4.6" data-roe-2024="-1.7" data-roe-2025="-2.5" data-roe-avg="-3.3666666666666667">
        <td>
         <a href="TW_stock/1909.TW/1909.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2687,8 +3030,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.26%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.22" data-roe-2022="3.5" data-roe-2023="4.7" data-roe-2024="5.2" data-roe-2025="5.0" data-roe-avg="4.466666666666667">
        <td>
         <a href="TW_stock/2889.TW/2889.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2711,8 +3057,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.22%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-7.11" data-roe-2022="21.8" data-roe-2023="23.7" data-roe-2024="23.9" data-roe-2025="19.8" data-roe-avg="23.133333333333336">
        <td>
         <a href="TW_stock/1795.TW/1795.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2735,8 +3084,11 @@
        <td class="pct-neg" style="text-align: right">
         -7.11%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.89" data-roe-2022="11.7" data-roe-2023="8.8" data-roe-2024="9.4" data-roe-2025="8.1" data-roe-avg="9.966666666666667">
        <td>
         <a href="TW_stock/5469.TW/5469.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2759,8 +3111,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.89%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.76" data-roe-2022="15.0" data-roe-2023="8.9" data-roe-2024="9.5" data-roe-2025="9.4" data-roe-avg="11.133333333333333">
        <td>
         <a href="TW_stock/4114.TWO/4114.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2783,8 +3138,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.76%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.62" data-roe-2022="16.8" data-roe-2023="14.6" data-roe-2024="12.9" data-roe-2025="12.8" data-roe-avg="14.766666666666666">
        <td>
         <a href="TW_stock/4915.TW/4915.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2807,8 +3165,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.62%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.62" data-roe-2022="4.8" data-roe-2023="5.1" data-roe-2024="5.0" data-roe-2025="4.3" data-roe-avg="4.966666666666666">
        <td>
         <a href="TW_stock/1234.TW/1234.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2831,8 +3192,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.62%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.56" data-roe-2022="4.4" data-roe-2023="-0.2" data-roe-2024="3.7" data-roe-2025="1.3" data-roe-avg="2.6333333333333333">
        <td>
         <a href="TW_stock/2009.TW/2009.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2855,8 +3219,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.56%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.36" data-roe-2022="21.6" data-roe-2023="21.4" data-roe-2024="22.1" data-roe-2025="20.7" data-roe-avg="21.7">
        <td>
         <a href="TW_stock/1264.TWO/1264.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2879,8 +3246,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.36%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.31" data-roe-2022="10.7" data-roe-2023="3.6" data-roe-2024="7.4" data-roe-2025="10.1" data-roe-avg="7.233333333333333">
        <td>
         <a href="TW_stock/9907.TW/9907.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2903,8 +3273,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.31%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.27" data-roe-2022="7.7" data-roe-2023="8.9" data-roe-2024="10.1" data-roe-2025="9.9" data-roe-avg="8.9">
        <td>
         <a href="TW_stock/2812.TW/2812.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2927,8 +3300,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.27%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.2" data-roe-2022="7.6" data-roe-2023="8.4" data-roe-2024="-0.8" data-roe-2025="7.3" data-roe-avg="5.066666666666666">
        <td>
         <a href="TW_stock/2331.TW/2331.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2951,8 +3327,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-6.12" data-roe-2022="8.0" data-roe-2023="19.3" data-roe-2024="10.2" data-roe-2025="7.5" data-roe-avg="12.5">
        <td>
         <a href="TW_stock/1609.TW/1609.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2975,8 +3354,11 @@
        <td class="pct-neg" style="text-align: right">
         -6.12%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.95" data-roe-2022="-24.0" data-roe-2023="15.8" data-roe-2024="10.8" data-roe-2025="7.9" data-roe-avg="0.8666666666666671">
        <td>
         <a href="TW_stock/2204.TW/2204.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -2999,8 +3381,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.95%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.94" data-roe-2022="3.9" data-roe-2023="3.7" data-roe-2024="4.3" data-roe-2025="3.4" data-roe-avg="3.966666666666667">
        <td>
         <a href="TW_stock/1402.TW/1402.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3023,8 +3408,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.94%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.84" data-roe-2022="24.0" data-roe-2023="16.7" data-roe-2024="16.7" data-roe-2025="14.0" data-roe-avg="19.133333333333333">
        <td>
         <a href="TW_stock/6491.TW/6491.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3047,8 +3435,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.84%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.82" data-roe-2022="7.1" data-roe-2023="-2.1" data-roe-2024="0.0" data-roe-2025="-9.2" data-roe-avg="1.6666666666666667">
        <td>
         <a href="TW_stock/6533.TW/6533.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3071,8 +3462,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.82%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.77" data-roe-2022="0.7" data-roe-2023="-0.9" data-roe-2024="-0.7" data-roe-2025="20.3" data-roe-avg="-0.3">
        <td>
         <a href="TW_stock/2547.TW/2547.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3095,8 +3489,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.77%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.76" data-roe-2022="10.4" data-roe-2023="5.2" data-roe-2024="7.6" data-roe-2025="1.9" data-roe-avg="7.733333333333333">
        <td>
         <a href="TW_stock/3376.TW/3376.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3119,8 +3516,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.76%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.75" data-roe-2022="28.3" data-roe-2023="21.4" data-roe-2024="16.8" data-roe-2025="4.5" data-roe-avg="22.166666666666668">
        <td>
         <a href="TW_stock/6965.TW/6965.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3143,8 +3543,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.75%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.69" data-roe-2022="-9.9" data-roe-2023="1.3" data-roe-2024="21.7" data-roe-2025="6.4" data-roe-avg="4.366666666666666">
        <td>
         <a href="TW_stock/2101.TW/2101.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3167,8 +3570,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.69%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.66" data-roe-2022="21.1" data-roe-2023="20.2" data-roe-2024="24.0" data-roe-2025="14.2" data-roe-avg="21.766666666666666">
        <td>
         <a href="TW_stock/3617.TW/3617.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3191,8 +3597,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.66%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.54" data-roe-2022="27.9" data-roe-2023="7.1" data-roe-2024="11.5" data-roe-2025="6.8" data-roe-avg="15.5">
        <td>
         <a href="TW_stock/6962.TW/6962.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3215,8 +3624,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.54%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.24" data-roe-2022="17.8" data-roe-2023="14.4" data-roe-2024="17.2" data-roe-2025="14.3" data-roe-avg="16.466666666666665">
        <td>
         <a href="TW_stock/2504.TW/2504.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3239,8 +3651,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.24%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.15" data-roe-2022="20.8" data-roe-2023="30.9" data-roe-2024="29.3" data-roe-2025="35.2" data-roe-avg="27.0">
        <td>
         <a href="TW_stock/2707.TW/2707.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3263,8 +3678,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.15" data-roe-2022="4.0" data-roe-2023="3.1" data-roe-2024="2.5" data-roe-2025="2.6" data-roe-avg="3.1999999999999997">
        <td>
         <a href="TW_stock/1907.TW/1907.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3287,8 +3705,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.08" data-roe-2022="12.3" data-roe-2023="10.2" data-roe-2024="8.2" data-roe-2025="8.8" data-roe-avg="10.233333333333333">
        <td>
         <a href="TW_stock/6592.TW/6592.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3311,8 +3732,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.08%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.05" data-roe-2022="7.5" data-roe-2023="6.4" data-roe-2024="7.1" data-roe-2025="5.6" data-roe-avg="7.0">
        <td>
         <a href="TW_stock/1102.TW/1102.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3335,8 +3759,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.05%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-5.02" data-roe-2022="14.6" data-roe-2023="16.4" data-roe-2024="15.6" data-roe-2025="16.4" data-roe-avg="15.533333333333331">
        <td>
         <a href="TW_stock/3596.TW/3596.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3359,8 +3786,11 @@
        <td class="pct-neg" style="text-align: right">
         -5.02%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.81" data-roe-2022="17.5" data-roe-2023="28.1" data-roe-2024="19.0" data-roe-2025="17.2" data-roe-avg="21.53333333333333">
        <td>
         <a href="TW_stock/2206.TW/2206.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3383,8 +3813,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.81%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.73" data-roe-2022="5.9" data-roe-2023="8.4" data-roe-2024="8.9" data-roe-2025="5.6" data-roe-avg="7.733333333333334">
        <td>
         <a href="TW_stock/2105.TW/2105.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3407,8 +3840,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.73%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.59" data-roe-2022="8.8" data-roe-2023="8.0" data-roe-2024="6.8" data-roe-2025="7.2" data-roe-avg="7.866666666666667">
        <td>
         <a href="TW_stock/5876.TW/5876.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3431,8 +3867,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.59" data-roe-2022="0.3" data-roe-2023="2.3" data-roe-2024="0.2" data-roe-2025="-9.6" data-roe-avg="0.9333333333333332">
        <td>
         <a href="TW_stock/1710.TW/1710.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3455,8 +3894,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.59" data-roe-2022="41.3" data-roe-2023="-2.8" data-roe-2024="18.1" data-roe-2025="11.4" data-roe-avg="18.866666666666667">
        <td>
         <a href="TW_stock/2615.TW/2615.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3479,8 +3921,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.53" data-roe-2022="9.8" data-roe-2023="9.6" data-roe-2024="6.3" data-roe-2025="7.3" data-roe-avg="8.566666666666666">
        <td>
         <a href="TW_stock/1104.TW/1104.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3503,8 +3948,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.53%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.52" data-roe-2022="6.9" data-roe-2023="7.1" data-roe-2024="9.4" data-roe-2025="6.5" data-roe-avg="7.8">
        <td>
         <a href="TW_stock/1227.TW/1227.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3527,8 +3975,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.52%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-4.37" data-roe-2022="23.5" data-roe-2023="24.0" data-roe-2024="23.2" data-roe-2025="24.2" data-roe-avg="23.566666666666666">
        <td>
         <a href="TW_stock/2480.TW/2480.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3551,8 +4002,11 @@
        <td class="pct-neg" style="text-align: right">
         -4.37%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.74" data-roe-2022="20.1" data-roe-2023="16.4" data-roe-2024="16.8" data-roe-2025="22.5" data-roe-avg="17.766666666666666">
        <td>
         <a href="TW_stock/2753.TW/2753.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3575,8 +4029,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.74%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.72" data-roe-2022="9.4" data-roe-2023="7.2" data-roe-2024="7.6" data-roe-2025="7.6" data-roe-avg="8.066666666666666">
        <td>
         <a href="TW_stock/5880.TW/5880.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3599,8 +4056,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.72%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.7" data-roe-2022="14.8" data-roe-2023="13.3" data-roe-2024="13.6" data-roe-2025="15.2" data-roe-avg="13.9">
        <td>
         <a href="TW_stock/8908.TWO/8908.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3623,8 +4083,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.70%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.69" data-roe-2022="13.0" data-roe-2023="11.3" data-roe-2024="13.9" data-roe-2025="15.7" data-roe-avg="12.733333333333334">
        <td>
         <a href="TW_stock/3515.TW/3515.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3647,8 +4110,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.69%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.59" data-roe-2022="10.3" data-roe-2023="13.0" data-roe-2024="11.9" data-roe-2025="4.1" data-roe-avg="11.733333333333334">
        <td>
         <a href="TW_stock/2634.TW/2634.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3671,8 +4137,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.57" data-roe-2022="4.4" data-roe-2023="4.3" data-roe-2024="10.0" data-roe-2025="8.2" data-roe-avg="6.233333333333333">
        <td>
         <a href="TW_stock/9105.TW/9105.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3695,8 +4164,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.57%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.52" data-roe-2022="13.5" data-roe-2023="14.1" data-roe-2024="13.0" data-roe-2025="12.5" data-roe-avg="13.533333333333333">
        <td>
         <a href="TW_stock/9937.TW/9937.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3719,8 +4191,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.52%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.51" data-roe-2022="13.7" data-roe-2023="14.7" data-roe-2024="15.3" data-roe-2025="14.5" data-roe-avg="14.566666666666668">
        <td>
         <a href="TW_stock/1216.TW/1216.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3743,8 +4218,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.51%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.48" data-roe-2022="17.3" data-roe-2023="23.3" data-roe-2024="18.1" data-roe-2025="24.6" data-roe-avg="19.566666666666666">
        <td>
         <a href="TW_stock/1215.TW/1215.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3767,8 +4245,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.48%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.39" data-roe-2022="41.6" data-roe-2023="21.6" data-roe-2024="25.9" data-roe-2025="20.1" data-roe-avg="29.7">
        <td>
         <a href="TW_stock/6670.TW/6670.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3791,8 +4272,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.39%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.38" data-roe-2022="5.0" data-roe-2023="7.2" data-roe-2024="3.5" data-roe-2025="1.7" data-roe-avg="5.233333333333333">
        <td>
         <a href="TW_stock/1722.TW/1722.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3815,8 +4299,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.38%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.31" data-roe-2022="31.5" data-roe-2023="29.4" data-roe-2024="31.5" data-roe-2025="36.8" data-roe-avg="30.8">
        <td>
         <a href="TW_stock/2597.TW/2597.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3839,8 +4326,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.31%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.3" data-roe-2022="22.5" data-roe-2023="11.6" data-roe-2024="23.0" data-roe-2025="19.3" data-roe-avg="19.033333333333335">
        <td>
         <a href="TW_stock/8114.TW/8114.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3863,8 +4353,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.30%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.24" data-roe-2022="-50.0" data-roe-2023="-17.0" data-roe-2024="9.1" data-roe-2025="4.8" data-roe-avg="-19.3">
        <td>
         <a href="TW_stock/2905.TW/2905.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3887,8 +4380,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.24%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.09" data-roe-2022="8.9" data-roe-2023="3.2" data-roe-2024="2.0" data-roe-2025="2.8" data-roe-avg="4.7">
        <td>
         <a href="TW_stock/1904.TW/1904.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3911,8 +4407,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.09%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-3.03" data-roe-2022="5.6" data-roe-2023="11.0" data-roe-2024="9.0" data-roe-2025="9.0" data-roe-avg="8.533333333333333">
        <td>
         <a href="TW_stock/2633.TW/2633.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3935,8 +4434,11 @@
        <td class="pct-neg" style="text-align: right">
         -3.03%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.97" data-roe-2022="1.9" data-roe-2023="-1.5" data-roe-2024="-4.1" data-roe-2025="-10.8" data-roe-avg="-1.2333333333333332">
        <td>
         <a href="TW_stock/2023.TW/2023.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3959,8 +4461,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.97%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.96" data-roe-2022="6.7" data-roe-2023="7.1" data-roe-2024="7.0" data-roe-2025="6.0" data-roe-avg="6.933333333333334">
        <td>
         <a href="TW_stock/2845.TW/2845.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -3983,8 +4488,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.96%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.95" data-roe-2022="8.1" data-roe-2023="20.2" data-roe-2024="23.5" data-roe-2025="18.9" data-roe-avg="17.266666666666666">
        <td>
         <a href="TW_stock/2618.TW/2618.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4007,8 +4515,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.95%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.81" data-roe-2022="7.6" data-roe-2023="6.6" data-roe-2024="7.2" data-roe-2025="5.0" data-roe-avg="7.133333333333333">
        <td>
         <a href="TW_stock/2353.TW/2353.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4031,8 +4542,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.81%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.64" data-roe-2022="20.3" data-roe-2023="14.7" data-roe-2024="20.4" data-roe-2025="14.9" data-roe-avg="18.466666666666665">
        <td>
         <a href="TW_stock/1537.TW/1537.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4055,8 +4569,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.64%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.6" data-roe-2022="18.8" data-roe-2023="18.5" data-roe-2024="18.8" data-roe-2025="20.7" data-roe-avg="18.7">
        <td>
         <a href="TW_stock/6183.TW/6183.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4079,8 +4596,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.60%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.53" data-roe-2022="5.6" data-roe-2023="0.5" data-roe-2024="0.7" data-roe-2025="-1.5" data-roe-avg="2.2666666666666666">
        <td>
         <a href="TW_stock/2002.TW/2002.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4103,8 +4623,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.53%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.36" data-roe-2022="51.4" data-roe-2023="52.7" data-roe-2024="55.3" data-roe-2025="56.9" data-roe-avg="53.13333333333333">
        <td>
         <a href="TW_stock/3293.TWO/3293.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4127,8 +4650,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.36%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.33" data-roe-2022="-54.4" data-roe-2023="37.3" data-roe-2024="22.5" data-roe-2025="32.9" data-roe-avg="1.7999999999999996">
        <td>
         <a href="TW_stock/2731.TW/2731.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4151,8 +4677,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.33%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.26" data-roe-2022="11.7" data-roe-2023="12.6" data-roe-2024="13.3" data-roe-2025="15.0" data-roe-avg="12.533333333333333">
        <td>
         <a href="TW_stock/8936.TWO/8936.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4175,8 +4704,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.26%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.23" data-roe-2022="11.7" data-roe-2023="11.3" data-roe-2024="14.7" data-roe-2025="10.8" data-roe-avg="12.566666666666668">
        <td>
         <a href="TW_stock/3705.TW/3705.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4199,8 +4731,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.23%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-2.2" data-roe-2022="4.1" data-roe-2023="4.0" data-roe-2024="3.2" data-roe-2025="3.1" data-roe-avg="3.766666666666667">
        <td>
         <a href="TW_stock/2354.TW/2354.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4223,8 +4758,11 @@
        <td class="pct-neg" style="text-align: right">
         -2.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.83" data-roe-2022="6.3" data-roe-2023="8.7" data-roe-2024="6.3" data-roe-2025="6.1" data-roe-avg="7.099999999999999">
        <td>
         <a href="TW_stock/9908.TW/9908.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4247,8 +4785,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.83%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.63" data-roe-2022="13.2" data-roe-2023="0.6" data-roe-2024="1.7" data-roe-2025="4.9" data-roe-avg="5.166666666666667">
        <td>
         <a href="TW_stock/6719.TW/6719.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4271,8 +4812,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.63%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.59" data-roe-2022="4.2" data-roe-2023="6.3" data-roe-2024="18.3" data-roe-2025="28.2" data-roe-avg="9.6">
        <td>
         <a href="TW_stock/8462.TW/8462.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4295,8 +4839,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.54" data-roe-2022="25.5" data-roe-2023="28.0" data-roe-2024="27.3" data-roe-2025="26.3" data-roe-avg="26.933333333333334">
        <td>
         <a href="TW_stock/2912.TW/2912.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4319,8 +4866,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.54%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.53" data-roe-2022="25.6" data-roe-2023="21.5" data-roe-2024="37.2" data-roe-2025="18.0" data-roe-avg="28.100000000000005">
        <td>
         <a href="TW_stock/5903.TWO/5903.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4343,8 +4893,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.53%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.5" data-roe-2022="6.1" data-roe-2023="0.8" data-roe-2024="4.0" data-roe-2025="2.0" data-roe-avg="3.6333333333333333">
        <td>
         <a href="TW_stock/1434.TW/1434.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4367,8 +4920,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.50%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.42" data-roe-2022="19.6" data-roe-2023="18.0" data-roe-2024="13.9" data-roe-2025="7.5" data-roe-avg="17.166666666666668">
        <td>
         <a href="TW_stock/5388.TW/5388.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4391,8 +4947,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.42%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.41" data-roe-2022="13.9" data-roe-2023="12.1" data-roe-2024="9.6" data-roe-2025="-4.2" data-roe-avg="11.866666666666667">
        <td>
         <a href="TW_stock/3362.TWO/3362.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4415,8 +4974,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.41%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.31" data-roe-2022="40.3" data-roe-2023="43.9" data-roe-2024="44.9" data-roe-2025="44.9" data-roe-avg="43.03333333333333">
        <td>
         <a href="TW_stock/4728.TWO/4728.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4439,8 +5001,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.31%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.22" data-roe-2022="2.0" data-roe-2023="2.6" data-roe-2024="4.0" data-roe-2025="2.7" data-roe-avg="2.8666666666666667">
        <td>
         <a href="TW_stock/2362.TW/2362.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4463,8 +5028,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.22%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.21" data-roe-2022="5.8" data-roe-2023="4.7" data-roe-2024="3.8" data-roe-2025="4.8" data-roe-avg="4.766666666666667">
        <td>
         <a href="TW_stock/2836.TW/2836.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4487,8 +5055,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.21%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.2" data-roe-2022="8.1" data-roe-2023="2.5" data-roe-2024="3.6" data-roe-2025="0.8" data-roe-avg="4.733333333333333">
        <td>
         <a href="TW_stock/2704.TW/2704.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4511,8 +5082,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.20%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.18" data-roe-2022="17.6" data-roe-2023="18.4" data-roe-2024="18.6" data-roe-2025="18.9" data-roe-avg="18.2">
        <td>
         <a href="TW_stock/6803.TWO/6803.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4535,8 +5109,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.18%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.15" data-roe-2022="12.8" data-roe-2023="13.9" data-roe-2024="18.1" data-roe-2025="18.7" data-roe-avg="14.933333333333335">
        <td>
         <a href="TW_stock/9930.TW/9930.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4559,8 +5136,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.15%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.13" data-roe-2022="12.0" data-roe-2023="15.1" data-roe-2024="9.0" data-roe-2025="13.1" data-roe-avg="12.033333333333333">
        <td>
         <a href="TW_stock/2211.TW/2211.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4583,8 +5163,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.13%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-1.03" data-roe-2022="17.1" data-roe-2023="17.1" data-roe-2024="17.9" data-roe-2025="19.8" data-roe-avg="17.366666666666667">
        <td>
         <a href="TW_stock/4506.TWO/4506.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4607,8 +5190,11 @@
        <td class="pct-neg" style="text-align: right">
         -1.03%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.99" data-roe-2022="4.2" data-roe-2023="14.6" data-roe-2024="12.4" data-roe-2025="9.0" data-roe-avg="10.4">
        <td>
         <a href="TW_stock/2031.TW/2031.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4631,8 +5217,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.99%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.98" data-roe-2022="12.5" data-roe-2023="6.5" data-roe-2024="8.7" data-roe-2025="2.2" data-roe-avg="9.233333333333333">
        <td>
         <a href="TW_stock/2227.TW/2227.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4655,8 +5244,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.98%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.93" data-roe-2022="15.5" data-roe-2023="6.6" data-roe-2024="21.7" data-roe-2025="4.6" data-roe-avg="14.6">
        <td>
         <a href="TW_stock/2545.TW/2545.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4679,8 +5271,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.93%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.78" data-roe-2022="7.3" data-roe-2023="7.8" data-roe-2024="9.4" data-roe-2025="9.8" data-roe-avg="8.166666666666666">
        <td>
         <a href="TW_stock/4532.TW/4532.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4703,8 +5298,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.78%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.76" data-roe-2022="11.0" data-roe-2023="5.6" data-roe-2024="5.6" data-roe-2025="5.1" data-roe-avg="7.3999999999999995">
        <td>
         <a href="TW_stock/8499.TW/8499.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4727,8 +5325,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.76%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.71" data-roe-2022="10.5" data-roe-2023="17.2" data-roe-2024="13.8" data-roe-2025="13.6" data-roe-avg="13.833333333333334">
        <td>
         <a href="TW_stock/1210.TW/1210.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4751,8 +5352,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.71%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.62" data-roe-2022="9.2" data-roe-2023="8.4" data-roe-2024="7.5" data-roe-2025="7.0" data-roe-avg="8.366666666666667">
        <td>
         <a href="TW_stock/9925.TW/9925.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4775,8 +5379,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.62%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.61" data-roe-2022="0.7" data-roe-2023="1.7" data-roe-2024="4.1" data-roe-2025="5.9" data-roe-avg="2.1666666666666665">
        <td>
         <a href="TW_stock/2630.TW/2630.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4799,8 +5406,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.61%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.59" data-roe-2022="6.1" data-roe-2023="9.9" data-roe-2024="9.5" data-roe-2025="8.9" data-roe-avg="8.5">
        <td>
         <a href="TW_stock/2886.TW/2886.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4823,8 +5433,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.59%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.56" data-roe-2022="6.1" data-roe-2023="8.8" data-roe-2024="7.4" data-roe-2025="7.1" data-roe-avg="7.433333333333334">
        <td>
         <a href="TW_stock/2903.TW/2903.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4847,8 +5460,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.56%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.52" data-roe-2022="8.0" data-roe-2023="9.2" data-roe-2024="10.3" data-roe-2025="12.6" data-roe-avg="9.166666666666666">
        <td>
         <a href="TW_stock/2884.TW/2884.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4871,8 +5487,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.52%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.48" data-roe-2022="0.5" data-roe-2023="-5.0" data-roe-2024="-6.1" data-roe-2025="35.2" data-roe-avg="-3.533333333333333">
        <td>
         <a href="TW_stock/4123.TWO/4123.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4895,8 +5514,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.48%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.39" data-roe-2022="17.1" data-roe-2023="11.4" data-roe-2024="11.2" data-roe-2025="15.0" data-roe-avg="13.233333333333334">
        <td>
         <a href="TW_stock/5269.TW/5269.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4919,8 +5541,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.39%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.29" data-roe-2022="16.5" data-roe-2023="23.0" data-roe-2024="21.4" data-roe-2025="16.4" data-roe-avg="20.3">
        <td>
         <a href="TW_stock/6177.TW/6177.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4943,8 +5568,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.29%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.27" data-roe-2022="-51.9" data-roe-2023="-83.3" data-roe-2024="-67.6" data-roe-2025="-95.0" data-roe-avg="-67.6">
        <td>
         <a href="TW_stock/6576.TWO/6576.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4967,8 +5595,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.27%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.26" data-roe-2022="12.8" data-roe-2023="10.4" data-roe-2024="7.0" data-roe-2025="7.4" data-roe-avg="10.066666666666668">
        <td>
         <a href="TW_stock/2617.TW/2617.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -4991,8 +5622,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.26%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.14" data-roe-2022="5.5" data-roe-2023="8.5" data-roe-2024="14.4" data-roe-2025="11.2" data-roe-avg="9.466666666666667">
        <td>
         <a href="TW_stock/1307.TW/1307.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -5015,8 +5649,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.14%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.07" data-roe-2022="8.8" data-roe-2023="10.9" data-roe-2024="10.5" data-roe-2025="12.3" data-roe-avg="10.066666666666668">
        <td>
         <a href="TW_stock/8436.TWO/8436.two_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -5039,8 +5676,11 @@
        <td class="pct-neg" style="text-align: right">
         -0.07%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
-      <tr>
+      <tr data-discount="-0.05" data-roe-2022="14.5" data-roe-2023="9.2" data-roe-2024="11.0" data-roe-2025="8.4" data-roe-avg="11.566666666666668">
        <td>
         <a href="TW_stock/5534.TW/5534.tw_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
          <span class="ticker-badge">
@@ -5063,6 +5703,9 @@
        <td class="pct-neg" style="text-align: right">
         -0.05%
        </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
       </tr>
      </tbody>
     </table>
@@ -5073,5 +5716,54 @@
     </p>
    </footer>
   </div>
+  <script>
+   document.getElementById('apply-sort').addEventListener('click', function() {
+            const method = document.getElementById('sort-method').value;
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const header = document.getElementById('dynamic-metric-header');
+            
+            // Update header text
+            const select = document.getElementById('sort-method');
+            header.innerText = select.options[select.selectedIndex].text.replace('Sort by ', '');
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
+                let valB = parseFloat(b.getAttribute('data-' + method)) || 0;
+                
+                // For discount, lower is better (more negative)
+                if (method === 'discount') return valA - valB;
+                // For ROE, higher is better
+                return valB - valA;
+            });
+
+            // Update visible cells and re-append rows
+            rows.forEach(row => {
+                const cell = row.querySelector('.dynamic-metric-cell');
+                const val = row.getAttribute('data-' + method);
+                
+                if (val !== null && val !== undefined) {
+                    const numVal = parseFloat(val);
+                    cell.innerText = numVal.toFixed(1) + '%';
+                    // Color coding for ROE
+                    if (method.includes('roe')) {
+                        cell.style.color = numVal > 0 ? '#4ade80' : '#f87171';
+                    } else {
+                        cell.style.color = '#38bdf8';
+                    }
+                } else {
+                    cell.innerText = 'N/A';
+                    cell.style.color = '#94a3b8';
+                }
+                tbody.appendChild(row);
+            });
+        });
+        
+        // Default sort on load
+        window.addEventListener('load', () => {
+            document.getElementById('apply-sort').click();
+        });
+  </script>
  </body>
 </html>
