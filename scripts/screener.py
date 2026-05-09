@@ -118,13 +118,15 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
         for i in range(0, len(tickers), chunk_size):
             chunk = tickers[i:i+chunk_size]
             try:
-                df_chunk = proxy_download(chunk, period="1y", interval="1d", group_by='ticker', progress=False, threads=True)
+                df_chunk, is_cached = proxy_download(chunk, period="1y", interval="1d", group_by='ticker', progress=False, threads=True)
                 if not df_chunk.empty:
                     data_frames.append(df_chunk)
             except Exception:
+                is_cached = False
                 pass
             progress.advance(task, advance=len(chunk))
-            time.sleep(1) # Be nice to Yahoo Finance API
+            if not is_cached:
+                time.sleep(1) # Be nice to Yahoo Finance API only if live downloading
 
     if not data_frames:
         console.print("[red]Error: Could not download any data. You may be rate-limited by Yahoo Finance.[/red]")
@@ -226,8 +228,8 @@ def main():
         tickers.extend(jp_tickers)
         console.print(f"Fetched {len(jp_tickers)} JP tickers.")
     
-    # Merge and remove duplicates
-    tickers = list(set(tickers))
+    # Merge, remove duplicates, and sort to ensure deterministic batching for the proxy
+    tickers = sorted(list(set(tickers)))
     
     if args.market == 'test':
         test_tickers = ['7722.TW', '2886.TW', '2884.TW', '5269.TW', '2618.TW', '2330.TW', '2317.TW', '2454.TW', '2308.TW', '2382.TW']

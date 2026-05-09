@@ -164,7 +164,7 @@ def proxy_download(tickers, **kwargs):
     if os.path.exists(cache_path):
         try:
             print(f"📦 Loading cached batch data ({len(tickers)} tickers)...")
-            return pd.read_pickle(cache_path)
+            return pd.read_pickle(cache_path), True
         except Exception:
             pass
             
@@ -177,7 +177,7 @@ def proxy_download(tickers, **kwargs):
         except Exception as e:
             print(f"⚠️ Failed to cache batch: {e}")
             
-    return df
+    return df, False
 
 def get_cached_list(list_key, fetch_func):
     """
