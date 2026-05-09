@@ -335,7 +335,9 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         
         # Fetch share history once to avoid multiple calls
         try:
-            shares_history = ticker.get_shares_full(start=years[0] - pd.Timedelta(days=365), end=years[-1] + pd.Timedelta(days=30))
+            # We need the last available date in financials to define range
+            last_date = fin.columns[0]
+            shares_history = ticker.get_shares_full(start=last_date - pd.Timedelta(days=365*5), end=last_date + pd.Timedelta(days=30))
         except:
             shares_history = pd.Series()
             
@@ -343,7 +345,15 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         eff_data = []
         val_data = []
         
-        for year in years:
+        # Filter columns to only include years with valid revenue data
+        valid_columns = []
+        for year in fin.columns:
+            rev = fin[year].get('Total Revenue', 0)
+            if not pd.isna(rev) and rev > 0:
+                valid_columns.append(year)
+        
+        # Process the most recent 4 valid years, oldest first
+        for year in valid_columns[:4][::-1]:
             y_label = str(year.year)
             
             # Operational
@@ -353,6 +363,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             y_bs = bs[year] if year in bs.columns else {}
             
             rev = y_fin.get('Total Revenue', 0)
+                
             gp = y_fin.get('Gross Profit', 0)
             op = y_fin.get('Operating Income', 0)
             ni = y_fin.get('Net Income', 0)
@@ -371,7 +382,9 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             
             inv_days = "N/A"
             if inv and cogs and cogs > 0:
-                inv_days = f"{int(inv / cogs * 365)}"
+                val = inv / cogs * 365
+                if not pd.isna(val):
+                    inv_days = f"{int(val)}"
             
             equity = y_bs.get('Stockholders Equity', 1)
             assets = y_bs.get('Total Assets', 1)

@@ -32,18 +32,18 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 ## 3. Efficiency and Return Metrics
 | Year / Status | Gross Margin (%) | Inventory Days | ROE (%) | ROA (%) |
 | :--- | :--- | :--- | :--- | :--- |
-| **2022** | 12.3% | N/A | -25.0% | -3.7% |
-| **2023** | 37.4% | N/A | 28.1% | 4.5% |
-| **2024** | 43.7% | N/A | 47.7% | 7.0% |
-| **2025** | 32.9% | N/A | 18.5% | 2.3% |
+| **2022** | 12.3% | 17 | -25.0% | -3.7% |
+| **2023** | 37.4% | 29 | 28.1% | 4.5% |
+| **2024** | 43.7% | 36 | 47.7% | 7.0% |
+| **2025** | 32.9% | 31 | 18.5% | 2.3% |
 | **Trend** | 📈 Good | ⚠️ N/A | 📈 Good | 📈 Good |
 
 ## 4. Valuations - 3P Model ("Cheap / 又便宜")
 | Year / Status | P/S | P/E | P/B |
 | :--- | :--- | :--- | :--- |
-| **2022** | N/A | N/A | N/A |
-| **2023** | N/A | N/A | N/A |
-| **2024** | N/A | N/A | N/A |
+| **2022** | 0.64 | N/A | 1.80 |
+| **2023** | 0.92 | 9.91 | 2.55 |
+| **2024** | 2.70 | 18.86 | 8.36 |
 | **2025** | 2.81 | 24.70 | 19.05 |
 | **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
 
