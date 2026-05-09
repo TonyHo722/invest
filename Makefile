@@ -4,7 +4,7 @@
 #
 # USAGE
 # -----
-#   make                    Run the full pipeline for ALL markets (us + tw + jp)
+#   make                    Run the full pipeline for ALL markets (us -> tw -> jp)
 #   make all                Same as above
 #   make pipeline-us        Run the complete pipeline for US only
 #   make pipeline-tw        Run the complete pipeline for TW only
@@ -55,7 +55,7 @@ endif
 # ── Default target ────────────────────────────────────────────────────────────
 # Running `make` with no arguments executes the full pipeline for all markets.
 .PHONY: all
-all: check screen reports links
+all: check pipeline-us pipeline-tw pipeline-jp
 	@echo ""
 	@echo "✅  Full pipeline complete for ALL markets."
 
@@ -87,10 +87,9 @@ pipeline-test: screen-test reports-test links-test
 
 # ── Step 1: Screener ──────────────────────────────────────────────────────────
 # Scans all markets, saves results CSV + premium HTML dashboard.
+# Scans all markets sequentially to preserve cache stability.
 .PHONY: screen
-screen: check
-	@echo "🔍  Screening ALL markets (US + TW + JP)…"
-	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market all
+screen: check screen-us screen-tw screen-jp
 
 # Screen US only (S&P 500 + NASDAQ-100).
 .PHONY: screen-us
@@ -118,10 +117,9 @@ screen-test: check
 # ── Step 2: Generate individual financial reports ─────────────────────────────
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
 # HTML and Markdown reports into <YYYYMMDD>_report/<TICKER>/ folders.
+# Generate individual financial reports for all markets.
 .PHONY: reports
-reports: check
-	@echo "📊  Generating reports for ALL markets…"
-	$(DEBUG_ENV) $(PYTHON) $(REPORTS) --market all
+reports: check reports-us reports-tw reports-jp
 
 .PHONY: reports-us
 reports-us: check
@@ -157,10 +155,9 @@ gen-report:
 # ── Step 3: Inject report links into the dashboard HTML ──────────────────────
 # Patches the dashboard HTML so each ticker badge becomes a clickable link
 # to the per-ticker financial report. Saves a new *_link_*.html file.
+# Inject report links into the dashboard HTML for all markets.
 .PHONY: links
-links:
-	@echo "🔗  Injecting ticker links for ALL markets…"
-	$(PYTHON) $(LINKS) --market all
+links: check links-us links-tw links-jp
 
 .PHONY: links-us
 links-us:
