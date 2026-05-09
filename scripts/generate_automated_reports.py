@@ -10,8 +10,7 @@ import time
 import json
 from datetime import datetime
 from pathlib import Path
-
-# Add scripts dir to path so we can potentially import from generate_reports if needed
+from yf_proxy import ProxyTicker
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Resolve report directory dynamically: <project_root>/<YYYYMMDD>_report
@@ -324,7 +323,7 @@ def build_html(s):
 def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_list=None):
     """Fetches data for a ticker and generates reports."""
     try:
-        ticker = yf.Ticker(ticker_sym)
+        ticker = ProxyTicker(ticker_sym)
         fin = ticker.financials
         cf = ticker.cashflow
         bs = ticker.balance_sheet

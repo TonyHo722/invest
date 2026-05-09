@@ -6,6 +6,7 @@ import pandas as pd
 import yfinance as yf
 from rich.console import Console
 from rich.status import Status
+from yf_proxy import ProxyTicker
 
 # Determine the report directory based on today's date
 TODAY = datetime.now().strftime("%Y%m%d")
@@ -321,7 +322,7 @@ def build_html(s):
 def fetch_and_generate(ticker_sym):
     """Fetches data for a ticker and generates reports."""
     try:
-        ticker = yf.Ticker(ticker_sym)
+        ticker = ProxyTicker(ticker_sym)
         info = ticker.info
         
         company_name = info.get('longName', ticker_sym)

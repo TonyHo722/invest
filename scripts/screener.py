@@ -14,6 +14,7 @@ import re
 import os
 from datetime import datetime
 from pathlib import Path
+from yf_proxy import ProxyTicker
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -162,7 +163,7 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
         
         for c in candidates:
             try:
-                t = yf.Ticker(c['symbol'])
+                t = ProxyTicker(c['symbol'])
                 info = t.info
                 mcap = info.get('marketCap', 0)
                 currency = info.get('currency', 'USD')

@@ -2,13 +2,15 @@ import yfinance as yf
 import sys
 
 def check_connectivity():
-    print("🌐 Checking Yahoo Finance connectivity...")
+    print("🌐 Checking Yahoo Finance connectivity (REAL-TIME)...")
     try:
-        # Try to fetch a single, reliable ticker
+        # We bypass the proxy here to verify actual network status
         ticker = yf.Ticker("AAPL")
-        info = ticker.fast_info
-        if info and 'lastPrice' in info and info['lastPrice'] > 0:
-            print("✅ Connectivity OK. (AAPL price: ${:.2f})".format(info['lastPrice']))
+        info = ticker.info
+        
+        if info and ('currentPrice' in info or 'regularMarketPrice' in info):
+            price = info.get('currentPrice') or info.get('regularMarketPrice')
+            print("✅ Connectivity OK. (AAPL price: ${:.2f})".format(price))
             return True
         else:
             print("❌ Connectivity failed: Could not retrieve price data.")
