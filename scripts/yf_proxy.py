@@ -178,3 +178,32 @@ def proxy_download(tickers, **kwargs):
             print(f"⚠️ Failed to cache batch: {e}")
             
     return df
+
+def get_cached_list(list_key, fetch_func):
+    """
+    Caches a list (like ticker symbols) for the day.
+    """
+    today_str = datetime.now().strftime("%Y%m%d")
+    cache_path = os.path.join(CACHE_DIR, today_str, f"list_{list_key}.json")
+    
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, 'r', encoding='utf-8') as f:
+                print(f"📦 Loading cached ticker list for {list_key}...")
+                return json.load(f)
+        except Exception:
+            pass
+            
+    print(f"📡 Fetching live ticker list for {list_key}...")
+    data = fetch_func()
+    
+    if data:
+        try:
+            with open(cache_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"⚠️ Failed to cache list: {e}")
+            
+    return data

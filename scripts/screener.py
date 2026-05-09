@@ -14,7 +14,7 @@ import re
 import os
 from datetime import datetime
 from pathlib import Path
-from yf_proxy import ProxyTicker, proxy_download
+from yf_proxy import ProxyTicker, proxy_download, get_cached_list
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -208,21 +208,21 @@ def main():
     
     tickers = []
     if args.market in ['us', 'all']:
-        sp500_tickers = get_sp500_tickers()
-        nasdaq_tickers = get_nasdaq100_tickers()
+        sp500_tickers = get_cached_list('sp500', get_sp500_tickers)
+        nasdaq_tickers = get_cached_list('nasdaq100', get_nasdaq100_tickers)
         tickers.extend(sp500_tickers)
         tickers.extend(nasdaq_tickers)
         console.print(f"Fetched {len(sp500_tickers)} S&P 500 and {len(nasdaq_tickers)} NASDAQ-100 tickers.")
         
     tw_names_map = {}
     if args.market in ['tw', 'all']:
-        tw_tickers_dict = get_tw_tickers()
+        tw_tickers_dict = get_cached_list('tw', get_tw_tickers)
         tw_names_map = tw_tickers_dict
         tickers.extend(tw_tickers_dict.keys())
         console.print(f"Fetched {len(tw_tickers_dict)} TWSE/TPEx tickers.")
 
     if args.market in ['jp', 'all']:
-        jp_tickers = get_all_jp_tickers()
+        jp_tickers = get_cached_list('jp', get_all_jp_tickers)
         tickers.extend(jp_tickers)
         console.print(f"Fetched {len(jp_tickers)} JP tickers.")
     
