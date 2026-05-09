@@ -54,17 +54,37 @@ def build_md(s):
     eff_headers = ["Year / Status","Gross Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
     val_headers = ["Year / Status","P/S","P/E","P/B"]
 
-    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO'))
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
+    is_tw_stock = t.endswith('.TW') or t.endswith('.TWO')
+    
     if is_us_stock:
         chart_1y = f"[![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})"
         chart_5y = f"[![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})"
         chart_source = "*Source: Finviz — Click chart to open interactive view*"
-    else:
+        charts_md = f"""### 📈 Today's Quote — {t}
+{chart_1y}
+
+### 📊 Long-Term Technical Analysis — {t}
+{chart_5y}
+
+{chart_source}"""
+    elif is_tw_stock:
         tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
         tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
-        chart_1y = f"[📈 Today's Quote — {t}]({tw_url})"
-        chart_5y = f"[📊 Long-Term Technical Analysis — {t}]({tw_ta_url})"
-        chart_source = f"*Source: Yahoo Finance TW — [Today's Chart]({tw_url}) | [Long-Term Analysis]({tw_ta_url})*"
+        charts_md = f"""### 📈 Today's Quote — {t}
+[View Interactive Chart]({tw_url})
+
+### 📊 Long-Term Technical Analysis — {t}
+[View Historical Technical Chart]({tw_ta_url})
+
+*Source: Yahoo Finance TW — [Today's Chart]({tw_url}) | [Long-Term Analysis]({tw_ta_url})*"""
+    else: # Japan stock
+        yahoo_url = f"https://finance.yahoo.com/quote/{t}"
+        charts_md = f"""### 📈 Price Charts ({t})
+
+*Note: Finviz charts are not available for non-US stocks. Please view charts on Yahoo Finance:*
+
+[View {t} on Yahoo Finance]({yahoo_url})"""
 
     lines = [
         f"# {s['company']} ({t}) Detailed Financial Data",
@@ -72,17 +92,7 @@ def build_md(s):
         "",
         "## 0. Stock Price Charts",
         "",
-        f"### 📈 Today's Quote — {t}",
-        chart_1y,
-        "",
-        f"### 📊 Long-Term Technical Analysis — {t}",
-        chart_5y,
-        "",
-        chart_source,
-        "",
-        "> **Chart Notes:**",
-        "> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.",
-        "> - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.",
+        charts_md,
         "",
         "---",
         "",
@@ -144,29 +154,20 @@ def map_exchange(yf_exchange):
         'NYQ': 'NYSE',
         'NYS': 'NYSE',
         'ASE': 'AMEX',
-        'BTS': 'BATS'
+        'BTS': 'BATS',
+        'TYO': 'TSE',
+        'JPX': 'TSE'
     }
     return mapping.get(yf_exchange, "NYSE")
 
 def build_html(s):
     """Generates HTML report based on company data."""
     t = s["ticker"]
-    if t.endswith('.TW'):
-        ex_enc = f"TWSE:{t.split('.')[0]}"
-    elif t.endswith('.TWO'):
-        ex_enc = f"TPEX:{t.split('.')[0]}"
-    else:
-        ex_enc = f"{s['exchange']}:{t}"
-    css_extra = """
-        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
-        .chart-box h3 { margin: 0; padding: 10px 14px; background: #2c3e50; color: #fff; font-size: 14px; }
-        .chart-box iframe { display: block; width: 100%; border: none; }
-        .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
-        @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
-
-    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO'))
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
+    is_tw_stock = t.endswith('.TW') or t.endswith('.TWO')
+    
     if is_us_stock:
+        ex_enc = f"{s['exchange']}:{t}"
         chart_html = f"""
     <div class="chart-grid">
         <div class="chart-box">
@@ -180,7 +181,7 @@ def build_html(s):
                 height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
         </div>
     </div>"""
-    else:
+    elif is_tw_stock:
         tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
         tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
         chart_html = f"""
@@ -202,6 +203,27 @@ def build_html(s):
             </p>
         </div>
     </div>"""
+    else: # Japan stock
+        yahoo_url = f"https://finance.yahoo.com/quote/{t}"
+        chart_html = f"""
+    <div class="chart-grid">
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <span style="font-size: 2rem;">📈</span><br><br>
+                <strong style="font-size: 1.1rem;">Price Chart &amp; Analysis</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">View interactive charts and historical data</span><br><br>
+                <a href="{yahoo_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📈 View on Yahoo Finance</a>
+            </p>
+        </div>
+    </div>"""
+
+    css_extra = """
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .chart-box h3 { margin: 0; padding: 10px 14px; background: #2c3e50; color: #fff; font-size: 14px; }
+        .chart-box iframe { display: block; width: 100%; border: none; }
+        .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
+        @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
 
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
     eff_headers = ["Year","Gross Margin","Inventory Days","ROE","ROA"]
@@ -420,19 +442,24 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
         
         val_trends = ["⚠️ MIXED", "⚠️ MIXED", "⚠️ MIXED"]
         
+        # Currency symbol handling
+        currency = info.get('currency', 'USD')
+        currency_symbols = {'USD': '$', 'TWD': 'NT$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CNY': '¥', 'HKD': 'HK$'}
+        cur_sym = currency_symbols.get(currency, f"{currency} ")
+
         s = {
             "ticker": ticker_sym,
             "company": company_name,
             "exchange": map_exchange(info.get('exchange')),
             "sector": info.get('sector', 'N/A'),
-            "mcap": f"${mcap/1e9:.2f}B",
-            "price": f"${current_price:.2f}",
+            "mcap": f"{cur_sym}{mcap/1e9:.2f}B",
+            "price": f"{cur_sym}{current_price:.2f}",
             "high": "N/A", "low": "N/A",
             "kqj": ["✅ PASS", "📈 Good", "✅ PASS", "⚠️ MIXED"],
             "notes": [
-                f"Market Cap > $10B confirmed: ${mcap/1e9:.2f}B",
+                f"Market Cap: {cur_sym}{mcap/1e9:.2f}B",
                 f"Automated check of 4-year financial trajectory.",
-                f"Stock is trading below 200-DMA (Price: ${current_price:.2f})",
+                f"Current Price: {cur_sym}{current_price:.2f}",
                 "Further qualitative analysis required for upside potential."
             ],
             "fin": fin_data, "fin_trends": fin_trends,
@@ -455,7 +482,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
         return False
 
 def run_for_market(market_key, console):
-    """Runs report generation for a single market key ('us' or 'tw')."""
+    """Runs report generation for a single market key ('us', 'tw', or 'jp')."""
     input_csv = os.path.join(REPORT_DIR, f"dma_200_screen_results_{market_key}.csv")
     console.print(f"\n[bold blue]Automated Financial Report Generator ({market_key.upper()})[/bold blue]")
     console.print(f"[dim]Report directory: {REPORT_DIR}[/dim]\n")
@@ -483,7 +510,6 @@ def run_for_market(market_key, console):
     console.print(f"Files are located in {REPORT_DIR}/[TICKER]/ folders.")
     return success_count
 
-
 def main():
     parser = argparse.ArgumentParser(description="Automated Financial Report Generator")
     parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to scan')
@@ -492,7 +518,7 @@ def main():
     console = Console()
 
     # Expand 'all' into individual market keys
-    markets = ['us', 'tw'] if args.market == 'all' else [args.market]
+    markets = ['us', 'tw', 'jp'] if args.market == 'all' else [args.market]
 
     total_success = 0
     for market_key in markets:

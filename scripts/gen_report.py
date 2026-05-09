@@ -50,7 +50,9 @@ def map_exchange(yf_exchange):
         'NYS': 'NYSE',
         'ASE': 'AMEX',
         'BTS': 'BATS',
-        'TAI': 'TWSE'
+        'TAI': 'TWSE',
+        'JPX': 'TSE',
+        'TYO': 'TSE'
     }
     return mapping.get(yf_exchange, "NYSE")
 
@@ -61,7 +63,9 @@ def build_md(s):
     eff_headers = ["Year / Status","Gross Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
     val_headers = ["Year / Status","P/S","P/E","P/B"]
 
-    is_us_stock = s.get("exchange") in ["NYSE", "NASDAQ", "AMEX", "BATS"]
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
+    is_tw_stock = t.endswith('.TW') or t.endswith('.TWO')
+    
     if is_us_stock:
         charts_md = f"""### 📈 1-Year Price Chart ({t})
 [![{t} 1-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t={t})
@@ -71,18 +75,30 @@ def build_md(s):
 ### 📈 5-Year Price Chart ({t})
 [![{t} 5-Year Chart](https://charts2.finviz.com/chart.ashx?t={t}&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t={t})
 
-*Source: Finviz — Click chart to open interactive view*
-
 > **Chart Notes:**
 > - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.
 > - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.
 """
-    else:
+    elif is_tw_stock:
+        tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
+        tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
+        charts_md = f"""### 📈 Price Charts ({t})
+
+*Source: Yahoo Finance TW — [Today's Chart]({tw_url}) | [Long-Term Analysis]({tw_ta_url})*
+
+### 📈 Today's Quote — {t}
+[View Interactive Chart]({tw_url})
+
+### 📊 Long-Term Technical Analysis — {t}
+[View Historical Technical Chart]({tw_ta_url})
+"""
+    else: # Japan stock
+        yahoo_url = f"https://finance.yahoo.com/quote/{t}"
         charts_md = f"""### 📈 Price Charts ({t})
 
 *Note: Finviz charts are not available for non-US stocks. Please view charts on Yahoo Finance:*
 
-[View {t} on Yahoo Finance](https://finance.yahoo.com/quote/{t}/chart)
+[View {t} on Yahoo Finance]({yahoo_url})
 """
 
     lines = [
@@ -154,6 +170,59 @@ def build_html(s):
         .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
         @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
 
+    is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
+    is_tw_stock = t.endswith('.TW') or t.endswith('.TWO')
+    
+    if is_us_stock:
+        chart_html = f"""
+    <div class="chart-grid">
+        <div class="chart-box">
+            <h3>📈 1-Year Price Chart (Daily)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+        <div class="chart-box">
+            <h3>📈 5-Year Price Chart (Weekly)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+    </div>"""
+    elif is_tw_stock:
+        tw_url = f"https://tw.stock.yahoo.com/quote/{t}"
+        tw_ta_url = f"https://tw.stock.yahoo.com/quote/{t}/technical-analysis"
+        chart_html = f"""
+    <div class="chart-grid">
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <span style="font-size: 2rem;">📈</span><br><br>
+                <strong style="font-size: 1.1rem;">Today's Quote</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">Current price, volume &amp; intraday chart</span><br><br>
+                <a href="{tw_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📈 Today's Chart</a>
+            </p>
+        </div>
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <span style="font-size: 2rem;">📊</span><br><br>
+                <strong style="font-size: 1.1rem;">Long-Term Technical Analysis</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">Historical chart with MA &amp; indicators</span><br><br>
+                <a href="{tw_ta_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #6600cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📊 Long-Term Chart</a>
+            </p>
+        </div>
+    </div>"""
+    else: # Japan stock
+        yahoo_url = f"https://finance.yahoo.com/quote/{t}"
+        chart_html = f"""
+    <div class="chart-grid">
+        <div class="chart-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f8f9fa;">
+            <p style="color: #555; text-align: center; padding: 20px;">
+                <span style="font-size: 2rem;">📈</span><br><br>
+                <strong style="font-size: 1.1rem;">Price Chart &amp; Analysis</strong><br>
+                <span style="color: #888; font-size: 0.9rem;">View interactive charts and historical data</span><br><br>
+                <a href="{yahoo_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 1rem;">📈 View on Yahoo Finance</a>
+            </p>
+        </div>
+    </div>"""
+
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
     eff_headers = ["Year","Gross Margin","Inventory Days","ROE","ROA"]
     val_headers = ["Year","P/S","P/E","P/B"]
@@ -210,18 +279,7 @@ def build_html(s):
     <p>Automated Analysis Dashboard</p>
 
     <h2>0. Stock Price Charts</h2>
-    <div class="chart-grid">
-        <div class="chart-box">
-            <h3>📈 1-Year Price Chart (Daily)</h3>
-            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
-                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
-        </div>
-        <div class="chart-box">
-            <h3>📈 5-Year Price Chart (Weekly)</h3>
-            <iframe src="https://s.tradingview.com/widgetembed/?symbol={ex_enc}&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
-                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
-        </div>
-    </div>
+    {chart_html}
 
     <h2>1. Market Position ("Big / 又大")</h2>
     <table>
@@ -298,6 +356,7 @@ def fetch_and_generate(ticker_sym):
             # Operational
             rev = fin.get(year).get('Total Revenue', 0)
             gp = fin.get(year).get('Gross Profit', 0)
+            # Use .get() and check for None to avoid potential issues
             op = fin.get(year).get('Operating Income', 0)
             ni = fin.get(year).get('Net Income', 0)
             eps = fin.get(year).get('Basic EPS', 0)
