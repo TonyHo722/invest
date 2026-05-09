@@ -35,7 +35,15 @@ def add_links_to_report(input_path, output_path):
         # The folders are named after the uppercase ticker,
         # and the files are named after the lowercase ticker.
         # Example: TTD/ttd_financial_data.html
-        link_url = f"{ticker}/{ticker.lower()}_financial_data.html"
+        # Determine market subfolder
+        market_subfolder = "US_stock"
+        if ticker.endswith('.T'):
+            market_subfolder = "JP_stock"
+        elif ticker.endswith('.TW') or ticker.endswith('.TWO'):
+            market_subfolder = "TW_stock"
+            
+        # Example: US_stock/TTD/ttd_financial_data.html
+        link_url = f"{market_subfolder}/{ticker}/{ticker.lower()}_financial_data.html"
 
         # Create a new <a> tag that opens in a new tab
         link_tag = soup.new_tag('a', href=link_url, target='_blank')

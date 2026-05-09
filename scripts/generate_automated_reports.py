@@ -468,7 +468,14 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
             "note": f"Automated report generated from live data. Sector: {info.get('sector', 'N/A')}."
         }
         
-        folder = os.path.join(REPORT_DIR, ticker_sym)
+        # Determine market subfolder
+        market_subfolder = "US_stock"
+        if ticker_sym.endswith('.T'):
+            market_subfolder = "JP_stock"
+        elif ticker_sym.endswith('.TW') or ticker_sym.endswith('.TWO'):
+            market_subfolder = "TW_stock"
+            
+        folder = os.path.join(REPORT_DIR, market_subfolder, ticker_sym)
         os.makedirs(folder, exist_ok=True)
         
         with open(os.path.join(folder, f"{ticker_sym.lower()}_financial_data.md"), "w") as f:
