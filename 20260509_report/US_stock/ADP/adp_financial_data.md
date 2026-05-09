@@ -18,7 +18,7 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 | :--- | :--- |
 | Sector | Technology |
 | Market Cap | $85.14B |
-| Current Price | $212.99 |
+| Current Price | $213.00 |
 
 ## 2. Operational and Financial Performance ("Good / 又好")
 | Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
@@ -52,5 +52,5 @@ Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis
 | :--- | :--- | :--- |
 | Big (又大) | ✅ PASS | Market Cap: $85.14B |
 | Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
-| Cheap (又便宜) | ✅ PASS | Current Price: $212.99 |
+| Cheap (又便宜) | ✅ PASS | Current Price: $213.00 |
 | >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |
