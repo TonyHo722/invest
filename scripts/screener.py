@@ -11,6 +11,9 @@ import argparse
 import urllib.request
 import ssl
 import re
+import os
+from datetime import datetime
+from pathlib import Path
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -21,6 +24,26 @@ def get_nasdaq100_tickers():
     """Fetches NASDAQ-100 tickers from Wikipedia."""
     url = "https://en.wikipedia.org/wiki/Nasdaq-100"
     return fetch_wikipedia_tickers(url, "constituents")
+
+def get_all_jp_tickers():
+    """Fetches large-cap Japanese tickers from the iShares MSCI Japan ETF (EWJ) holdings.
+    Returns tickers with the Yahoo Finance .T suffix.
+    """
+    url = "https://www.ishares.com/us/products/239665/ishares-msci-japan-etf/1467271812596.ajax?fileType=csv&fileName=EWJ_holdings&dataType=fund"
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers, timeout=10)
+        tickers = []
+        for line in response.text.splitlines():
+            parts = line.split(',')
+            if parts:
+                first_col = parts[0].replace('"', '').strip()
+                if re.fullmatch(r"\d{4}", first_col):
+                    tickers.append(first_col + '.T')
+        return list(set(tickers))
+    except Exception as e:
+        print(f"Error fetching JP tickers from EWJ: {e}")
+        return []
 
 def get_tw_tickers(market_type='all'):
     """Fetches TWSE and TPEx tickers and their Chinese names from TWSE ISIN."""
@@ -77,7 +100,7 @@ def fetch_wikipedia_tickers(url, table_id):
         print(f"Error fetching tickers from {url}: {e}")
         return []
 
-def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd_billion=10):
+def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd_billion=10, min_mcap_jpy_billion=100):
     """
     Screens tickers for Price < 200-DMA and Market Cap > min_mcap_billion.
     Optimized by fetching technicals in batch before checking fundamentals.
@@ -85,13 +108,28 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
     results = []
     console = Console()
     
-    console.print(f"[cyan]Downloading historical data for {len(tickers)} tickers...[/cyan]")
-    # Use yf.download for batch fetching of historical data
-    try:
-        data = yf.download(tickers, period="1y", interval="1d", group_by='ticker', progress=True)
-    except Exception as e:
-        console.print(f"[red]Error downloading data: {e}[/red]")
+    console.print(f"[cyan]Downloading historical data for {len(tickers)} tickers in chunks...[/cyan]")
+    data_frames = []
+    chunk_size = 20
+    
+    with Progress() as progress:
+        task = progress.add_task("[yellow]Downloading data...", total=len(tickers))
+        for i in range(0, len(tickers), chunk_size):
+            chunk = tickers[i:i+chunk_size]
+            try:
+                df_chunk = yf.download(chunk, period="1y", interval="1d", group_by='ticker', progress=False, threads=True)
+                if not df_chunk.empty:
+                    data_frames.append(df_chunk)
+            except Exception:
+                pass
+            progress.advance(task, advance=len(chunk))
+            time.sleep(1) # Be nice to Yahoo Finance API
+
+    if not data_frames:
+        console.print("[red]Error: Could not download any data. You may be rate-limited by Yahoo Finance.[/red]")
         return []
+
+    data = pd.concat(data_frames, axis=1)
 
     # Filter candidates based on 200-DMA first (Fast)
     candidates = []
@@ -131,6 +169,8 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
                 
                 if currency == 'TWD':
                     threshold = min_mcap_twd_billion * 1e9
+                elif currency == 'JPY':
+                    threshold = min_mcap_jpy_billion * 1e9
                 else:
                     threshold = min_mcap_usd_billion * 1e9
                 
@@ -156,7 +196,8 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd
 
 def main():
     parser = argparse.ArgumentParser(description="Mega-Cap 200-DMA Screener")
-    parser.add_argument('--market', choices=['us', 'tw', 'all'], default='us', help='Market to scan')
+    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to scan')
+    parser.add_argument('--min-mcap-jpy', type=float, default=100, help='Minimum market cap in billions of JPY (default 100)')
     args = parser.parse_args()
 
     console = Console()
@@ -178,6 +219,11 @@ def main():
         tw_names_map = tw_tickers_dict
         tickers.extend(tw_tickers_dict.keys())
         console.print(f"Fetched {len(tw_tickers_dict)} TWSE/TPEx tickers.")
+
+    if args.market in ['jp', 'all']:
+        jp_tickers = get_all_jp_tickers()
+        tickers.extend(jp_tickers)
+        console.print(f"Fetched {len(jp_tickers)} JP tickers.")
     
     # Merge and remove duplicates
     tickers = list(set(tickers))
@@ -188,10 +234,10 @@ def main():
         
     console.print(f"Unique tickers to scan: [bold cyan]{len(tickers)}[/bold cyan]\n")
     
-    matches = screen_stocks(tickers, tw_names_map)
+    matches = screen_stocks(tickers, tw_names_map, min_mcap_jpy_billion=args.min_mcap_jpy)
     
     if not matches:
-        console.print("[yellow]No companies match the criteria (Market Cap > $10B and Price < 200-DMA).[/yellow]")
+        console.print("[yellow]No companies match the criteria.[/yellow]")
     else:
         table = Table(title="Screening Results")
         table.add_column("Ticker", style="cyan")
@@ -202,10 +248,11 @@ def main():
         table.add_column("% Diff", justify="right")
 
         for m in sorted(matches, key=lambda x: x['% Diff']):
+            divisor = 1e9
             table.add_row(
                 m['Ticker'],
                 m['Name'],
-                f"{m['Market Cap']/1e9:.2f}B {m['Currency']}",
+                f"{m['Market Cap']/divisor:.2f}B {m['Currency']}",
                 f"{m['Price']:.2f} {m['Currency']}",
                 f"{m['200-DMA']:.2f} {m['Currency']}",
                 f"[red]{m['% Diff']:.2f}%[/red]"
@@ -213,10 +260,17 @@ def main():
 
         console.print(table)
         
+        # Resolve output directory
+        project_root = Path(__file__).resolve().parent.parent
+        today_str = datetime.now().strftime("%Y%m%d")
+        report_dir = project_root / f"{today_str}_report"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        console.print(f"[dim]Output directory: {report_dir}[/dim]")
+
         # Save results to a CSV
         try:
             df = pd.DataFrame(matches)
-            csv_path = f"/home/tonyho/workspace/invest/report/dma_200_screen_results_{args.market}.csv"
+            csv_path = report_dir / f"dma_200_screen_results_{args.market}.csv"
             df.to_csv(csv_path, index=False)
             console.print(f"\n[bold green]Results saved to {csv_path}[/bold green]")
         except Exception as e:
@@ -224,7 +278,7 @@ def main():
             
         # Generate Premium HTML Report
         try:
-            html_path = f"/home/tonyho/workspace/invest/report/dma_200_screen_results_{args.market}.html"
+            html_path = report_dir / f"dma_200_screen_results_{args.market}.html"
             html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 import os
 import sys
+from datetime import datetime
 import pandas as pd
 import yfinance as yf
 from rich.console import Console
 from rich.status import Status
 
-REPORT_DIR = "/home/tonyho/workspace/invest/report"
+# Determine the report directory based on today's date
+TODAY = datetime.now().strftime("%Y%m%d")
+REPORT_DIR = os.path.join(os.getcwd(), f"{TODAY}_report")
 
 def get_trend_emoji(values, reverse=False):
     """

@@ -1,0 +1,60 @@
+# Dollar General Corporation (DG) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — DG
+[![DG 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=DG&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=DG)
+
+### 📊 Long-Term Technical Analysis — DG
+[![DG 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=DG&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=DG)
+
+*Source: Finviz — Click chart to open interactive view*
+
+> **Chart Notes:**
+> - The **1-Year chart** (daily candles) shows short-term momentum and recent support/resistance levels.
+> - The **5-Year chart** (weekly candles) shows the long-term price trend and major drawdown magnitude.
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | Dollar General Corporation (DG) |
+| :--- | :--- |
+| Sector | Consumer Defensive |
+| Market Cap | $25.52B |
+| Current Price | $115.89 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **2023** | 37,845M | 11,820M | 3,328M | 2,416M | 10.73 | 1.77 | 424M | 2,748M |
+| **2024** | 38,692M | 11,719M | 2,446M | 1,661M | 7.57 | 2.36 | 692M | 0M |
+| **2025** | 40,612M | 12,017M | 1,714M | 1,125M | 5.12 | 2.36 | 1,686M | 0M |
+| **2026** | 42,724M | 13,100M | 2,204M | 1,512M | nan | 1.18 | 2,393M | nanM |
+| **Trend** | 📈 Good | 📈 Good | 📉 Bad | 📉 Bad | 📉 Bad | 📉 Bad | 📈 Good | 📉 Bad |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Inventory Days | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- |
+| **2023** | 31.2% | N/A | 43.6% | 8.3% |
+| **2024** | 30.3% | N/A | 24.6% | 5.4% |
+| **2025** | 29.6% | N/A | 15.2% | 3.6% |
+| **2026** | 30.7% | N/A | 17.8% | 4.9% |
+| **Trend** | 📉 Bad | ⚠️ N/A | 📉 Bad | 📉 Bad |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **2023** | 1.30 | 20.56 | 8.90 |
+| **2024** | 0.73 | 17.10 | 4.21 |
+| **2025** | 0.37 | 13.52 | 2.05 |
+| **2026** | 0.60 | 16.93 | 3.00 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap > $10B confirmed: $25.52B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Stock is trading below 200-DMA (Price: $115.89) |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |

@@ -32,11 +32,12 @@ cd /home/tonyho/workspace/invest
 # Alternatively, scan specific markets:
 ./.venv/bin/python3 scripts/screener.py --market us  # S&P 500 & NASDAQ-100
 ./.venv/bin/python3 scripts/screener.py --market tw  # Taiwan TWSE & TPEx
-./.venv/bin/python3 scripts/screener.py --market all # Both US and TW markets
+./.venv/bin/python3 scripts/screener.py --market jp  # Japan Nikkei 225
+./.venv/bin/python3 scripts/screener.py --market all # US, TW, and JP markets
 ```
 
 ### Script Execution Logic
-1.  **Fetch Tickers**: Scrapes the latest constituent lists depending on the chosen market (Wikipedia for US, official ISIN for TW).
+1.  **Fetch Tickers**: Scrapes the latest constituent lists depending on the chosen market (Wikipedia for US, official ISIN for TW, iShares for JP).
 2.  **Batch Technical Screen**: Downloads the last year of price data for all selected stocks in a single high-speed request.
 3.  **Condition Filter**: Filters for stocks where `Current Price < 200-DMA`.
 4.  **Fundamental Validation**: For remaining candidates, it fetches current Market Cap and Currency to ensure they are > 10B (USD or TWD).
@@ -63,6 +64,9 @@ cd /home/tonyho/workspace/invest
 
 # Or generate for the TW market
 ./.venv/bin/python3 scripts/generate_automated_reports.py --market tw
+
+# Or generate for the JP market
+./.venv/bin/python3 scripts/generate_automated_reports.py --market jp
 ```
 
 ### What this script does:
@@ -87,6 +91,9 @@ cd /home/tonyho/workspace/invest
 
 # Or link for the TW market
 ./.venv/bin/python3 scripts/add_report_links.py --market tw
+
+# Or link for the JP market
+./.venv/bin/python3 scripts/add_report_links.py --market jp
 ```
 
 ### What this script does:

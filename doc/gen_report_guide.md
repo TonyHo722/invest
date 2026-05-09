@@ -22,33 +22,44 @@ The script requires Python 3 and the following libraries (already installed in y
 Run the script from the root of the workspace using the virtual environment:
 
 ```bash
-./.venv/bin/python scripts/gen_report.py [TICKER]
+./.venv/bin/python3 scripts/gen_report.py [TICKER]
 ```
 
-**Example:**
+**Example (US Stock - Vital Farms):**
 ```bash
-./.venv/bin/python scripts/gen_report.py LVMUY
+./.venv/bin/python3 scripts/gen_report.py VITL
+```
+
+### 1b. Generation via Makefile (Shortcut)
+Alternatively, you can use the `Makefile` target for a cleaner command:
+
+```bash
+# Single ticker
+make gen-report TICKER=VITL
+
+# Multiple tickers
+make gen-report TICKER="AAPL MSFT VITL"
 ```
 
 ### 2. Multi-Stock Generation
 You can generate reports for multiple companies in a single command:
 
 ```bash
-./.venv/bin/python scripts/gen_report.py NKE TSLA AAPL MSFT
+./.venv/bin/python3 scripts/gen_report.py VITL TSLA AAPL MSFT
 ```
 
 ### 3. Creating a Shortcut (Recommended)
 To run the command simply as `gen_report`, you can add an alias to your shell profile (`~/.bashrc`):
 
 ```bash
-alias gen_report='/home/tonyho/workspace/invest/.venv/bin/python /home/tonyho/workspace/invest/scripts/gen_report.py'
+alias gen_report='/home/tonyho/workspace/invest/.venv/bin/python3 /home/tonyho/workspace/invest/scripts/gen_report.py'
 ```
 
 ---
 
 ## 📊 Output Structure
 
-Each time you run the script, it creates or updates a folder in `/report/[TICKER]/` with two files:
+Each time you run the script, it creates or updates a folder in `/[YYYYMMDD]_report/[TICKER]/` (e.g., `20260509_report/VITL/`) with two files:
 
 | File Type | Filename | Best Use Case |
 | :--- | :--- | :--- |
@@ -60,6 +71,13 @@ Each time you run the script, it creates or updates a folder in `/report/[TICKER
 - **Financial Table**: 4 years of Revenue, Net Income, EPS, FCF, and more.
 - **Trend Indicators**: Automatic 📈/📉 detection based on year-over-year performance.
 - **Framework Assessment**: Summary of **Big, Good, and Cheap** status.
+
+### Practical Example (VITL)
+After running `./.venv/bin/python3 scripts/gen_report.py VITL`, the following outputs are generated:
+- `report/VITL/vitl_financial_data.md`
+- `report/VITL/vitl_financial_data.html`
+
+The report will show **Vital Farms, Inc.**'s 4-year financial trajectory, including revenue growth and margin trends.
 
 ---
 

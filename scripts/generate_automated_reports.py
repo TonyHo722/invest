@@ -7,11 +7,17 @@ import yfinance as yf
 from rich.console import Console
 from rich.progress import Progress
 import time
+from datetime import datetime
+from pathlib import Path
 
 # Add scripts dir to path so we can potentially import from generate_reports if needed
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-REPORT_DIR = "/home/tonyho/workspace/invest/report"
+# Resolve report directory dynamically: <project_root>/<YYYYMMDD>_report
+# Matches the same convention used by screener.py
+_project_root = Path(__file__).resolve().parent.parent
+_today_str = datetime.now().strftime("%Y%m%d")
+REPORT_DIR = str(_project_root / f"{_today_str}_report")
 
 def get_trend_emoji(values, reverse=False):
     """
@@ -448,39 +454,52 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap):
         # print(f"Error processing {ticker_sym}: {e}")
         return False
 
-def main():
-    parser = argparse.ArgumentParser(description="Automated Financial Report Generator")
-    parser.add_argument('--market', choices=['us', 'tw', 'all'], default='us', help='Market to scan')
-    args = parser.parse_args()
+def run_for_market(market_key, console):
+    """Runs report generation for a single market key ('us' or 'tw')."""
+    input_csv = os.path.join(REPORT_DIR, f"dma_200_screen_results_{market_key}.csv")
+    console.print(f"\n[bold blue]Automated Financial Report Generator ({market_key.upper()})[/bold blue]")
+    console.print(f"[dim]Report directory: {REPORT_DIR}[/dim]\n")
 
-    input_csv = os.path.join(REPORT_DIR, f"dma_200_screen_results_{args.market}.csv")
-
-    console = Console()
-    console.print(f"[bold blue]Automated Financial Report Generator ({args.market.upper()})[/bold blue]\n")
-    
     if not os.path.exists(input_csv):
         console.print(f"[red]Input file not found: {input_csv}[/red]")
-        return
-        
+        console.print(f"[yellow]Hint: Run screener.py --market {market_key} first.[/yellow]")
+        return 0
+
     df = pd.read_csv(input_csv)
     tickers = df.to_dict('records')
-    
     console.print(f"Loaded {len(tickers)} companies from screener output.\n")
-    
+
     success_count = 0
     with Progress() as progress:
         task = progress.add_task("[cyan]Generating reports...", total=len(tickers))
-        
         for t in tickers:
             ticker_sym = t['Ticker']
             company_name = t['Name']
-                
             if fetch_and_generate(ticker_sym, company_name, t['Price'], t['Market Cap']):
                 success_count += 1
             progress.advance(task)
-            
-    console.print(f"\n[bold green]Successfully generated reports for {success_count} companies.[/bold green]")
+
+    console.print(f"\n[bold green]Successfully generated reports for {success_count}/{len(tickers)} companies.[/bold green]")
     console.print(f"Files are located in {REPORT_DIR}/[TICKER]/ folders.")
+    return success_count
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Automated Financial Report Generator")
+    parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all'], default='us', help='Market to scan')
+    args = parser.parse_args()
+
+    console = Console()
+
+    # Expand 'all' into individual market keys
+    markets = ['us', 'tw'] if args.market == 'all' else [args.market]
+
+    total_success = 0
+    for market_key in markets:
+        total_success += run_for_market(market_key, console)
+
+    if len(markets) > 1:
+        console.print(f"\n[bold green]Grand total: {total_success} reports generated across {len(markets)} markets.[/bold green]")
 
 if __name__ == "__main__":
     main()
