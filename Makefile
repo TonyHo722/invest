@@ -6,26 +6,19 @@
 # -----
 #   make                    Run the full pipeline for ALL markets (us + tw + jp)
 #   make all                Same as above
-#   make screen             Screen stocks only (all markets)
-#   make reports            Generate individual financial reports (all markets)
-#   make links              Inject ticker links into dashboard HTML (all markets)
-#
-#   make screen-us          Screen US stocks only (S&P500 + NASDAQ-100)
-#   make screen-tw          Screen Taiwan stocks only (TWSE + TPEx)
-#   make screen-jp          Screen Japan stocks only (Nikkei 225)
-#   make reports-us         Generate individual HTML/MD reports for US results
-#   make reports-tw         Generate individual HTML/MD reports for TW results
-#   make reports-jp         Generate individual HTML/MD reports for JP results
-#   make links-us           Inject ticker hyperlinks into US dashboard HTML
-#   make links-tw           Inject ticker hyperlinks into TW dashboard HTML
-#   make links-jp           Inject ticker hyperlinks into JP dashboard HTML
-#
 #   make pipeline-us        Run the complete pipeline for US only
 #   make pipeline-tw        Run the complete pipeline for TW only
 #   make pipeline-jp        Run the complete pipeline for JP only
 #
-#   make gen-report TICKER=AAPL  Generate manual report for specific ticker(s)
+#   DEBUG=1 make ...        Run any command using the FROZEN debug cache (offline)
+#   make freeze-cache       Snapshot today's live data into the debug cache
+#   make clean              Clear old cache folders (preserves today and debug)
 #
+#   make screen             Screen stocks only (all markets)
+#   make reports            Generate individual financial reports (all markets)
+#   make links              Inject ticker links into dashboard HTML (all markets)
+#
+#   make gen-report TICKER=AAPL  Generate manual report for specific ticker(s)
 #   make help               Show this help message
 #
 # PIPELINE ORDER (per market)
