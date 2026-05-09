@@ -183,8 +183,8 @@ links-test:
 .PHONY: freeze-cache
 freeze-cache:
 	@echo "❄️  Freezing today's cache as 'debug' template…"
-	@rm -rf scratch/cache/debug
-	@cp -r scratch/cache/$(shell date +%Y%m%d) scratch/cache/debug
+	@mkdir -p scratch/cache/debug
+	@cp -rf scratch/cache/$(shell date +%Y%m%d)/* scratch/cache/debug/
 	@echo "✅  Cache frozen in scratch/cache/debug/"
 
 .PHONY: clean
