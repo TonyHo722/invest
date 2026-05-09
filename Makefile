@@ -197,6 +197,15 @@ freeze-cache:
 	@cp -r scratch/cache/$(shell date +%Y%m%d) scratch/cache/debug
 	@echo "✅  Cache frozen in scratch/cache/debug/"
 
+.PHONY: clean
+clean:
+	@echo "🧹 Cleaning old cache folders (preserving 'debug' and today's data)..."
+	@find scratch/cache -mindepth 1 -maxdepth 1 -type d \
+		! -name "debug" \
+		! -name "$(shell date +%Y%m%d)" \
+		-exec rm -rf {} +
+	@echo "✅  Old cache cleared."
+
 # ── Help ──────────────────────────────────────────────────────────────────────
 .PHONY: help
 help:
