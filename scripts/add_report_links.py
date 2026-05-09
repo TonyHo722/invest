@@ -37,8 +37,8 @@ def add_links_to_report(input_path, output_path):
         # Example: TTD/ttd_financial_data.html
         link_url = f"{ticker}/{ticker.lower()}_financial_data.html"
 
-        # Create a new <a> tag
-        link_tag = soup.new_tag('a', href=link_url)
+        # Create a new <a> tag that opens in a new tab
+        link_tag = soup.new_tag('a', href=link_url, target='_blank')
         # Add style to remove underline and make it look like a button/badge
         link_tag['style'] = 'text-decoration: none; display: inline-block;'
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     report_dir = get_report_dir()
 
     # Expand 'all' into individual market keys
-    markets = ['us', 'tw'] if args.market == 'all' else [args.market]
+    markets = ['us', 'tw', 'jp'] if args.market == 'all' else [args.market]
 
     for market_key in markets:
         report_in  = report_dir / f"dma_200_screen_results_{market_key}.html"
