@@ -513,20 +513,37 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
                 except:
                     roe_values[year_label] = 0.0
             
-            # Calculate average of past 4 years (excluding the latest one if it's the current year)
-            # Actually let's just take the first N-1 if N >= 2
-            avg_roe = 0.0
-            if len(roe_values) >= 2:
-                # Get labels sorted by year
-                sorted_labels = sorted(roe_values.keys())
-                # Exclude the last one (latest)
+            ps_values = {}
+            pe_values = {}
+            pb_values = {}
+            for year_label, ps_str, pe_str, pb_str in val_data:
+                try: ps_values[year_label] = float(ps_str)
+                except: ps_values[year_label] = 0.0
+                try: pe_values[year_label] = float(pe_str)
+                except: pe_values[year_label] = 0.0
+                try: pb_values[year_label] = float(pb_str)
+                except: pb_values[year_label] = 0.0
+            
+            def calc_avg(values_dict):
+                if len(values_dict) < 2: return 0.0
+                sorted_labels = sorted(values_dict.keys())
+                # Exclude the last one (usually the latest/current year)
                 past_labels = sorted_labels[:-1]
-                if past_labels:
-                    avg_roe = round(sum(roe_values[l] for l in past_labels) / len(past_labels), 2)
+                if not past_labels: return 0.0
+                # Only average non-zero/valid values
+                valid_vals = [values_dict[l] for l in past_labels if values_dict[l] > 0]
+                if not valid_vals: return 0.0
+                return round(sum(valid_vals) / len(valid_vals), 2)
             
             metrics_list[ticker_sym] = {
                 "roe": roe_values,
-                "avg_roe_past": avg_roe
+                "avg_roe_past": calc_avg(roe_values),
+                "ps": ps_values,
+                "avg_ps_past": calc_avg(ps_values),
+                "pe": pe_values,
+                "avg_pe_past": calc_avg(pe_values),
+                "pb": pb_values,
+                "avg_pb_past": calc_avg(pb_values)
             }
 
         # Determine market subfolder

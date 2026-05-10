@@ -73,10 +73,12 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
             
             if metrics_data and ticker in metrics_data:
                 m = metrics_data[ticker]
-                # Add ROE attributes
-                for year, roe_val in m.get('roe', {}).items():
-                    row[f'data-roe-{year}'] = roe_val
-                row['data-roe-avg'] = m.get('avg_roe_past', 0.0)
+                # Add metrics attributes
+                for metric in ['roe', 'ps', 'pe', 'pb']:
+                    if metric in m:
+                        for year, val in m[metric].items():
+                            row[f'data-{metric}-{year}'] = val
+                        row[f'data-{metric}-avg'] = m.get(f'avg_{metric}_past', 0.0)
 
     # Step 3: Add Sorting UI and column
     thead = soup.find('thead')
@@ -108,13 +110,29 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
 
         controls_html = f"""
         <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <span style="font-weight: 600; color: #94a3b8;">Sort & Filter By:</span>
-            <select id="sort-method" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
-                <option value="discount">200-DMA Discount (Technical)</option>
-                <option value="roe-avg">Average ROE (Past 4 Years)</option>
-                {"".join([f'<option value="roe-{y}">ROE in {y}</option>' for y in sorted_years])}
-            </select>
-            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;">Apply Sort</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 600; color: #94a3b8;">Filter:</span>
+                <input type="text" id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 150px;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 600; color: #94a3b8;">Sort By:</span>
+                <select id="sort-method" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+                    <option value="discount">200-DMA Discount</option>
+                    <optgroup label="ROE (Higher is Better)">
+                        <option value="roe-avg">Average ROE</option>
+                        {"".join([f'<option value="roe-{y}">ROE in {y}</option>' for y in sorted_years])}
+                    </optgroup>
+                    <optgroup label="Valuation (Lower is Better)">
+                        <option value="pe-avg">Average P/E</option>
+                        <option value="ps-avg">Average P/S</option>
+                        <option value="pb-avg">Average P/B</option>
+                        {"".join([f'<option value="pe-{y}">P/E in {y}</option>' for y in sorted_years])}
+                        {"".join([f'<option value="ps-{y}">P/S in {y}</option>' for y in sorted_years])}
+                        {"".join([f'<option value="pb-{y}">P/B in {y}</option>' for y in sorted_years])}
+                    </optgroup>
+                </select>
+            </div>
+            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;">Apply</button>
         </div>
         """
         controls_soup = BeautifulSoup(controls_html, 'html.parser')
@@ -125,52 +143,74 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
     if body:
         js_code = """
         <script>
-        document.getElementById('apply-sort').addEventListener('click', function() {
+        function applySortAndFilter() {
             const method = document.getElementById('sort-method').value;
+            const filterText = document.getElementById('ticker-filter').value.toLowerCase();
             const tbody = document.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
             const header = document.getElementById('dynamic-metric-header');
             
-            // Update header text
             const select = document.getElementById('sort-method');
-            header.innerText = select.options[select.selectedIndex].text.replace('Sort by ', '');
+            const selectedText = select.options[select.selectedIndex].text;
+            header.innerText = selectedText;
 
-            // Sort rows
+            // Extract year from method if applicable
+            const yearMatch = method.match(/-(20\\d{2})$/);
+            const year = yearMatch ? yearMatch[1] : 'avg';
+
             rows.sort((a, b) => {
                 let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
                 let valB = parseFloat(b.getAttribute('data-' + method)) || 0;
                 
-                // For discount, lower is better (more negative)
-                if (method === 'discount') return valA - valB;
-                // For ROE, higher is better
-                return valB - valA;
+                // If both are 0 (likely N/A), put them at the end
+                if (valA === 0 && valB !== 0) return 1;
+                if (valB === 0 && valA !== 0) return -1;
+
+                if (method === 'discount' || method.startsWith('pe-') || method.startsWith('ps-') || method.startsWith('pb-') || method.includes('-avg') && !method.startsWith('roe')) {
+                    return valA - valB; // Ascending (Lower is better)
+                }
+                return valB - valA; // Descending (Higher is better)
             });
 
-            // Update visible cells and re-append rows
             rows.forEach(row => {
+                // Filter logic
+                const ticker = row.cells[0].innerText.toLowerCase();
+                const name = row.cells[1].innerText.toLowerCase();
+                const matches = ticker.includes(filterText) || name.includes(filterText);
+                row.style.display = matches ? '' : 'none';
+
                 const cell = row.querySelector('.dynamic-metric-cell');
                 const val = row.getAttribute('data-' + method);
+                const roeVal = row.getAttribute('data-roe-' + year);
                 
-                if (val !== null && val !== undefined) {
+                if (val !== null && val !== '0' && val !== 0) {
                     const numVal = parseFloat(val);
-                    cell.innerText = numVal.toFixed(1) + '%';
-                    // Color coding for ROE
-                    if (method.includes('roe')) {
-                        cell.style.color = numVal > 0 ? '#4ade80' : '#f87171';
+                    let displayStr = '';
+                    
+                    if (method.startsWith('roe')) {
+                        displayStr = numVal.toFixed(1) + '%';
+                        cell.style.color = numVal > 15 ? '#4ade80' : (numVal > 0 ? '#fbbf24' : '#f87171');
                     } else {
+                        displayStr = numVal.toFixed(2);
+                        if (roeVal) {
+                            displayStr += ' <span style="font-size: 0.8em; color: #94a3b8;">(ROE: ' + parseFloat(roeVal).toFixed(1) + '%)</span>';
+                        }
                         cell.style.color = '#38bdf8';
                     }
+                    cell.innerHTML = displayStr;
                 } else {
                     cell.innerText = 'N/A';
                     cell.style.color = '#94a3b8';
                 }
                 tbody.appendChild(row);
             });
-        });
+        }
+
+        document.getElementById('apply-sort').addEventListener('click', applySortAndFilter);
+        document.getElementById('ticker-filter').addEventListener('input', applySortAndFilter);
         
-        // Default sort on load
         window.addEventListener('load', () => {
-            document.getElementById('apply-sort').click();
+            applySortAndFilter();
         });
         </script>
         """
