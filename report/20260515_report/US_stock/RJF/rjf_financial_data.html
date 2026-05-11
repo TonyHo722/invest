@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raymond James Financial, Inc. (RJF) Financial Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 960px; margin: 0 auto; padding: 20px; color: #333; }
+        h1, h2, h3 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .good { color: green; font-weight: bold; }
+        .bad { color: red; font-weight: bold; }
+        .mixed { color: orange; font-weight: bold; }
+        .risk { color: red; font-weight: bold; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .chart-box h3 { margin: 0; padding: 10px 14px; background: #2c3e50; color: #fff; font-size: 14px; }
+        .chart-box iframe { display: block; width: 100%; border: none; }
+        .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
+        @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>Raymond James Financial, Inc. (RJF) Detailed Financial Data</h1>
+    <p>Automated Analysis Dashboard</p>
+
+    <h2>0. Stock Price Charts</h2>
+    
+    <div class="chart-grid">
+        <div class="chart-box">
+            <h3>📈 1-Year Price Chart (Daily)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:RJF&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+        <div class="chart-box">
+            <h3>📈 5-Year Price Chart (Weekly)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:RJF&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <h2>1. Market Position ("Big / 又大")</h2>
+    <table>
+        <tr><th>Indicator</th><th>Raymond James Financial, Inc. (RJF)</th></tr>
+        <tr><td>Sector</td><td>Financial Services</td></tr>
+        <tr><td>Market Cap</td><td>$30.14B</td></tr>
+        <tr><td>Current Price</td><td>$154.71</td></tr>
+    </table>
+
+    <h2>2. Operational and Financial Performance ("Good / 又好")</h2>
+    <table>
+        <tr><th>Year</th><th>Revenue</th><th>Gross Profit</th><th>Op. Profit</th><th>Net Income</th><th>EPS</th><th>Dividends</th><th>FCF</th><th>Buybacks</th></tr>
+        <tr><td><strong>2022</strong></td><td>10,851M</td><td>0M</td><td>0M</td><td>1,509M</td><td>7.16</td><td>1.78</td><td>-19M</td><td>216M</td></tr>
+<tr><td><strong>2023</strong></td><td>11,468M</td><td>0M</td><td>0M</td><td>1,739M</td><td>8.16</td><td>1.71</td><td>-3,687M</td><td>902M</td></tr>
+<tr><td><strong>2024</strong></td><td>12,639M</td><td>0M</td><td>0M</td><td>2,068M</td><td>9.94</td><td>1.35</td><td>1,950M</td><td>984M</td></tr>
+<tr><td><strong>2025</strong></td><td>13,842M</td><td>0M</td><td>0M</td><td>2,135M</td><td>10.53</td><td>2.00</td><td>2,246M</td><td>1,267M</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="good">📈 Good</td><td class="bad">📉 Bad</td><td class="bad">📉 Bad</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td></tr>
+    </table>
+
+    <h2>3. Efficiency and Return Metrics</h2>
+    <table>
+        <tr><th>Year</th><th>Gross Margin</th><th>Inventory Days</th><th>ROE</th><th>ROA</th></tr>
+        <tr><td><strong>2022</strong></td><td>0.0%</td><td>N/A</td><td>16.0%</td><td>1.9%</td></tr>
+<tr><td><strong>2023</strong></td><td>0.0%</td><td>N/A</td><td>17.0%</td><td>2.2%</td></tr>
+<tr><td><strong>2024</strong></td><td>0.0%</td><td>N/A</td><td>17.7%</td><td>2.5%</td></tr>
+<tr><td><strong>2025</strong></td><td>0.0%</td><td>N/A</td><td>17.1%</td><td>2.4%</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="bad">📉 Bad</td><td class="mixed">⚠️ N/A</td><td class="good">📈 Good</td><td class="good">📈 Good</td></tr>
+    </table>
+
+    <h2>4. Valuations - 3P Model ("Cheap / 又便宜")</h2>
+    <h3>4.1 Historical Annual Valuations</h3>
+    <table>
+        <tr><th>Year</th><th>P/S</th><th>P/E</th><th>P/B</th></tr>
+        <tr><td><strong>2022</strong></td><td>1.87</td><td>13.11</td><td>2.14</td></tr>
+<tr><td><strong>2023</strong></td><td>1.77</td><td>11.88</td><td>1.98</td></tr>
+<tr><td><strong>2024</strong></td><td>1.97</td><td>12.13</td><td>2.13</td></tr>
+<tr><td><strong>2025</strong></td><td>2.05</td><td>14.60</td><td>2.40</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="mixed">⚠️ MIXED</td><td class="mixed">⚠️ MIXED</td><td class="mixed">⚠️ MIXED</td></tr>
+    </table>
+
+    <h3>4.2 Recent Quarterly Valuations (Past 4Q)</h3>
+    <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">* Values are TTM (Trailing Twelve Months) where available. <strong>(A)</strong> indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.</p>
+    <table>
+        <tr><th>Quarter</th><th>P/S</th><th>P/E</th><th>P/B</th></tr>
+        <tr><td>2025-06</td><td>3.04</td><td>33.50</td><td>2.52</td></tr><tr><td>2025-09</td><td>2.37</td><td>21.67</td><td>2.63</td></tr><tr><td>2025-12</td><td>2.27</td><td>15.26</td><td>2.53</td></tr><tr><td>2026-03</td><td>2.65</td><td>13.28</td><td>2.25</td></tr>
+    </table>
+
+    <h2>5. Framework Assessment</h2>
+    <table>
+        <tr><th>Criterion</th><th>Status</th><th>Notes</th></tr>
+        <tr><td>Big (又大)</td><td class="good">✅ PASS</td><td>Market Cap: $30.14B</td></tr>
+<tr><td>Good (又好)</td><td class="mixed">📈 Good</td><td>Automated check of 4-year financial trajectory.</td></tr>
+<tr><td>Cheap (又便宜)</td><td class="good">✅ PASS</td><td>Current Price: $154.71</td></tr>
+<tr><td>Upside Potential</td><td class="mixed">⚠️ MIXED</td><td>Further qualitative analysis required for upside potential.</td></tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener: Mega-Cap Value (JP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Market Value Screener (JP)</h1>
+            <p class="subtitle">Target: Nikkei 225 Index (223 stocks) | Generated: 2026-06-27 20:10:49</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">20</div>
+                <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 1.25rem; line-height: 2.2rem; font-weight: 600;">Nikkei 225 Index</div>
+                <div class="stat-label">Target Index</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">223</div>
+                <div class="stat-label">Scanned Targets</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">> $10B</div>
+                <div class="stat-label">Market Cap Filter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">200-DMA</div>
+                <div class="stat-label">Technical Level</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Company Name</th>
+                        <th class="mcap" style="text-align: right">Market Cap</th>
+                        <th style="text-align: right">Price</th>
+                        <th class="dma-col" style="text-align: right">200-DMA</th>
+                        <th style="text-align: right">% Discount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td><span class="ticker-badge">7974.T</span></td>
+                        <td>NINTENDO CO LTD</td>
+                        <td class="mcap" style="text-align: right">7595.99B JPY</td>
+                        <td class="price" style="text-align: right">6589.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">10113.10 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-34.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8267.T</span></td>
+                        <td>AEON CO LTD</td>
+                        <td class="mcap" style="text-align: right">3614.60B JPY</td>
+                        <td class="price" style="text-align: right">1306.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1994.26 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-34.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3659.T</span></td>
+                        <td>NEXON CO LTD</td>
+                        <td class="mcap" style="text-align: right">1689.08B JPY</td>
+                        <td class="price" style="text-align: right">2136.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3164.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-32.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9501.T</span></td>
+                        <td>TOKYO ELEC POWER CO HLDGS INC</td>
+                        <td class="mcap" style="text-align: right">731.79B JPY</td>
+                        <td class="price" style="text-align: right">456.60 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">666.50 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-31.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3697.T</span></td>
+                        <td>SHIFT INC</td>
+                        <td class="mcap" style="text-align: right">157.71B JPY</td>
+                        <td class="price" style="text-align: right">617.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">879.71 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-29.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4506.T</span></td>
+                        <td>SUMITOMO PHARMA CO LTD</td>
+                        <td class="mcap" style="text-align: right">647.77B JPY</td>
+                        <td class="price" style="text-align: right">1444.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2010.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-28.19%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9602.T</span></td>
+                        <td>TOHO CO LTD</td>
+                        <td class="mcap" style="text-align: right">1049.80B JPY</td>
+                        <td class="price" style="text-align: right">1262.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1611.74 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4755.T</span></td>
+                        <td>RAKUTEN GROUP INC</td>
+                        <td class="mcap" style="text-align: right">1500.28B JPY</td>
+                        <td class="price" style="text-align: right">690.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">877.23 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6701.T</span></td>
+                        <td>NEC CORP</td>
+                        <td class="mcap" style="text-align: right">5033.48B JPY</td>
+                        <td class="price" style="text-align: right">3795.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4716.30 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-19.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7201.T</span></td>
+                        <td>NISSAN MOTOR CO</td>
+                        <td class="mcap" style="text-align: right">1048.91B JPY</td>
+                        <td class="price" style="text-align: right">300.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">371.45 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-19.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4568.T</span></td>
+                        <td>DAIICHI SANKYO COMPANY LIMITED</td>
+                        <td class="mcap" style="text-align: right">4613.73B JPY</td>
+                        <td class="price" style="text-align: right">2535.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3129.43 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-18.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7270.T</span></td>
+                        <td>SUBARU CORPORATION</td>
+                        <td class="mcap" style="text-align: right">1717.74B JPY</td>
+                        <td class="price" style="text-align: right">2401.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2909.98 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-17.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9766.T</span></td>
+                        <td>KONAMI GROUP CORPORATION</td>
+                        <td class="mcap" style="text-align: right">2342.42B JPY</td>
+                        <td class="price" style="text-align: right">17280.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">20807.31 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9022.T</span></td>
+                        <td>CENTRAL JAPAN RAILWAY CO</td>
+                        <td class="mcap" style="text-align: right">3260.16B JPY</td>
+                        <td class="price" style="text-align: right">3420.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4104.71 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4307.T</span></td>
+                        <td>NOMURA RESEARCH INSTITUTE</td>
+                        <td class="mcap" style="text-align: right">2411.04B JPY</td>
+                        <td class="price" style="text-align: right">4301.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5156.63 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7011.T</span></td>
+                        <td>MITSUBISHI HEAVY INDUSTRIES</td>
+                        <td class="mcap" style="text-align: right">11985.87B JPY</td>
+                        <td class="price" style="text-align: right">3567.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4256.44 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5411.T</span></td>
+                        <td>JFE HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">984.42B JPY</td>
+                        <td class="price" style="text-align: right">1547.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1843.19 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4661.T</span></td>
+                        <td>ORIENTAL LAND CO</td>
+                        <td class="mcap" style="text-align: right">3932.86B JPY</td>
+                        <td class="price" style="text-align: right">2398.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2854.29 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6753.T</span></td>
+                        <td>SHARP CORP</td>
+                        <td class="mcap" style="text-align: right">393.61B JPY</td>
+                        <td class="price" style="text-align: right">606.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">717.97 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6758.T</span></td>
+                        <td>SONY GROUP CORPORATION</td>
+                        <td class="mcap" style="text-align: right">18841.68B JPY</td>
+                        <td class="price" style="text-align: right">3199.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3782.22 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.42%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer class="footer">
+            <p>Data provided by Yahoo Finance & Wikipedia Analysts. Generated on 2026-06-27 20:10:49</p>
+        </footer>
+    </div>
+</body>
+</html>

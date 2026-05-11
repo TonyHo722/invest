@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Screener: Mega-Cap Value (US)
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+   .ticker-badge {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .ticker-badge:hover {
+            filter: brightness(1.2);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <header>
+    <h1>
+     Market Value Screener (US)
+    </h1>
+    <p class="subtitle">
+     Target: S&amp;P 100 + NASDAQ 100 (168 stocks) | Generated: 2026-06-27 20:10:49 - Generated when 2026-06-27 20:10:53
+    </p>
+    <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+     <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Filter:
+      </span>
+      <input id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 100%; min-width: 100px;" type="text"/>
+     </div>
+     <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Metric:
+      </span>
+      <select id="metric-type" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
+       <option value="dma">
+        200-DMA
+       </option>
+       <option value="roe">
+        ROE
+       </option>
+       <option value="pe">
+        P/E
+       </option>
+       <option value="ps">
+        P/S
+       </option>
+       <option value="pb">
+        P/B
+       </option>
+      </select>
+     </div>
+     <div id="range-container" style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Range:
+      </span>
+      <select id="metric-range" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
+       <option value="avg">
+        Average
+       </option>
+       <option value="TTM">
+        TTM
+       </option>
+       <option value="2026">
+        2026
+       </option>
+       <option value="2025">
+        2025
+       </option>
+       <option value="2024">
+        2024
+       </option>
+       <option value="2023">
+        2023
+       </option>
+       <option value="2022">
+        2022
+       </option>
+       <option value="2021">
+        2021
+       </option>
+      </select>
+     </div>
+     <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 10px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; width: 100%;">
+      Apply
+     </button>
+    </div>
+   </header>
+   <div class="stats-grid">
+    <div class="stat-card">
+     <div class="stat-value">
+      20
+     </div>
+     <div class="stat-label">
+      Companies Found
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value" style="font-size: 1.25rem; line-height: 2.2rem; font-weight: 600;">
+      S&amp;P 100 + NASDAQ 100
+     </div>
+     <div class="stat-label">
+      Target Index
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      168
+     </div>
+     <div class="stat-label">
+      Scanned Targets
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      &gt; $10B
+     </div>
+     <div class="stat-label">
+      Market Cap Filter
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      200-DMA
+     </div>
+     <div class="stat-label">
+      Technical Level
+     </div>
+    </div>
+   </div>
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th>
+        Ticker
+       </th>
+       <th>
+        Company Name
+       </th>
+       <th class="mcap" style="text-align: right">
+        Market Cap
+       </th>
+       <th style="text-align: right">
+        Price
+       </th>
+       <th class="dma-col" style="text-align: right">
+        200-DMA
+       </th>
+       <th style="text-align: right">
+        % Discount
+       </th>
+       <th id="dynamic-metric-header" style="text-align: right">
+        Metric
+       </th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr data-discount="-55.74">
+       <td>
+        <a href="US_stock/MSTR/mstr_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          MSTR
+         </span>
+        </a>
+       </td>
+       <td>
+        Strategy Inc
+       </td>
+       <td class="mcap" style="text-align: right">
+        29.45B USD
+       </td>
+       <td class="price" style="text-align: right">
+        82.31 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        185.95 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -55.74%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-47.62">
+       <td>
+        <a href="US_stock/INTU/intu_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          INTU
+         </span>
+        </a>
+       </td>
+       <td>
+        Intuit Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        73.23B USD
+       </td>
+       <td class="price" style="text-align: right">
+        267.72 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        511.14 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -47.62%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-41.76">
+       <td>
+        <a href="US_stock/ACN/acn_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ACN
+         </span>
+        </a>
+       </td>
+       <td>
+        Accenture plc
+       </td>
+       <td class="mcap" style="text-align: right">
+        78.93B USD
+       </td>
+       <td class="price" style="text-align: right">
+        128.98 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        221.46 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -41.76%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-40.93">
+       <td>
+        <a href="US_stock/CTSH/ctsh_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          CTSH
+         </span>
+        </a>
+       </td>
+       <td>
+        Cognizant Technology Solutions
+       </td>
+       <td class="mcap" style="text-align: right">
+        18.93B USD
+       </td>
+       <td class="price" style="text-align: right">
+        39.15 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        66.28 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -40.93%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-36.37">
+       <td>
+        <a href="US_stock/ZS/zs_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ZS
+         </span>
+        </a>
+       </td>
+       <td>
+        Zscaler, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        21.39B USD
+       </td>
+       <td class="price" style="text-align: right">
+        132.26 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        207.86 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -36.37%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-35.85">
+       <td>
+        <a href="US_stock/CHTR/chtr_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          CHTR
+         </span>
+        </a>
+       </td>
+       <td>
+        Charter Communications, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        20.94B USD
+       </td>
+       <td class="price" style="text-align: right">
+        133.64 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        208.34 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -35.85%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-32.22">
+       <td>
+        <a href="US_stock/INSM/insm_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          INSM
+         </span>
+        </a>
+       </td>
+       <td>
+        Insmed Incorporated
+       </td>
+       <td class="mcap" style="text-align: right">
+        22.41B USD
+       </td>
+       <td class="price" style="text-align: right">
+        103.38 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        152.52 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -32.22%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-30.44">
+       <td>
+        <a href="US_stock/ADBE/adbe_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ADBE
+         </span>
+        </a>
+       </td>
+       <td>
+        Adobe Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        80.59B USD
+       </td>
+       <td class="price" style="text-align: right">
+        202.73 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        291.45 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -30.44%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-30.01">
+       <td>
+        <a href="US_stock/PDD/pdd_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          PDD
+         </span>
+        </a>
+       </td>
+       <td>
+        PDD Holdings Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        108.96B USD
+       </td>
+       <td class="price" style="text-align: right">
+        76.55 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        109.37 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -30.01%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-29.73">
+       <td>
+        <a href="US_stock/WDAY/wday_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          WDAY
+         </span>
+        </a>
+       </td>
+       <td>
+        Workday, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        30.68B USD
+       </td>
+       <td class="price" style="text-align: right">
+        124.21 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        176.77 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -29.73%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-28.91">
+       <td>
+        <a href="US_stock/PLTR/pltr_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          PLTR
+         </span>
+        </a>
+       </td>
+       <td>
+        Palantir Technologies Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        270.73B USD
+       </td>
+       <td class="price" style="text-align: right">
+        112.93 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        158.85 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -28.91%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-28.56">
+       <td>
+        <a href="US_stock/NKE/nke_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          NKE
+         </span>
+        </a>
+       </td>
+       <td>
+        Nike, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        60.35B USD
+       </td>
+       <td class="price" style="text-align: right">
+        40.90 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        57.25 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -28.56%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-28.38">
+       <td>
+        <a href="US_stock/TRI/tri_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          TRI
+         </span>
+        </a>
+       </td>
+       <td>
+        Thomson Reuters Corp
+       </td>
+       <td class="mcap" style="text-align: right">
+        36.61B USD
+       </td>
+       <td class="price" style="text-align: right">
+        81.01 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        113.11 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -28.38%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-27.13">
+       <td>
+        <a href="US_stock/NFLX/nflx_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          NFLX
+         </span>
+        </a>
+       </td>
+       <td>
+        Netflix, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        310.80B USD
+       </td>
+       <td class="price" style="text-align: right">
+        70.90 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        97.30 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -27.13%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-26.9">
+       <td>
+        <a href="US_stock/NOW/now_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          NOW
+         </span>
+        </a>
+       </td>
+       <td>
+        ServiceNow, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        101.42B USD
+       </td>
+       <td class="price" style="text-align: right">
+        98.34 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        134.53 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -26.90%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-26.35">
+       <td>
+        <a href="US_stock/ADSK/adsk_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ADSK
+         </span>
+        </a>
+       </td>
+       <td>
+        Autodesk, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        41.44B USD
+       </td>
+       <td class="price" style="text-align: right">
+        196.26 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        266.47 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -26.35%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-25.59">
+       <td>
+        <a href="US_stock/CRM/crm_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          CRM
+         </span>
+        </a>
+       </td>
+       <td>
+        Salesforce, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        129.71B USD
+       </td>
+       <td class="price" style="text-align: right">
+        158.37 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        212.83 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -25.59%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-24.8">
+       <td>
+        <a href="US_stock/ORCL/orcl_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ORCL
+         </span>
+        </a>
+       </td>
+       <td>
+        Oracle Corporation
+       </td>
+       <td class="mcap" style="text-align: right">
+        427.84B USD
+       </td>
+       <td class="price" style="text-align: right">
+        152.46 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        202.74 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -24.80%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-21.3">
+       <td>
+        <a href="US_stock/ALNY/alny_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          ALNY
+         </span>
+        </a>
+       </td>
+       <td>
+        Alnylam Pharmaceuticals, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        38.90B USD
+       </td>
+       <td class="price" style="text-align: right">
+        291.37 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        370.21 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -21.30%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-19.44">
+       <td>
+        <a href="US_stock/CPRT/cprt_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          CPRT
+         </span>
+        </a>
+       </td>
+       <td>
+        Copart, Inc.
+       </td>
+       <td class="mcap" style="text-align: right">
+        28.28B USD
+       </td>
+       <td class="price" style="text-align: right">
+        30.55 USD
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        37.92 USD
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -19.44%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <footer class="footer">
+    <p>
+     Data provided by Yahoo Finance &amp; Wikipedia Analysts. Generated on 2026-06-27 20:10:49
+    </p>
+   </footer>
+  </div>
+  <script>
+   function applySortAndFilter() {
+            const type = document.getElementById('metric-type').value;
+            const range = document.getElementById('metric-range').value;
+            const filterText = document.getElementById('ticker-filter').value.toLowerCase();
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const header = document.getElementById('dynamic-metric-header');
+            const rangeContainer = document.getElementById('range-container');
+
+            // Construct method key and handle UI state
+            let method = '';
+            let label = '';
+            
+            if (type === 'dma') {
+                method = 'discount';
+                label = '200-DMA % Discount';
+                rangeContainer.style.opacity = '0.3';
+                rangeContainer.style.pointerEvents = 'none';
+            } else {
+                method = type + '-' + range;
+                const typeLabel = type === 'roe' ? 'ROE' : type.toUpperCase();
+                const rangeLabel = range === 'avg' ? 'Average' : range;
+                label = typeLabel + ' (' + rangeLabel + ')';
+                rangeContainer.style.opacity = '1';
+                rangeContainer.style.pointerEvents = 'auto';
+            }
+            
+            header.innerText = label;
+
+            rows.sort((a, b) => {
+                let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
+                let valB = parseFloat(b.getAttribute('data-' + method)) || 0;
+                
+                // If both are 0 (likely N/A), put them at the end
+                if (valA === 0 && valB !== 0) return 1;
+                if (valB === 0 && valA !== 0) return -1;
+
+                // Ascending (Lower is better) for valuations and DMA discount
+                if (type === 'dma' || type === 'pe' || type === 'ps' || type === 'pb') {
+                    return valA - valB;
+                }
+                // Descending (Higher is better) for ROE
+                return valB - valA;
+            });
+
+            rows.forEach(row => {
+                // Filter logic
+                const ticker = row.cells[0].innerText.toLowerCase();
+                const name = row.cells[1].innerText.toLowerCase();
+                const matches = ticker.includes(filterText) || name.includes(filterText);
+                row.style.display = matches ? '' : 'none';
+
+                const cell = row.querySelector('.dynamic-metric-cell');
+                const val = row.getAttribute('data-' + method);
+                const roeVal = row.getAttribute('data-roe-' + range);
+                
+                if (val !== null && val !== '0' && val !== 0) {
+                    const numVal = parseFloat(val);
+                    let displayStr = '';
+                    
+                    if (type === 'roe') {
+                        displayStr = numVal.toFixed(1) + '%';
+                        cell.style.color = numVal > 15 ? '#4ade80' : (numVal > 0 ? '#fbbf24' : '#f87171');
+                    } else if (type === 'dma') {
+                        displayStr = numVal.toFixed(2) + '%';
+                        cell.style.color = '#38bdf8';
+                    } else {
+                        displayStr = numVal.toFixed(2);
+                        if (roeVal && type !== 'roe') {
+                            displayStr += ' <span style="font-size: 0.8em; color: #94a3b8;">(ROE: ' + parseFloat(roeVal).toFixed(1) + '%)</span>';
+                        }
+                        cell.style.color = '#38bdf8';
+                    }
+                    cell.innerHTML = displayStr;
+                } else {
+                    cell.innerText = 'N/A';
+                    cell.style.color = '#94a3b8';
+                }
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('apply-sort').addEventListener('click', applySortAndFilter);
+        document.getElementById('ticker-filter').addEventListener('input', applySortAndFilter);
+        document.getElementById('metric-type').addEventListener('change', applySortAndFilter);
+        document.getElementById('metric-range').addEventListener('change', applySortAndFilter);
+        
+        window.addEventListener('load', () => {
+            applySortAndFilter();
+        });
+  </script>
+ </body>
+</html>

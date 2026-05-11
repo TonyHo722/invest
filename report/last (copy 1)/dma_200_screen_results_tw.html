@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener: Mega-Cap Value (TW)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Market Value Screener</h1>
+            <p class="subtitle">Mega-Cap (TW) Below 200-DMA - Generated when 2026-06-27 12:47:08</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">187</div>
+                <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">> $10B</div>
+                <div class="stat-label">Market Cap Filter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">200-DMA</div>
+                <div class="stat-label">Technical Level</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Company Name</th>
+                        <th class="mcap" style="text-align: right">Market Cap</th>
+                        <th style="text-align: right">Price</th>
+                        <th class="dma-col" style="text-align: right">200-DMA</th>
+                        <th style="text-align: right">% Discount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td><span class="ticker-badge">6535.TWO</span></td>
+                        <td>LUMOSA THERAPEUTICS CO LTD (順藥)</td>
+                        <td class="mcap" style="text-align: right">16.25B TWD</td>
+                        <td class="price" style="text-align: right">97.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">183.20 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-47.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5314.TWO</span></td>
+                        <td>MYSON-CENTURY TECHNOLOGY INC (世紀*)</td>
+                        <td class="mcap" style="text-align: right">16.01B TWD</td>
+                        <td class="price" style="text-align: right">55.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">92.67 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-40.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7818.TW</span></td>
+                        <td>KEMFLO INTERNATIONAL CO.  LTD. (溢泰實業)</td>
+                        <td class="mcap" style="text-align: right">10.56B TWD</td>
+                        <td class="price" style="text-align: right">62.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">101.56 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-38.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2543.TW</span></td>
+                        <td>HWANG CHANG GENERAL CONTRACTOR  (皇昌)</td>
+                        <td class="mcap" style="text-align: right">19.73B TWD</td>
+                        <td class="price" style="text-align: right">38.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">60.80 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-37.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6919.TW</span></td>
+                        <td>CALIWAY BIOPHARMACEUTICALS CO L (康霈*)</td>
+                        <td class="mcap" style="text-align: right">152.68B TWD</td>
+                        <td class="price" style="text-align: right">98.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">142.39 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-31.10%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7722.TW</span></td>
+                        <td>LINE PAY TAIWAN LIMITED (LINEPAY)</td>
+                        <td class="mcap" style="text-align: right">21.76B TWD</td>
+                        <td class="price" style="text-align: right">320.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">451.22 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-29.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2530.TW</span></td>
+                        <td>DELPHA CONSTRUCTION CORP (華建)</td>
+                        <td class="mcap" style="text-align: right">15.52B TWD</td>
+                        <td class="price" style="text-align: right">18.45 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">25.79 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-28.46%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9910.TW</span></td>
+                        <td>FENG TAY ENTERPRISE CO LTD (豐泰)</td>
+                        <td class="mcap" style="text-align: right">68.63B TWD</td>
+                        <td class="price" style="text-align: right">69.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">96.10 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-27.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2072.TW</span></td>
+                        <td>CENTURY WIND POWER (世紀風電)</td>
+                        <td class="mcap" style="text-align: right">31.58B TWD</td>
+                        <td class="price" style="text-align: right">164.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">227.03 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-27.54%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1795.TW</span></td>
+                        <td>LOTUS PHARMACEUTICAL CO (美時)</td>
+                        <td class="mcap" style="text-align: right">48.09B TWD</td>
+                        <td class="price" style="text-align: right">183.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">252.53 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-27.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7786.TW</span></td>
+                        <td>DONG FANG OFFSHORE CO LTD (東方風能)</td>
+                        <td class="mcap" style="text-align: right">21.92B TWD</td>
+                        <td class="price" style="text-align: right">125.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">171.94 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-27.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6188.TWO</span></td>
+                        <td>QUANTA STORAGE (廣明)</td>
+                        <td class="mcap" style="text-align: right">20.43B TWD</td>
+                        <td class="price" style="text-align: right">73.40 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">98.10 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-25.18%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6873.TW</span></td>
+                        <td>HD RENEWABLE ENERGY CO LTD (泓德能源)</td>
+                        <td class="mcap" style="text-align: right">11.10B TWD</td>
+                        <td class="price" style="text-align: right">79.40 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">105.52 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-24.75%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6469.TWO</span></td>
+                        <td>GREAT TREE PHARMACY CO LTD (大樹)</td>
+                        <td class="mcap" style="text-align: right">10.92B TWD</td>
+                        <td class="price" style="text-align: right">72.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">95.53 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-23.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8937.TWO</span></td>
+                        <td>HER CHEE INDUSTRIAL CO (合騏*)</td>
+                        <td class="mcap" style="text-align: right">11.81B TWD</td>
+                        <td class="price" style="text-align: right">27.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">36.41 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-23.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2371.TW</span></td>
+                        <td>TATUNG CO LTD (大同)</td>
+                        <td class="mcap" style="text-align: right">53.61B TWD</td>
+                        <td class="price" style="text-align: right">26.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">33.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-22.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6176.TW</span></td>
+                        <td>RADIANT OPTO-ELECTRONICS CORP (瑞儀)</td>
+                        <td class="mcap" style="text-align: right">40.36B TWD</td>
+                        <td class="price" style="text-align: right">87.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">112.30 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-21.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3078.TWO</span></td>
+                        <td>CHANNEL WELL TECHNOLOGY CO.LTD (僑威)</td>
+                        <td class="mcap" style="text-align: right">11.82B TWD</td>
+                        <td class="price" style="text-align: right">52.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">66.33 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-21.61%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4585.TW</span></td>
+                        <td>TECHMAN ROBOT INC (達明)</td>
+                        <td class="mcap" style="text-align: right">30.91B TWD</td>
+                        <td class="price" style="text-align: right">295.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">376.12 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-21.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6541.TW</span></td>
+                        <td>TANVEX BIOPHARMA INC (泰福-KY)</td>
+                        <td class="mcap" style="text-align: right">10.22B TWD</td>
+                        <td class="price" style="text-align: right">38.55 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">48.90 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-21.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6472.TW</span></td>
+                        <td>BORA PHARMACEUTICALS CO LTD (保瑞)</td>
+                        <td class="mcap" style="text-align: right">52.48B TWD</td>
+                        <td class="price" style="text-align: right">412.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">521.42 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-20.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9802.TW</span></td>
+                        <td>FULGENT SUN INTERNATIONAL CO LT (鈺齊-KY)</td>
+                        <td class="mcap" style="text-align: right">14.57B TWD</td>
+                        <td class="price" style="text-align: right">72.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">91.58 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-20.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8478.TW</span></td>
+                        <td>ALEXANDER MARINE CO LTD (東哥遊艇)</td>
+                        <td class="mcap" style="text-align: right">13.77B TWD</td>
+                        <td class="price" style="text-align: right">146.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">182.34 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-19.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4441.TW</span></td>
+                        <td>GREAT GIANT FIBRE GARMENT CO LT (振大環球)</td>
+                        <td class="mcap" style="text-align: right">12.95B TWD</td>
+                        <td class="price" style="text-align: right">190.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">235.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-19.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4743.TWO</span></td>
+                        <td>ONENESS BIOTECH CO LTD (合一)</td>
+                        <td class="mcap" style="text-align: right">23.08B TWD</td>
+                        <td class="price" style="text-align: right">48.15 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">59.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-19.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1477.TW</span></td>
+                        <td>MAKALOT INDUSTRIAL CO (聚陽)</td>
+                        <td class="mcap" style="text-align: right">53.29B TWD</td>
+                        <td class="price" style="text-align: right">216.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">265.57 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-18.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6768.TW</span></td>
+                        <td>SPORTS GEAR CO LTD (志強-KY)</td>
+                        <td class="mcap" style="text-align: right">15.47B TWD</td>
+                        <td class="price" style="text-align: right">77.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">94.53 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-18.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5371.TWO</span></td>
+                        <td>CORETRONICS CORP (中光電)</td>
+                        <td class="mcap" style="text-align: right">28.74B TWD</td>
+                        <td class="price" style="text-align: right">71.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">87.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-18.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3005.TW</span></td>
+                        <td>GETAC HOLDINGS CORP (神基)</td>
+                        <td class="mcap" style="text-align: right">59.93B TWD</td>
+                        <td class="price" style="text-align: right">96.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">116.95 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-17.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2208.TW</span></td>
+                        <td>CSBC CORPORATION TAIWAN (台船)</td>
+                        <td class="mcap" style="text-align: right">21.92B TWD</td>
+                        <td class="price" style="text-align: right">17.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">20.95 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-17.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1536.TW</span></td>
+                        <td>HOTA INDUSTRIAL MFG CO (和大)</td>
+                        <td class="mcap" style="text-align: right">13.14B TWD</td>
+                        <td class="price" style="text-align: right">47.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">57.08 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-17.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1707.TW</span></td>
+                        <td>GRAPE KING BIO LTD (葡萄王)</td>
+                        <td class="mcap" style="text-align: right">14.13B TWD</td>
+                        <td class="price" style="text-align: right">95.40 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">115.04 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-17.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2539.TW</span></td>
+                        <td>SAKURA DEVELOPMENT CO (櫻花建)</td>
+                        <td class="mcap" style="text-align: right">45.46B TWD</td>
+                        <td class="price" style="text-align: right">38.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">45.93 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-17.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9958.TW</span></td>
+                        <td>CENTURY IRON & STEEL INDUSTRIAL (世紀鋼)</td>
+                        <td class="mcap" style="text-align: right">27.65B TWD</td>
+                        <td class="price" style="text-align: right">112.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">134.72 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-16.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5508.TWO</span></td>
+                        <td>YUNSHIN CONSTRUCTION & DEVELOPM (永信建)</td>
+                        <td class="mcap" style="text-align: right">11.65B TWD</td>
+                        <td class="price" style="text-align: right">53.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">64.33 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-16.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2231.TW</span></td>
+                        <td>CUB ELECPARTS INC. (為升)</td>
+                        <td class="mcap" style="text-align: right">11.99B TWD</td>
+                        <td class="price" style="text-align: right">88.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">105.51 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-16.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4772.TWO</span></td>
+                        <td>TSC (台特化)</td>
+                        <td class="mcap" style="text-align: right">38.47B TWD</td>
+                        <td class="price" style="text-align: right">260.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">311.27 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-16.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4763.TW</span></td>
+                        <td>JINAN ACETATE CHEMICAL CO. (材料*-KY)</td>
+                        <td class="mcap" style="text-align: right">43.03B TWD</td>
+                        <td class="price" style="text-align: right">43.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">51.65 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-15.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1736.TW</span></td>
+                        <td>JOHNSON HEALTH TECH (喬山)</td>
+                        <td class="mcap" style="text-align: right">35.95B TWD</td>
+                        <td class="price" style="text-align: right">118.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">140.39 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-15.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6854.TW</span></td>
+                        <td>PLAYNITRIDE INC (錼創科技-KY創)</td>
+                        <td class="mcap" style="text-align: right">14.17B TWD</td>
+                        <td class="price" style="text-align: right">121.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">142.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-15.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1476.TW</span></td>
+                        <td>ECLAT TEXTILE CO (儒鴻)</td>
+                        <td class="mcap" style="text-align: right">86.56B TWD</td>
+                        <td class="price" style="text-align: right">315.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">371.73 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-15.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1504.TW</span></td>
+                        <td>TECO ELECTRIC & MACHINERY CO (東元)</td>
+                        <td class="mcap" style="text-align: right">159.25B TWD</td>
+                        <td class="price" style="text-align: right">67.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">79.97 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-15.09%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9938.TW</span></td>
+                        <td>TAIWAN PAIHO (百和)</td>
+                        <td class="mcap" style="text-align: right">12.89B TWD</td>
+                        <td class="price" style="text-align: right">43.25 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">50.72 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-14.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2385.TW</span></td>
+                        <td>CHICONY ELECTRONICS (群光)</td>
+                        <td class="mcap" style="text-align: right">74.80B TWD</td>
+                        <td class="price" style="text-align: right">102.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">119.40 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-14.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4583.TW</span></td>
+                        <td>APEX DYNAMICS INC (台灣精銳)</td>
+                        <td class="mcap" style="text-align: right">46.18B TWD</td>
+                        <td class="price" style="text-align: right">576.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">671.82 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-14.26%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1215.TW</span></td>
+                        <td>CHAROEN POKPHAND ENTERPRISES CO (卜蜂)</td>
+                        <td class="mcap" style="text-align: right">33.61B TWD</td>
+                        <td class="price" style="text-align: right">114.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">132.76 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-14.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2201.TW</span></td>
+                        <td>YULON MOTOR CO (裕隆)</td>
+                        <td class="mcap" style="text-align: right">28.47B TWD</td>
+                        <td class="price" style="text-align: right">26.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">31.07 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-13.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4968.TW</span></td>
+                        <td>RICHWAVE TECHNOLOGY CORPORATION (立積)</td>
+                        <td class="mcap" style="text-align: right">10.19B TWD</td>
+                        <td class="price" style="text-align: right">110.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">127.74 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-13.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2524.TW</span></td>
+                        <td>KINGS TOWN CONSTRUCTION CO (京城)</td>
+                        <td class="mcap" style="text-align: right">12.88B TWD</td>
+                        <td class="price" style="text-align: right">35.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">40.68 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-13.47%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6125.TWO</span></td>
+                        <td>KENMEC MECHANICAL ENGINEERING (廣運)</td>
+                        <td class="mcap" style="text-align: right">14.76B TWD</td>
+                        <td class="price" style="text-align: right">57.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">65.81 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-13.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2101.TW</span></td>
+                        <td>NAN KANG RUBBER TIRE (南港)</td>
+                        <td class="mcap" style="text-align: right">22.46B TWD</td>
+                        <td class="price" style="text-align: right">31.15 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">35.92 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-13.28%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1231.TW</span></td>
+                        <td>LIAN HWA FOODS CORP (聯華食)</td>
+                        <td class="mcap" style="text-align: right">26.00B TWD</td>
+                        <td class="price" style="text-align: right">87.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">99.46 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1319.TW</span></td>
+                        <td>TONG YANG INDUSTRY (東陽)</td>
+                        <td class="mcap" style="text-align: right">45.72B TWD</td>
+                        <td class="price" style="text-align: right">77.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">88.24 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4770.TW</span></td>
+                        <td>ALLIED SUPREME CORP (上品)</td>
+                        <td class="mcap" style="text-align: right">16.79B TWD</td>
+                        <td class="price" style="text-align: right">210.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">239.40 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.28%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3013.TW</span></td>
+                        <td>CHENMING ELECTRONIC TECHNOLOGY  (晟銘電)</td>
+                        <td class="mcap" style="text-align: right">21.13B TWD</td>
+                        <td class="price" style="text-align: right">103.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">117.40 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.26%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9904.TW</span></td>
+                        <td>POU CHEN (寶成)</td>
+                        <td class="mcap" style="text-align: right">74.55B TWD</td>
+                        <td class="price" style="text-align: right">25.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">28.83 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.25%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2607.TW</span></td>
+                        <td>EVERGREEN INTL STORAGE TRANSPOR (榮運)</td>
+                        <td class="mcap" style="text-align: right">25.85B TWD</td>
+                        <td class="price" style="text-align: right">48.45 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.10 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-12.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2258.TW</span></td>
+                        <td>FOXTRON VEHICLE TECHS CO LTD (鴻華先進-創)</td>
+                        <td class="mcap" style="text-align: right">55.01B TWD</td>
+                        <td class="price" style="text-align: right">31.55 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">35.77 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2348.TW</span></td>
+                        <td>HIYES INTERNATIONAL CO LTD (海悅)</td>
+                        <td class="mcap" style="text-align: right">10.65B TWD</td>
+                        <td class="price" style="text-align: right">70.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">79.59 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5222.TW</span></td>
+                        <td>TRANSCOM INC (全訊)</td>
+                        <td class="mcap" style="text-align: right">10.66B TWD</td>
+                        <td class="price" style="text-align: right">117.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">132.53 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1903.TW</span></td>
+                        <td>SHIHLIN PAPER CORP (士紙)</td>
+                        <td class="mcap" style="text-align: right">12.08B TWD</td>
+                        <td class="price" style="text-align: right">46.45 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">52.57 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9921.TW</span></td>
+                        <td>GIANT MANUFACTURING CO (巨大)</td>
+                        <td class="mcap" style="text-align: right">29.99B TWD</td>
+                        <td class="price" style="text-align: right">76.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">86.51 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2247.TW</span></td>
+                        <td>PAN GERMAN UNIVERSAL MOTORS LTD (汎德永業)</td>
+                        <td class="mcap" style="text-align: right">18.64B TWD</td>
+                        <td class="price" style="text-align: right">231.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">260.74 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9914.TW</span></td>
+                        <td>MERIDA INDUSTRY (美利達)</td>
+                        <td class="mcap" style="text-align: right">22.01B TWD</td>
+                        <td class="price" style="text-align: right">73.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">83.07 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3701.TW</span></td>
+                        <td>FIC GLOBAL INC (大眾控)</td>
+                        <td class="mcap" style="text-align: right">10.29B TWD</td>
+                        <td class="price" style="text-align: right">43.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">48.99 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2498.TW</span></td>
+                        <td>HTC CORPORATION (宏達電)</td>
+                        <td class="mcap" style="text-align: right">35.87B TWD</td>
+                        <td class="price" style="text-align: right">42.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">48.29 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6230.TW</span></td>
+                        <td>NIDEC CHAUN-CHOUNG TECHNOLOGY C (尼得科超眾)</td>
+                        <td class="mcap" style="text-align: right">10.53B TWD</td>
+                        <td class="price" style="text-align: right">122.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">137.13 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-11.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2354.TW</span></td>
+                        <td>FOXCONN TECH CO (鴻準)</td>
+                        <td class="mcap" style="text-align: right">77.66B TWD</td>
+                        <td class="price" style="text-align: right">54.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">61.36 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-10.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6753.TW</span></td>
+                        <td>LUNGTEH SHIPBUILDING CO LTD (龍德造船)</td>
+                        <td class="mcap" style="text-align: right">14.25B TWD</td>
+                        <td class="price" style="text-align: right">121.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">135.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-10.46%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9907.TW</span></td>
+                        <td>TON YI INDUSTRIAL CORP (統一實)</td>
+                        <td class="mcap" style="text-align: right">23.61B TWD</td>
+                        <td class="price" style="text-align: right">14.95 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">16.66 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-10.24%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3029.TW</span></td>
+                        <td>ZERO ONE TECHNOLOGY (零壹)</td>
+                        <td class="mcap" style="text-align: right">15.83B TWD</td>
+                        <td class="price" style="text-align: right">95.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">106.59 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-10.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7749.TW</span></td>
+                        <td>INTELLIGO TECHNOLOGY INC (意騰-KY)</td>
+                        <td class="mcap" style="text-align: right">19.38B TWD</td>
+                        <td class="price" style="text-align: right">417.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">463.42 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-10.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2233.TW</span></td>
+                        <td>TURVO INTERNATIONAL CO LTD (宇隆)</td>
+                        <td class="mcap" style="text-align: right">12.90B TWD</td>
+                        <td class="price" style="text-align: right">214.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">237.50 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-9.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9940.TW</span></td>
+                        <td>SINYI REALTY INC. (信義)</td>
+                        <td class="mcap" style="text-align: right">13.96B TWD</td>
+                        <td class="price" style="text-align: right">18.95 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">21.02 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-9.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2106.TW</span></td>
+                        <td>KENDA RUBBER INDUSTRY (建大)</td>
+                        <td class="mcap" style="text-align: right">16.09B TWD</td>
+                        <td class="price" style="text-align: right">16.85 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">18.57 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-9.26%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2392.TW</span></td>
+                        <td>CHENG UEI PRECISION INDUSTRY CO (正崴)</td>
+                        <td class="mcap" style="text-align: right">17.12B TWD</td>
+                        <td class="price" style="text-align: right">37.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">40.67 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-9.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5388.TW</span></td>
+                        <td>SERCOMM CORP (中磊)</td>
+                        <td class="mcap" style="text-align: right">22.96B TWD</td>
+                        <td class="price" style="text-align: right">76.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">84.16 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2227.TW</span></td>
+                        <td>YULON NISSAN MOTOR CO.LTD (裕日車)</td>
+                        <td class="mcap" style="text-align: right">14.63B TWD</td>
+                        <td class="price" style="text-align: right">48.75 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">53.41 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2009.TW</span></td>
+                        <td>FIRST COPPER TECHNOLOGY (第一銅)</td>
+                        <td class="mcap" style="text-align: right">13.68B TWD</td>
+                        <td class="price" style="text-align: right">38.05 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">41.63 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4104.TW</span></td>
+                        <td>EXCELSIOR MEDICAL CO LTD (佳醫)</td>
+                        <td class="mcap" style="text-align: right">12.94B TWD</td>
+                        <td class="price" style="text-align: right">68.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">75.01 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6191.TW</span></td>
+                        <td>GLOBAL BRANDS MANUFACTURE CO LT (精成科)</td>
+                        <td class="mcap" style="text-align: right">50.18B TWD</td>
+                        <td class="price" style="text-align: right">100.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">109.69 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3376.TW</span></td>
+                        <td>SHIN ZU SHING CO (新日興)</td>
+                        <td class="mcap" style="text-align: right">38.08B TWD</td>
+                        <td class="price" style="text-align: right">194.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">212.07 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-8.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1808.TW</span></td>
+                        <td>RUN LONG CONSTRUCTION CO LTD (潤隆)</td>
+                        <td class="mcap" style="text-align: right">27.33B TWD</td>
+                        <td class="price" style="text-align: right">30.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">33.24 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.93%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9941.TW</span></td>
+                        <td>TAIWAN ACCEPTANCE CORP (裕融)</td>
+                        <td class="mcap" style="text-align: right">45.24B TWD</td>
+                        <td class="price" style="text-align: right">78.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">85.35 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2211.TW</span></td>
+                        <td>EVERGREEN STEEL CORP (長榮鋼)</td>
+                        <td class="mcap" style="text-align: right">39.04B TWD</td>
+                        <td class="price" style="text-align: right">93.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">101.35 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2331.TW</span></td>
+                        <td>ELITEGROUP COMPUTER SYSTEMS (精英)</td>
+                        <td class="mcap" style="text-align: right">11.48B TWD</td>
+                        <td class="price" style="text-align: right">20.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">22.24 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5439.TWO</span></td>
+                        <td>FIRST HI-TEC ENTERPRISE CO LTD (高技)</td>
+                        <td class="mcap" style="text-align: right">28.13B TWD</td>
+                        <td class="price" style="text-align: right">302.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">325.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6781.TW</span></td>
+                        <td>ADVANCED ENERGY SOLUTION HOLDIN (AES-KY)</td>
+                        <td class="mcap" style="text-align: right">94.39B TWD</td>
+                        <td class="price" style="text-align: right">1105.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1189.14 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-7.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2439.TW</span></td>
+                        <td>MERRY ELECTRONICS CO (美律)</td>
+                        <td class="mcap" style="text-align: right">22.28B TWD</td>
+                        <td class="price" style="text-align: right">89.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">96.26 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.92%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2612.TW</span></td>
+                        <td>CHINESE MARITIME TRANSPORT LTD (中航)</td>
+                        <td class="mcap" style="text-align: right">10.17B TWD</td>
+                        <td class="price" style="text-align: right">51.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.32 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2207.TW</span></td>
+                        <td>HOTAI MOTOR CO (和泰車)</td>
+                        <td class="mcap" style="text-align: right">267.97B TWD</td>
+                        <td class="price" style="text-align: right">481.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">516.34 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1229.TW</span></td>
+                        <td>LIEN HWA INDUSTRIAL HOLDINGS CO (聯華)</td>
+                        <td class="mcap" style="text-align: right">75.93B TWD</td>
+                        <td class="price" style="text-align: right">42.45 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">45.54 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3515.TW</span></td>
+                        <td>ASROCK INCORPORATION (華擎)</td>
+                        <td class="mcap" style="text-align: right">28.66B TWD</td>
+                        <td class="price" style="text-align: right">232.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">248.81 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.76%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2609.TW</span></td>
+                        <td>YANG MING MARINE TRANSPORT CORP (陽明)</td>
+                        <td class="mcap" style="text-align: right">174.95B TWD</td>
+                        <td class="price" style="text-align: right">50.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">53.72 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7805.TWO</span></td>
+                        <td>QNAP (威聯通)</td>
+                        <td class="mcap" style="text-align: right">21.76B TWD</td>
+                        <td class="price" style="text-align: right">657.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">703.96 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1712.TW</span></td>
+                        <td>SINON CORP (興農)</td>
+                        <td class="mcap" style="text-align: right">16.36B TWD</td>
+                        <td class="price" style="text-align: right">38.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">41.65 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2646.TW</span></td>
+                        <td>STARLUX AIRLINES CO LTD (星宇航空)</td>
+                        <td class="mcap" style="text-align: right">63.79B TWD</td>
+                        <td class="price" style="text-align: right">21.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">22.66 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2023.TW</span></td>
+                        <td>YIEH PHUI ENTERPRISE CO (燁輝)</td>
+                        <td class="mcap" style="text-align: right">24.95B TWD</td>
+                        <td class="price" style="text-align: right">13.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">14.61 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6438.TW</span></td>
+                        <td>SYMTEK AUTOMATION ASIA CO LTD (迅得)</td>
+                        <td class="mcap" style="text-align: right">11.96B TWD</td>
+                        <td class="price" style="text-align: right">145.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">155.02 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4114.TWO</span></td>
+                        <td>SYNMOSA BIOPHARMA CORP (健喬)</td>
+                        <td class="mcap" style="text-align: right">15.30B TWD</td>
+                        <td class="price" style="text-align: right">30.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">32.27 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6183.TW</span></td>
+                        <td>TRADE-VAN INFORMATION (關貿)</td>
+                        <td class="mcap" style="text-align: right">13.35B TWD</td>
+                        <td class="price" style="text-align: right">89.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">94.78 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.09%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1609.TW</span></td>
+                        <td>TA YA ELECTRONIC WIRE & CABLE (大亞)</td>
+                        <td class="mcap" style="text-align: right">27.64B TWD</td>
+                        <td class="price" style="text-align: right">35.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">37.56 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-6.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2634.TW</span></td>
+                        <td>AEROSPACE INDUSTRIAL DEVLPMT CO (漢翔)</td>
+                        <td class="mcap" style="text-align: right">46.34B TWD</td>
+                        <td class="price" style="text-align: right">49.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">52.33 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1623.TW</span></td>
+                        <td>TA TUN ELECTRIC WIRE CABLE CO L (大東電)</td>
+                        <td class="mcap" style="text-align: right">13.89B TWD</td>
+                        <td class="price" style="text-align: right">210.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">223.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2608.TW</span></td>
+                        <td>KERRY TJ LOGISTICS COMPANY LTD (嘉里大榮)</td>
+                        <td class="mcap" style="text-align: right">13.43B TWD</td>
+                        <td class="price" style="text-align: right">28.75 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">30.54 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8436.TWO</span></td>
+                        <td>TCI CO LTD (大江)</td>
+                        <td class="mcap" style="text-align: right">12.62B TWD</td>
+                        <td class="price" style="text-align: right">114.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">121.61 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5530.TWO</span></td>
+                        <td>LUNGYEN LIFE SERVICE CO LTD (龍巖)</td>
+                        <td class="mcap" style="text-align: right">19.81B TWD</td>
+                        <td class="price" style="text-align: right">47.15 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">50.05 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2889.TW</span></td>
+                        <td>IBF FINANCIAL HOLDINGS CO LTD (國票金)</td>
+                        <td class="mcap" style="text-align: right">53.78B TWD</td>
+                        <td class="price" style="text-align: right">14.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">15.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3218.TWO</span></td>
+                        <td>UNIVERSAL VISION BIOTECHNOLOGY  (大學光)</td>
+                        <td class="mcap" style="text-align: right">11.06B TWD</td>
+                        <td class="price" style="text-align: right">130.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">138.19 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.56%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2328.TW</span></td>
+                        <td>PAN INTERNATIONAL INDUSTRIAL (廣宇)</td>
+                        <td class="mcap" style="text-align: right">24.88B TWD</td>
+                        <td class="price" style="text-align: right">48.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">50.81 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6962.TW</span></td>
+                        <td>ITH CORPORATION (奕力-KY)</td>
+                        <td class="mcap" style="text-align: right">18.02B TWD</td>
+                        <td class="price" style="text-align: right">36.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">38.71 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.45%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8464.TW</span></td>
+                        <td>NIEN MADE ENTERPRISE CO LTD (億豐)</td>
+                        <td class="mcap" style="text-align: right">102.70B TWD</td>
+                        <td class="price" style="text-align: right">350.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">369.80 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1234.TW</span></td>
+                        <td>HEY SONG (黑松)</td>
+                        <td class="mcap" style="text-align: right">14.05B TWD</td>
+                        <td class="price" style="text-align: right">34.95 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">36.80 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-5.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4915.TW</span></td>
+                        <td>PRIMAX ELECTRONICS LTD(NEW) (致伸)</td>
+                        <td class="mcap" style="text-align: right">34.68B TWD</td>
+                        <td class="price" style="text-align: right">73.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">77.36 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9945.TW</span></td>
+                        <td>RUENTEX DEVELOPMENT CO LTD (潤泰新)</td>
+                        <td class="mcap" style="text-align: right">75.40B TWD</td>
+                        <td class="price" style="text-align: right">26.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">27.97 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2812.TW</span></td>
+                        <td>TAICHUNG COMMERCIAL BANK (台中銀)</td>
+                        <td class="mcap" style="text-align: right">119.23B TWD</td>
+                        <td class="price" style="text-align: right">19.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">20.79 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.76%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1104.TW</span></td>
+                        <td>UNIVERSAL CEMENT CORPORATION (環泥)</td>
+                        <td class="mcap" style="text-align: right">18.23B TWD</td>
+                        <td class="price" style="text-align: right">26.55 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">27.86 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9937.TW</span></td>
+                        <td>NATIONAL PETROLEUM CO (全國)</td>
+                        <td class="mcap" style="text-align: right">17.06B TWD</td>
+                        <td class="price" style="text-align: right">55.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">57.89 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8462.TW</span></td>
+                        <td>POWER WIND HEALTH INDUSTRY INCO (柏文)</td>
+                        <td class="mcap" style="text-align: right">10.93B TWD</td>
+                        <td class="price" style="text-align: right">136.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">142.45 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4966.TWO</span></td>
+                        <td>PARADE TECHNOLOGIES LTD (譜瑞-KY)</td>
+                        <td class="mcap" style="text-align: right">46.43B TWD</td>
+                        <td class="price" style="text-align: right">608.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">636.64 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2204.TW</span></td>
+                        <td>CHINA MOTOR CO (中華)</td>
+                        <td class="mcap" style="text-align: right">30.45B TWD</td>
+                        <td class="price" style="text-align: right">55.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">57.53 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2421.TW</span></td>
+                        <td>SUNONWEALTH ELECTRIC MACHINE IN (建準)</td>
+                        <td class="mcap" style="text-align: right">39.19B TWD</td>
+                        <td class="price" style="text-align: right">137.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">143.28 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2374.TW</span></td>
+                        <td>ABILITY ENTERPRISE CO LTD (佳能)</td>
+                        <td class="mcap" style="text-align: right">25.28B TWD</td>
+                        <td class="price" style="text-align: right">74.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">78.18 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2105.TW</span></td>
+                        <td>CHENG SHIN RUBBER INDUSTRIES (正新)</td>
+                        <td class="mcap" style="text-align: right">95.30B TWD</td>
+                        <td class="price" style="text-align: right">29.40 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">30.72 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3380.TW</span></td>
+                        <td>ALPHA NETWORKS INC (明泰)</td>
+                        <td class="mcap" style="text-align: right">17.06B TWD</td>
+                        <td class="price" style="text-align: right">31.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">32.91 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6279.TWO</span></td>
+                        <td>HU LANE ASSOCIATE INC (胡連)</td>
+                        <td class="mcap" style="text-align: right">13.87B TWD</td>
+                        <td class="price" style="text-align: right">116.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">121.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.27%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1608.TW</span></td>
+                        <td>HUA ENGINEERING WIRE & CABLE (華榮)</td>
+                        <td class="mcap" style="text-align: right">13.91B TWD</td>
+                        <td class="price" style="text-align: right">32.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">34.19 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-4.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6177.TW</span></td>
+                        <td>DA-LI CONSTRUCTION CO. LTD. (達麗)</td>
+                        <td class="mcap" style="text-align: right">21.54B TWD</td>
+                        <td class="price" style="text-align: right">45.65 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">47.54 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2511.TW</span></td>
+                        <td>PRINCE HOUSING DEVELOPMENT CORP (太子)</td>
+                        <td class="mcap" style="text-align: right">13.08B TWD</td>
+                        <td class="price" style="text-align: right">8.06 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">8.39 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6462.TWO</span></td>
+                        <td>EGIS TECHNOLOGY INC (神盾)</td>
+                        <td class="mcap" style="text-align: right">10.63B TWD</td>
+                        <td class="price" style="text-align: right">116.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">121.03 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2633.TW</span></td>
+                        <td>TAIWAN HIGH SPEED RAIL CORP (台灣高鐵)</td>
+                        <td class="mcap" style="text-align: right">146.62B TWD</td>
+                        <td class="price" style="text-align: right">26.05 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">27.05 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3703.TW</span></td>
+                        <td>CONTINENTAL HLDGS CORP (欣陸)</td>
+                        <td class="mcap" style="text-align: right">17.58B TWD</td>
+                        <td class="price" style="text-align: right">21.35 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">22.15 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1909.TW</span></td>
+                        <td>LONGCHEN PAPER&PACKAGING CO LTD (榮成)</td>
+                        <td class="mcap" style="text-align: right">12.23B TWD</td>
+                        <td class="price" style="text-align: right">9.47 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">9.81 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2731.TW</span></td>
+                        <td>LION TRAVEL SERVICE CO LTD (雄獅)</td>
+                        <td class="mcap" style="text-align: right">13.81B TWD</td>
+                        <td class="price" style="text-align: right">148.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">153.18 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5309.TWO</span></td>
+                        <td>SYSGRATION (系統電)</td>
+                        <td class="mcap" style="text-align: right">14.10B TWD</td>
+                        <td class="price" style="text-align: right">61.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">63.86 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5469.TW</span></td>
+                        <td>HANNSTAR BOARD CORP (瀚宇博)</td>
+                        <td class="mcap" style="text-align: right">42.47B TWD</td>
+                        <td class="price" style="text-align: right">87.40 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">90.40 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2912.TW</span></td>
+                        <td>PRESIDENT CHAIN STORE CORP (統一超)</td>
+                        <td class="mcap" style="text-align: right">231.84B TWD</td>
+                        <td class="price" style="text-align: right">223.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">230.29 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4123.TWO</span></td>
+                        <td>CENTER LABORATORIES INC (晟德)</td>
+                        <td class="mcap" style="text-align: right">28.21B TWD</td>
+                        <td class="price" style="text-align: right">37.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">38.41 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1227.TW</span></td>
+                        <td>STANDARD FOODS CORPORATION (佳格)</td>
+                        <td class="mcap" style="text-align: right">26.39B TWD</td>
+                        <td class="price" style="text-align: right">29.05 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">29.97 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-3.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3706.TW</span></td>
+                        <td>MITAC HOLDINGS CORPORATION (神達)</td>
+                        <td class="mcap" style="text-align: right">110.82B TWD</td>
+                        <td class="price" style="text-align: right">83.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">86.07 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2545.TW</span></td>
+                        <td>HUANG HSIANG CONSTRUCTION (皇翔)</td>
+                        <td class="mcap" style="text-align: right">14.32B TWD</td>
+                        <td class="price" style="text-align: right">37.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">38.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5306.TW</span></td>
+                        <td>KMC (KUEI MENG) INTERNATIONAL I (桂盟)</td>
+                        <td class="mcap" style="text-align: right">10.67B TWD</td>
+                        <td class="price" style="text-align: right">84.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">87.28 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6643.TWO</span></td>
+                        <td>M31 TECHNOLOGY CORPORATION (M31)</td>
+                        <td class="mcap" style="text-align: right">19.36B TWD</td>
+                        <td class="price" style="text-align: right">460.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">473.56 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6965.TW</span></td>
+                        <td>CHUNG JYE INVESTMENT HOLDING CO (中傑-KY)</td>
+                        <td class="mcap" style="text-align: right">12.29B TWD</td>
+                        <td class="price" style="text-align: right">78.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">80.79 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5009.TWO</span></td>
+                        <td>GLORIA MATERIAL TECHNOLOGY CORP (榮剛)</td>
+                        <td class="mcap" style="text-align: right">18.19B TWD</td>
+                        <td class="price" style="text-align: right">33.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">34.11 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2615.TW</span></td>
+                        <td>WAN HAI LINES (萬海)</td>
+                        <td class="mcap" style="text-align: right">215.23B TWD</td>
+                        <td class="price" style="text-align: right">76.70 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">78.80 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2359.TW</span></td>
+                        <td>SOLOMON TECHNOLOGY CORP (所羅門)</td>
+                        <td class="mcap" style="text-align: right">21.68B TWD</td>
+                        <td class="price" style="text-align: right">126.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">129.92 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.63%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2015.TW</span></td>
+                        <td>FENG HSIN STEEL CO LTD (豐興)</td>
+                        <td class="mcap" style="text-align: right">35.01B TWD</td>
+                        <td class="price" style="text-align: right">60.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">61.73 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.47%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2723.TW</span></td>
+                        <td>GOURMET MASTER CO LTD (美食-KY)</td>
+                        <td class="mcap" style="text-align: right">12.28B TWD</td>
+                        <td class="price" style="text-align: right">68.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">69.87 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2457.TW</span></td>
+                        <td>PHIHONG TECHNOLOGY COMPANY LTD (飛宏)</td>
+                        <td class="mcap" style="text-align: right">11.47B TWD</td>
+                        <td class="price" style="text-align: right">27.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">27.65 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2504.TW</span></td>
+                        <td>GOLDSUN BUILDING MATERIALS CO L (國產)</td>
+                        <td class="mcap" style="text-align: right">38.60B TWD</td>
+                        <td class="price" style="text-align: right">32.80 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">33.55 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4147.TWO</span></td>
+                        <td>TAIMED BIOLOGICS INC. (中裕)</td>
+                        <td class="mcap" style="text-align: right">16.27B TWD</td>
+                        <td class="price" style="text-align: right">60.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">61.41 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2617.TW</span></td>
+                        <td>TAIWAN NAVIGATION CO (台航)</td>
+                        <td class="mcap" style="text-align: right">12.16B TWD</td>
+                        <td class="price" style="text-align: right">29.15 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">29.79 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2034.TW</span></td>
+                        <td>YC INOX CO LTD (允強)</td>
+                        <td class="mcap" style="text-align: right">10.53B TWD</td>
+                        <td class="price" style="text-align: right">19.90 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">20.33 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6937.TW</span></td>
+                        <td>SKYTECH INC (天虹)</td>
+                        <td class="mcap" style="text-align: right">16.87B TWD</td>
+                        <td class="price" style="text-align: right">250.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">255.31 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-2.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7792.TWO</span></td>
+                        <td>AM POWER (安葆)</td>
+                        <td class="mcap" style="text-align: right">11.78B TWD</td>
+                        <td class="price" style="text-align: right">252.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">257.37 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5213.TWO</span></td>
+                        <td>YEASHIN INTERNATIONAL DEVELOPME (亞昕)</td>
+                        <td class="mcap" style="text-align: right">15.95B TWD</td>
+                        <td class="price" style="text-align: right">22.15 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">22.57 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1440.TW</span></td>
+                        <td>TAINAN SPINNING (南紡)</td>
+                        <td class="mcap" style="text-align: right">21.54B TWD</td>
+                        <td class="price" style="text-align: right">13.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">13.24 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.82%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8114.TW</span></td>
+                        <td>POSIFLEX TECHNOLOGIES INC (振樺電)</td>
+                        <td class="mcap" style="text-align: right">14.11B TWD</td>
+                        <td class="price" style="text-align: right">185.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">188.40 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.81%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4536.TW</span></td>
+                        <td>TOPKEY CORPORATION (拓凱)</td>
+                        <td class="mcap" style="text-align: right">14.89B TWD</td>
+                        <td class="price" style="text-align: right">164.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">167.01 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8033.TW</span></td>
+                        <td>THUNDER TIGER CORP (雷虎)</td>
+                        <td class="mcap" style="text-align: right">23.13B TWD</td>
+                        <td class="price" style="text-align: right">140.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">142.88 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5903.TWO</span></td>
+                        <td>TAIWAN FAMILYMART CO (全家)</td>
+                        <td class="mcap" style="text-align: right">41.97B TWD</td>
+                        <td class="price" style="text-align: right">188.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">191.15 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1519.TW</span></td>
+                        <td>FORTUNE ELECTRIC CO LTD (華城)</td>
+                        <td class="mcap" style="text-align: right">246.39B TWD</td>
+                        <td class="price" style="text-align: right">780.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">792.38 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.56%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2515.TW</span></td>
+                        <td>BES ENGINEERING (中工)</td>
+                        <td class="mcap" style="text-align: right">20.82B TWD</td>
+                        <td class="price" style="text-align: right">12.95 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">13.15 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6757.TW</span></td>
+                        <td>TIGERAIR TAIWAN CO LTD (台灣虎航)</td>
+                        <td class="mcap" style="text-align: right">28.77B TWD</td>
+                        <td class="price" style="text-align: right">62.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">63.57 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4105.TWO</span></td>
+                        <td>TTY BIOPHARM COMPANY LIMITED (東洋)</td>
+                        <td class="mcap" style="text-align: right">18.55B TWD</td>
+                        <td class="price" style="text-align: right">74.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">75.70 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.46%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6803.TWO</span></td>
+                        <td>ECOVE ENVIRONMENT CORP (崑鼎)</td>
+                        <td class="mcap" style="text-align: right">20.96B TWD</td>
+                        <td class="price" style="text-align: right">288.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">292.04 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3545.TW</span></td>
+                        <td>FOCALTECH SYSTEMS CO LTD (敦泰)</td>
+                        <td class="mcap" style="text-align: right">11.77B TWD</td>
+                        <td class="price" style="text-align: right">54.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.26 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4749.TWO</span></td>
+                        <td>ecsc (新應材)</td>
+                        <td class="mcap" style="text-align: right">81.33B TWD</td>
+                        <td class="price" style="text-align: right">877.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">889.09 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.36%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3596.TW</span></td>
+                        <td>ARCADYAN TECHNOLOGY CORPORATION (智易)</td>
+                        <td class="mcap" style="text-align: right">39.99B TWD</td>
+                        <td class="price" style="text-align: right">181.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">183.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.28%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9908.TW</span></td>
+                        <td>THE GREAT TAIPEI GAS (大台北)</td>
+                        <td class="mcap" style="text-align: right">14.80B TWD</td>
+                        <td class="price" style="text-align: right">29.55 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">29.89 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2548.TW</span></td>
+                        <td>HUAKU DEVELOPMENT CO. LTD. (華固)</td>
+                        <td class="mcap" style="text-align: right">32.75B TWD</td>
+                        <td class="price" style="text-align: right">102.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">103.61 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4736.TW</span></td>
+                        <td>TAIDOC TECHNOLOGY CORPORATION (泰博)</td>
+                        <td class="mcap" style="text-align: right">11.57B TWD</td>
+                        <td class="price" style="text-align: right">123.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">124.32 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3019.TW</span></td>
+                        <td>ASIA OPTICAL CO INC (亞光)</td>
+                        <td class="mcap" style="text-align: right">38.95B TWD</td>
+                        <td class="price" style="text-align: right">139.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">140.95 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-1.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6605.TW</span></td>
+                        <td>DEPO AUTO PARTS IND (帝寶)</td>
+                        <td class="mcap" style="text-align: right">22.72B TWD</td>
+                        <td class="price" style="text-align: right">137.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">138.33 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2002.TW</span></td>
+                        <td>CHINA STEEL CORP (中鋼)</td>
+                        <td class="mcap" style="text-align: right">290.32B TWD</td>
+                        <td class="price" style="text-align: right">19.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">19.14 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.73%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1102.TW</span></td>
+                        <td>ASIA CEMENT CORP (亞泥)</td>
+                        <td class="mcap" style="text-align: right">126.79B TWD</td>
+                        <td class="price" style="text-align: right">35.75 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">36.01 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4506.TWO</span></td>
+                        <td>GOLDEN FRIENDS CO (崇友)</td>
+                        <td class="mcap" style="text-align: right">21.15B TWD</td>
+                        <td class="price" style="text-align: right">119.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">120.31 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1722.TW</span></td>
+                        <td>TAIWAN FERTILIZER CO (台肥)</td>
+                        <td class="mcap" style="text-align: right">46.26B TWD</td>
+                        <td class="price" style="text-align: right">47.20 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">47.47 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.58%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9925.TW</span></td>
+                        <td>TAIWAN SHIN KONG SECURITY CO LT (新保)</td>
+                        <td class="mcap" style="text-align: right">15.54B TWD</td>
+                        <td class="price" style="text-align: right">40.45 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">40.67 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6782.TW</span></td>
+                        <td>VISCO VISION INC (視陽)</td>
+                        <td class="mcap" style="text-align: right">11.97B TWD</td>
+                        <td class="price" style="text-align: right">190.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">190.78 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1216.TW</span></td>
+                        <td>UNI-PRESIDENT ENTERPRISES CORP (統一)</td>
+                        <td class="mcap" style="text-align: right">423.88B TWD</td>
+                        <td class="price" style="text-align: right">74.60 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">74.85 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3293.TWO</span></td>
+                        <td>INTERNATIONAL GAMES SYSTEM CO (鈊象)</td>
+                        <td class="mcap" style="text-align: right">209.94B TWD</td>
+                        <td class="price" style="text-align: right">745.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">747.43 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8341.TW</span></td>
+                        <td>SUNNY FRIEND ENVIRONMENTAL TECH (日友)</td>
+                        <td class="mcap" style="text-align: right">10.15B TWD</td>
+                        <td class="price" style="text-align: right">78.10 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">78.35 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2707.TW</span></td>
+                        <td>FORMOSA INTERNATIONAL HOTELS CO (晶華)</td>
+                        <td class="mcap" style="text-align: right">22.74B TWD</td>
+                        <td class="price" style="text-align: right">178.50 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">178.81 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.18%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2603.TW</span></td>
+                        <td>EVERGREEN MARINE CORP(TAIWAN) (長榮)</td>
+                        <td class="mcap" style="text-align: right">391.87B TWD</td>
+                        <td class="price" style="text-align: right">181.00 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">181.25 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2605.TW</span></td>
+                        <td>SINCERE NAVIGATION CORP (新興)</td>
+                        <td class="mcap" style="text-align: right">17.15B TWD</td>
+                        <td class="price" style="text-align: right">29.30 TWD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">29.31 TWD</td>
+                        <td class="pct-neg" style="text-align: right">-0.04%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer class="footer">
+            <p>Data provided by Yahoo Finance & Wikipedia Analysts. Generated on 2026-06-27 12:47:08</p>
+        </footer>
+    </div>
+</body>
+</html>

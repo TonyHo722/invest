@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener: Mega-Cap Value (JP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Market Value Screener</h1>
+            <p class="subtitle">Mega-Cap (JP) Below 200-DMA - Generated when 2026-06-13 11:21:38</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">275</div>
+                <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">> $10B</div>
+                <div class="stat-label">Market Cap Filter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">200-DMA</div>
+                <div class="stat-label">Technical Level</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Company Name</th>
+                        <th class="mcap" style="text-align: right">Market Cap</th>
+                        <th style="text-align: right">Price</th>
+                        <th class="dma-col" style="text-align: right">200-DMA</th>
+                        <th style="text-align: right">% Discount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td><span class="ticker-badge">5032.T</span></td>
+                        <td>ANYCOLOR INC</td>
+                        <td class="mcap" style="text-align: right">135.77B JPY</td>
+                        <td class="price" style="text-align: right">2265.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4400.30 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-48.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4784.T</span></td>
+                        <td>GMO INTERNET INC</td>
+                        <td class="mcap" style="text-align: right">139.35B JPY</td>
+                        <td class="price" style="text-align: right">458.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">838.78 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-45.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4587.T</span></td>
+                        <td>PEPTIDREAM INC</td>
+                        <td class="mcap" style="text-align: right">119.82B JPY</td>
+                        <td class="price" style="text-align: right">932.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1461.84 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-36.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9024.T</span></td>
+                        <td>SEIBU HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">761.01B JPY</td>
+                        <td class="price" style="text-align: right">2994.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4509.23 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-33.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3659.T</span></td>
+                        <td>NEXON CO LTD</td>
+                        <td class="mcap" style="text-align: right">1726.63B JPY</td>
+                        <td class="price" style="text-align: right">2184.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3221.07 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-32.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4506.T</span></td>
+                        <td>SUMITOMO PHARMA CO LTD</td>
+                        <td class="mcap" style="text-align: right">616.59B JPY</td>
+                        <td class="price" style="text-align: right">1374.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2009.54 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-31.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7974.T</span></td>
+                        <td>NINTENDO CO LTD</td>
+                        <td class="mcap" style="text-align: right">8270.39B JPY</td>
+                        <td class="price" style="text-align: right">7174.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">10440.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-31.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4483.T</span></td>
+                        <td>JMDC INC</td>
+                        <td class="mcap" style="text-align: right">171.97B JPY</td>
+                        <td class="price" style="text-align: right">2628.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3812.77 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-31.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6330.T</span></td>
+                        <td>TOYO ENGINEERING CORP</td>
+                        <td class="mcap" style="text-align: right">139.30B JPY</td>
+                        <td class="price" style="text-align: right">1918.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2767.70 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-30.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3697.T</span></td>
+                        <td>SHIFT INC</td>
+                        <td class="mcap" style="text-align: right">164.94B JPY</td>
+                        <td class="price" style="text-align: right">645.30 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">927.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-30.45%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3626.T</span></td>
+                        <td>TIS INC.</td>
+                        <td class="mcap" style="text-align: right">647.32B JPY</td>
+                        <td class="price" style="text-align: right">3085.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4274.15 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-27.82%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7003.T</span></td>
+                        <td>MITSUI E&S CO LTD</td>
+                        <td class="mcap" style="text-align: right">419.45B JPY</td>
+                        <td class="price" style="text-align: right">4157.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5596.00 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-25.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5838.T</span></td>
+                        <td>RAKUTEN BANK LTD</td>
+                        <td class="mcap" style="text-align: right">917.92B JPY</td>
+                        <td class="price" style="text-align: right">5260.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7065.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-25.56%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9501.T</span></td>
+                        <td>TOKYO ELEC POWER CO HLDGS INC</td>
+                        <td class="mcap" style="text-align: right">816.26B JPY</td>
+                        <td class="price" style="text-align: right">509.30 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">678.68 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-24.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3498.T</span></td>
+                        <td>KASUMIGASEKI CAPITAL CO LTD</td>
+                        <td class="mcap" style="text-align: right">141.83B JPY</td>
+                        <td class="price" style="text-align: right">5780.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7643.63 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-24.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3038.T</span></td>
+                        <td>KOBE BUSSAN CO LTD</td>
+                        <td class="mcap" style="text-align: right">602.07B JPY</td>
+                        <td class="price" style="text-align: right">2715.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3590.54 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-24.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7148.T</span></td>
+                        <td>FINANCIAL PARTNERS GROUP CO LTD</td>
+                        <td class="mcap" style="text-align: right">125.52B JPY</td>
+                        <td class="price" style="text-align: right">1499.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1978.52 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-24.24%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9267.T</span></td>
+                        <td>GENKY DRUGSTORES CO LTD</td>
+                        <td class="mcap" style="text-align: right">103.78B JPY</td>
+                        <td class="price" style="text-align: right">3405.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4443.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-23.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2726.T</span></td>
+                        <td>PAL GROUP HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">247.27B JPY</td>
+                        <td class="price" style="text-align: right">1424.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1857.91 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-23.35%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1885.T</span></td>
+                        <td>TOA CORPORATION (CONST)</td>
+                        <td class="mcap" style="text-align: right">163.22B JPY</td>
+                        <td class="price" style="text-align: right">2111.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2743.81 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-23.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9697.T</span></td>
+                        <td>CAPCOM CO LTD</td>
+                        <td class="mcap" style="text-align: right">1165.83B JPY</td>
+                        <td class="price" style="text-align: right">2787.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3620.13 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-23.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9090.T</span></td>
+                        <td>AZ-COM MARUWA HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">101.01B JPY</td>
+                        <td class="price" style="text-align: right">750.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">970.11 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-22.69%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4661.T</span></td>
+                        <td>ORIENTAL LAND CO</td>
+                        <td class="mcap" style="text-align: right">3712.68B JPY</td>
+                        <td class="price" style="text-align: right">2264.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2914.14 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-22.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4733.T</span></td>
+                        <td>OBIC BUSINESS CONSULTANT</td>
+                        <td class="mcap" style="text-align: right">439.78B JPY</td>
+                        <td class="price" style="text-align: right">5850.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7479.73 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.79%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4568.T</span></td>
+                        <td>DAIICHI SANKYO COMPANY LIMITED</td>
+                        <td class="mcap" style="text-align: right">4550.04B JPY</td>
+                        <td class="price" style="text-align: right">2500.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3183.29 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.45%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4722.T</span></td>
+                        <td>FUTURE CORPORATION</td>
+                        <td class="mcap" style="text-align: right">132.84B JPY</td>
+                        <td class="price" style="text-align: right">1498.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1900.95 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9722.T</span></td>
+                        <td>FUJITA KANKO INC</td>
+                        <td class="mcap" style="text-align: right">105.28B JPY</td>
+                        <td class="price" style="text-align: right">1757.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2223.92 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-21.00%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9602.T</span></td>
+                        <td>TOHO CO LTD</td>
+                        <td class="mcap" style="text-align: right">1091.39B JPY</td>
+                        <td class="price" style="text-align: right">1312.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1644.56 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-20.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7013.T</span></td>
+                        <td>IHI CORPORATION</td>
+                        <td class="mcap" style="text-align: right">2576.19B JPY</td>
+                        <td class="price" style="text-align: right">2430.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3039.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-20.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4194.T</span></td>
+                        <td>VISIONAL INC</td>
+                        <td class="mcap" style="text-align: right">297.26B JPY</td>
+                        <td class="price" style="text-align: right">7391.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">9242.01 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-20.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4914.T</span></td>
+                        <td>TAKASAGO INTERNATIONAL CORP</td>
+                        <td class="mcap" style="text-align: right">109.10B JPY</td>
+                        <td class="price" style="text-align: right">1119.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1381.86 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-19.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7157.T</span></td>
+                        <td>LIFENET INSURANCE COMPANY</td>
+                        <td class="mcap" style="text-align: right">131.20B JPY</td>
+                        <td class="price" style="text-align: right">1633.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2015.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-18.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6269.T</span></td>
+                        <td>MODEC INC(JAPAN)</td>
+                        <td class="mcap" style="text-align: right">658.12B JPY</td>
+                        <td class="price" style="text-align: right">9630.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">11845.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-18.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9022.T</span></td>
+                        <td>CENTRAL JAPAN RAILWAY CO</td>
+                        <td class="mcap" style="text-align: right">3214.43B JPY</td>
+                        <td class="price" style="text-align: right">3365.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4133.06 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-18.58%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4523.T</span></td>
+                        <td>EISAI CO LTD</td>
+                        <td class="mcap" style="text-align: right">1066.85B JPY</td>
+                        <td class="price" style="text-align: right">3780.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4617.64 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-18.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9759.T</span></td>
+                        <td>NSD CO.LTD</td>
+                        <td class="mcap" style="text-align: right">190.74B JPY</td>
+                        <td class="price" style="text-align: right">2516.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3049.99 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-17.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3635.T</span></td>
+                        <td>KOEI TECMO HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">488.77B JPY</td>
+                        <td class="price" style="text-align: right">1463.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1771.98 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-17.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4887.T</span></td>
+                        <td>SAWAI GROUP HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">197.60B JPY</td>
+                        <td class="price" style="text-align: right">1711.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2070.70 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-17.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8056.T</span></td>
+                        <td>BIPROGY INC</td>
+                        <td class="mcap" style="text-align: right">420.69B JPY</td>
+                        <td class="price" style="text-align: right">4356.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5259.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-17.18%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6753.T</span></td>
+                        <td>SHARP CORP</td>
+                        <td class="mcap" style="text-align: right">395.56B JPY</td>
+                        <td class="price" style="text-align: right">609.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">731.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.69%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4755.T</span></td>
+                        <td>RAKUTEN GROUP INC</td>
+                        <td class="mcap" style="text-align: right">1607.44B JPY</td>
+                        <td class="price" style="text-align: right">739.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">885.63 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3349.T</span></td>
+                        <td>COSMOS PHARMACEUTICAL CORP</td>
+                        <td class="mcap" style="text-align: right">481.57B JPY</td>
+                        <td class="price" style="text-align: right">6076.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7265.11 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2413.T</span></td>
+                        <td>M3 INC</td>
+                        <td class="mcap" style="text-align: right">1074.56B JPY</td>
+                        <td class="price" style="text-align: right">1610.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1924.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9021.T</span></td>
+                        <td>WEST JAPAN RAILWAY CO</td>
+                        <td class="mcap" style="text-align: right">1172.98B JPY</td>
+                        <td class="price" style="text-align: right">2577.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3077.24 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.24%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5631.T</span></td>
+                        <td>JAPAN STEEL WORKS</td>
+                        <td class="mcap" style="text-align: right">555.69B JPY</td>
+                        <td class="price" style="text-align: right">7549.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">8991.83 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6460.T</span></td>
+                        <td>SEGA SAMMY HLDGS INC</td>
+                        <td class="mcap" style="text-align: right">444.11B JPY</td>
+                        <td class="price" style="text-align: right">2190.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2608.02 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-16.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6849.T</span></td>
+                        <td>NIHON KOHDEN CORP</td>
+                        <td class="mcap" style="text-align: right">216.12B JPY</td>
+                        <td class="price" style="text-align: right">1351.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1607.77 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4776.T</span></td>
+                        <td>CYBOZU INC</td>
+                        <td class="mcap" style="text-align: right">105.53B JPY</td>
+                        <td class="price" style="text-align: right">2293.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2725.23 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9023.T</span></td>
+                        <td>TOKYO METRO CO LTD</td>
+                        <td class="mcap" style="text-align: right">782.65B JPY</td>
+                        <td class="price" style="text-align: right">1348.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1600.55 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7270.T</span></td>
+                        <td>SUBARU CORPORATION</td>
+                        <td class="mcap" style="text-align: right">1770.96B JPY</td>
+                        <td class="price" style="text-align: right">2474.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2928.83 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9682.T</span></td>
+                        <td>DTS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">155.11B JPY</td>
+                        <td class="price" style="text-align: right">981.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1154.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-15.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1925.T</span></td>
+                        <td>DAIWA HOUSE INDUSTRY CO</td>
+                        <td class="mcap" style="text-align: right">2663.19B JPY</td>
+                        <td class="price" style="text-align: right">4300.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5057.53 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4684.T</span></td>
+                        <td>OBIC CO LTD</td>
+                        <td class="mcap" style="text-align: right">1670.90B JPY</td>
+                        <td class="price" style="text-align: right">3862.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4541.87 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1911.T</span></td>
+                        <td>SUMITOMO FORESTRY CO</td>
+                        <td class="mcap" style="text-align: right">817.66B JPY</td>
+                        <td class="price" style="text-align: right">1333.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1567.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.92%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2327.T</span></td>
+                        <td>NS SOLUTIONS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">588.10B JPY</td>
+                        <td class="price" style="text-align: right">3214.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3776.19 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8585.T</span></td>
+                        <td>ORIENT CORP</td>
+                        <td class="mcap" style="text-align: right">144.31B JPY</td>
+                        <td class="price" style="text-align: right">843.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">990.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.88%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9025.T</span></td>
+                        <td>KONOIKE TRANSPORT CO LIMITED</td>
+                        <td class="mcap" style="text-align: right">139.65B JPY</td>
+                        <td class="price" style="text-align: right">2630.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3084.27 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.73%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3391.T</span></td>
+                        <td>TSURUHA HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">941.84B JPY</td>
+                        <td class="price" style="text-align: right">2079.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2437.86 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9418.T</span></td>
+                        <td>U-NEXT HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">288.42B JPY</td>
+                        <td class="price" style="text-align: right">1599.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1874.12 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3994.T</span></td>
+                        <td>MONEY FORWARD INC</td>
+                        <td class="mcap" style="text-align: right">214.55B JPY</td>
+                        <td class="price" style="text-align: right">3868.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4525.54 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9936.T</span></td>
+                        <td>OHSHO FOOD SERVICE CORP</td>
+                        <td class="mcap" style="text-align: right">144.51B JPY</td>
+                        <td class="price" style="text-align: right">2751.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3210.53 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7832.T</span></td>
+                        <td>BANDAI NAMCO HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">2351.25B JPY</td>
+                        <td class="price" style="text-align: right">3666.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4273.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3064.T</span></td>
+                        <td>MONOTARO CO.LTD</td>
+                        <td class="mcap" style="text-align: right">893.07B JPY</td>
+                        <td class="price" style="text-align: right">1814.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2112.15 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9987.T</span></td>
+                        <td>SUZUKEN CO LTD</td>
+                        <td class="mcap" style="text-align: right">341.84B JPY</td>
+                        <td class="price" style="text-align: right">5054.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5882.32 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4307.T</span></td>
+                        <td>NOMURA RESEARCH INSTITUTE</td>
+                        <td class="mcap" style="text-align: right">2582.52B JPY</td>
+                        <td class="price" style="text-align: right">4496.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5231.32 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3923.T</span></td>
+                        <td>RAKUS CO LTD</td>
+                        <td class="mcap" style="text-align: right">314.45B JPY</td>
+                        <td class="price" style="text-align: right">888.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1032.92 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-14.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6758.T</span></td>
+                        <td>SONY GROUP CORPORATION</td>
+                        <td class="mcap" style="text-align: right">19389.44B JPY</td>
+                        <td class="price" style="text-align: right">3292.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3827.49 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9672.T</span></td>
+                        <td>TOKYOTOKEIBA CO</td>
+                        <td class="mcap" style="text-align: right">121.98B JPY</td>
+                        <td class="price" style="text-align: right">4685.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5444.41 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2317.T</span></td>
+                        <td>SYSTENA CORPORATION</td>
+                        <td class="mcap" style="text-align: right">143.70B JPY</td>
+                        <td class="price" style="text-align: right">402.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">465.14 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8129.T</span></td>
+                        <td>TOHO HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">263.59B JPY</td>
+                        <td class="price" style="text-align: right">4074.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4710.03 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3197.T</span></td>
+                        <td>SKYLARK HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">626.01B JPY</td>
+                        <td class="price" style="text-align: right">2753.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3180.50 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4686.T</span></td>
+                        <td>JUSTSYSTEMS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">243.73B JPY</td>
+                        <td class="price" style="text-align: right">3795.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4380.09 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.36%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2296.T</span></td>
+                        <td>ITOHAM YONEKYU HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">273.25B JPY</td>
+                        <td class="price" style="text-align: right">4815.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5535.36 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-13.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9509.T</span></td>
+                        <td>HOKKAIDO ELECTRIC POWER CO INC</td>
+                        <td class="mcap" style="text-align: right">190.67B JPY</td>
+                        <td class="price" style="text-align: right">928.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1065.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5411.T</span></td>
+                        <td>JFE HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">1026.09B JPY</td>
+                        <td class="price" style="text-align: right">1613.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1850.40 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.83%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9064.T</span></td>
+                        <td>YAMATO HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">565.27B JPY</td>
+                        <td class="price" style="text-align: right">1785.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2046.57 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6988.T</span></td>
+                        <td>NITTO DENKO CORP</td>
+                        <td class="mcap" style="text-align: right">2006.80B JPY</td>
+                        <td class="price" style="text-align: right">3005.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3442.38 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3397.T</span></td>
+                        <td>TORIDOLL HOLDINGS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">335.93B JPY</td>
+                        <td class="price" style="text-align: right">3821.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4376.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3116.T</span></td>
+                        <td>TOYOTA BOSHOKU CORP</td>
+                        <td class="mcap" style="text-align: right">385.37B JPY</td>
+                        <td class="price" style="text-align: right">2157.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2465.32 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2678.T</span></td>
+                        <td>ASKUL CORP</td>
+                        <td class="mcap" style="text-align: right">106.01B JPY</td>
+                        <td class="price" style="text-align: right">1184.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1350.41 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9601.T</span></td>
+                        <td>SHOCHIKU CO LTD</td>
+                        <td class="mcap" style="text-align: right">143.21B JPY</td>
+                        <td class="price" style="text-align: right">10420.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">11872.34 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9974.T</span></td>
+                        <td>BELC CO LTD</td>
+                        <td class="mcap" style="text-align: right">134.15B JPY</td>
+                        <td class="price" style="text-align: right">6440.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7329.84 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1934.T</span></td>
+                        <td>YURTEC CORPORATION</td>
+                        <td class="mcap" style="text-align: right">159.42B JPY</td>
+                        <td class="price" style="text-align: right">2321.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2641.68 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3088.T</span></td>
+                        <td>MATSUKIYOCOCOKARA & CO</td>
+                        <td class="mcap" style="text-align: right">928.76B JPY</td>
+                        <td class="price" style="text-align: right">2334.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2656.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7203.T</span></td>
+                        <td>TOYOTA MOTOR CORP</td>
+                        <td class="mcap" style="text-align: right">36174.16B JPY</td>
+                        <td class="price" style="text-align: right">2775.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3156.10 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-12.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6532.T</span></td>
+                        <td>BAYCURRENT INC</td>
+                        <td class="mcap" style="text-align: right">831.15B JPY</td>
+                        <td class="price" style="text-align: right">5545.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6290.95 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1766.T</span></td>
+                        <td>TOKEN CORPORATION</td>
+                        <td class="mcap" style="text-align: right">135.54B JPY</td>
+                        <td class="price" style="text-align: right">12210.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">13837.84 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.76%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8584.T</span></td>
+                        <td>JACCS CO LTD</td>
+                        <td class="mcap" style="text-align: right">159.85B JPY</td>
+                        <td class="price" style="text-align: right">3570.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4035.94 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.54%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2124.T</span></td>
+                        <td>JAC RECRUITMENT CO LTD</td>
+                        <td class="mcap" style="text-align: right">136.38B JPY</td>
+                        <td class="price" style="text-align: right">858.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">969.58 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9435.T</span></td>
+                        <td>HIKARI TSUSHIN INC</td>
+                        <td class="mcap" style="text-align: right">1589.20B JPY</td>
+                        <td class="price" style="text-align: right">36290.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">40989.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.47%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3778.T</span></td>
+                        <td>SAKURA INTERNET INC</td>
+                        <td class="mcap" style="text-align: right">107.14B JPY</td>
+                        <td class="price" style="text-align: right">2677.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3020.71 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1835.T</span></td>
+                        <td>TOTETSU KOGYO CO</td>
+                        <td class="mcap" style="text-align: right">142.42B JPY</td>
+                        <td class="price" style="text-align: right">4135.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4661.19 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3765.T</span></td>
+                        <td>GUNGHO ONLINE ENTERTAINMENT</td>
+                        <td class="mcap" style="text-align: right">116.67B JPY</td>
+                        <td class="price" style="text-align: right">2228.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2510.89 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.27%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8473.T</span></td>
+                        <td>SBI HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">1828.56B JPY</td>
+                        <td class="price" style="text-align: right">2829.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3187.64 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.25%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8698.T</span></td>
+                        <td>MONEX GROUP INC</td>
+                        <td class="mcap" style="text-align: right">159.87B JPY</td>
+                        <td class="price" style="text-align: right">636.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">716.17 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.19%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4617.T</span></td>
+                        <td>CHUGOKU MARINE PAINTS</td>
+                        <td class="mcap" style="text-align: right">167.20B JPY</td>
+                        <td class="price" style="text-align: right">3370.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3791.46 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-11.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1871.T</span></td>
+                        <td>PS CONSTRUCTION CO LTD</td>
+                        <td class="mcap" style="text-align: right">100.90B JPY</td>
+                        <td class="price" style="text-align: right">2155.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2420.93 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6332.T</span></td>
+                        <td>TSUKISHIMA HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">100.56B JPY</td>
+                        <td class="price" style="text-align: right">2542.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2855.26 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9449.T</span></td>
+                        <td>GMO INTERNET GROUP INC</td>
+                        <td class="mcap" style="text-align: right">303.28B JPY</td>
+                        <td class="price" style="text-align: right">3083.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3457.45 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.83%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3360.T</span></td>
+                        <td>SHIP HEALTH CARE HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">195.31B JPY</td>
+                        <td class="price" style="text-align: right">2122.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2377.85 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7532.T</span></td>
+                        <td>PAN PACIFIC INTL HLDGS CORP</td>
+                        <td class="mcap" style="text-align: right">2556.90B JPY</td>
+                        <td class="price" style="text-align: right">855.30 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">956.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.55%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2502.T</span></td>
+                        <td>ASAHI GROUP HLDGS</td>
+                        <td class="mcap" style="text-align: right">2189.18B JPY</td>
+                        <td class="price" style="text-align: right">1496.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1671.38 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.46%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4547.T</span></td>
+                        <td>KISSEI PHARMACEUTICAL CO</td>
+                        <td class="mcap" style="text-align: right">161.87B JPY</td>
+                        <td class="price" style="text-align: right">3905.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4358.82 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4704.T</span></td>
+                        <td>TREND MICRO INC</td>
+                        <td class="mcap" style="text-align: right">765.63B JPY</td>
+                        <td class="price" style="text-align: right">5900.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6570.74 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4812.T</span></td>
+                        <td>DENTSU SOKEN INC</td>
+                        <td class="mcap" style="text-align: right">394.26B JPY</td>
+                        <td class="price" style="text-align: right">2020.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2248.77 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9766.T</span></td>
+                        <td>KONAMI GROUP CORPORATION</td>
+                        <td class="mcap" style="text-align: right">2568.80B JPY</td>
+                        <td class="price" style="text-align: right">18950.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">21095.93 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3092.T</span></td>
+                        <td>ZOZO INC</td>
+                        <td class="mcap" style="text-align: right">962.15B JPY</td>
+                        <td class="price" style="text-align: right">1088.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1209.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5021.T</span></td>
+                        <td>COSMO ENERGY HLDGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">567.04B JPY</td>
+                        <td class="price" style="text-align: right">3571.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3968.54 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-10.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4204.T</span></td>
+                        <td>SEKISUI CHEMICAL CO</td>
+                        <td class="mcap" style="text-align: right">961.43B JPY</td>
+                        <td class="price" style="text-align: right">2381.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2642.67 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.88%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8276.T</span></td>
+                        <td>HEIWADO CO LTD</td>
+                        <td class="mcap" style="text-align: right">126.90B JPY</td>
+                        <td class="price" style="text-align: right">2566.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2846.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7821.T</span></td>
+                        <td>MAEDA KOSEN CO.LTD</td>
+                        <td class="mcap" style="text-align: right">115.83B JPY</td>
+                        <td class="price" style="text-align: right">1737.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1925.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.79%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4516.T</span></td>
+                        <td>NIPPON SHINYAKU CO</td>
+                        <td class="mcap" style="text-align: right">265.76B JPY</td>
+                        <td class="price" style="text-align: right">3943.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4368.58 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1720.T</span></td>
+                        <td>TOKYU CONSTRUCTION CO(NEW)</td>
+                        <td class="mcap" style="text-align: right">121.36B JPY</td>
+                        <td class="price" style="text-align: right">1142.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1264.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.69%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7201.T</span></td>
+                        <td>NISSAN MOTOR CO</td>
+                        <td class="mcap" style="text-align: right">1178.98B JPY</td>
+                        <td class="price" style="text-align: right">337.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">372.53 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6869.T</span></td>
+                        <td>SYSMEX CORP</td>
+                        <td class="mcap" style="text-align: right">864.81B JPY</td>
+                        <td class="price" style="text-align: right">1405.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1550.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.35%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8179.T</span></td>
+                        <td>ROYAL HOLDINGS CO</td>
+                        <td class="mcap" style="text-align: right">121.78B JPY</td>
+                        <td class="price" style="text-align: right">1236.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1362.57 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6902.T</span></td>
+                        <td>DENSO CORP</td>
+                        <td class="mcap" style="text-align: right">4991.05B JPY</td>
+                        <td class="price" style="text-align: right">1854.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2042.59 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7283.T</span></td>
+                        <td>AISAN INDUSTRY CO</td>
+                        <td class="mcap" style="text-align: right">103.16B JPY</td>
+                        <td class="price" style="text-align: right">1809.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1992.13 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.19%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7972.T</span></td>
+                        <td>ITOKI CORPORATION</td>
+                        <td class="mcap" style="text-align: right">120.61B JPY</td>
+                        <td class="price" style="text-align: right">2438.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2683.69 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-9.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1861.T</span></td>
+                        <td>KUMAGAI GUMI CO</td>
+                        <td class="mcap" style="text-align: right">230.75B JPY</td>
+                        <td class="price" style="text-align: right">1358.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1491.08 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.92%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9003.T</span></td>
+                        <td>SOTETSU HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">236.56B JPY</td>
+                        <td class="price" style="text-align: right">2465.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2698.09 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9505.T</span></td>
+                        <td>HOKURIKU ELECTRIC POWER CO</td>
+                        <td class="mcap" style="text-align: right">180.54B JPY</td>
+                        <td class="price" style="text-align: right">864.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">945.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.61%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9627.T</span></td>
+                        <td>AIN HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">199.26B JPY</td>
+                        <td class="price" style="text-align: right">5674.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6204.10 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.54%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4443.T</span></td>
+                        <td>SANSAN INC</td>
+                        <td class="mcap" style="text-align: right">181.73B JPY</td>
+                        <td class="price" style="text-align: right">1435.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1563.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.24%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9142.T</span></td>
+                        <td>KYUSHU RAILWAY COMPANY</td>
+                        <td class="mcap" style="text-align: right">542.73B JPY</td>
+                        <td class="price" style="text-align: right">3528.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3844.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2127.T</span></td>
+                        <td>NIHON M&A CENTER HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">201.65B JPY</td>
+                        <td class="price" style="text-align: right">636.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">692.86 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9020.T</span></td>
+                        <td>EAST JAPAN RAILWAY CO</td>
+                        <td class="mcap" style="text-align: right">3841.94B JPY</td>
+                        <td class="price" style="text-align: right">3404.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3707.43 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.18%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2875.T</span></td>
+                        <td>TOYO SUISAN KAISHA</td>
+                        <td class="mcap" style="text-align: right">958.43B JPY</td>
+                        <td class="price" style="text-align: right">9846.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">10722.32 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3291.T</span></td>
+                        <td>IIDA GROUP HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">599.36B JPY</td>
+                        <td class="price" style="text-align: right">2169.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2361.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5930.T</span></td>
+                        <td>BUNKA SHUTTER CO</td>
+                        <td class="mcap" style="text-align: right">131.74B JPY</td>
+                        <td class="price" style="text-align: right">1873.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2038.65 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9506.T</span></td>
+                        <td>TOHOKU ELECTRIC POWER CO INC</td>
+                        <td class="mcap" style="text-align: right">510.07B JPY</td>
+                        <td class="price" style="text-align: right">1019.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1108.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-8.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2593.T</span></td>
+                        <td>ITO EN LTD</td>
+                        <td class="mcap" style="text-align: right">326.85B JPY</td>
+                        <td class="price" style="text-align: right">2836.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3078.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5929.T</span></td>
+                        <td>SANWA HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">759.36B JPY</td>
+                        <td class="price" style="text-align: right">3618.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3926.32 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2587.T</span></td>
+                        <td>SUNTORY BEVERAGE & FOOD LIMITED</td>
+                        <td class="mcap" style="text-align: right">1325.61B JPY</td>
+                        <td class="price" style="text-align: right">4290.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4652.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7164.T</span></td>
+                        <td>ZENKOKU HOSHO CO LTD</td>
+                        <td class="mcap" style="text-align: right">380.78B JPY</td>
+                        <td class="price" style="text-align: right">2866.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3107.89 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8848.T</span></td>
+                        <td>LEOPALACE 21 CORP</td>
+                        <td class="mcap" style="text-align: right">196.34B JPY</td>
+                        <td class="price" style="text-align: right">618.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">669.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4403.T</span></td>
+                        <td>NOF CORP</td>
+                        <td class="mcap" style="text-align: right">606.07B JPY</td>
+                        <td class="price" style="text-align: right">2684.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2907.68 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2331.T</span></td>
+                        <td>ALSOK CO LTD</td>
+                        <td class="mcap" style="text-align: right">523.74B JPY</td>
+                        <td class="price" style="text-align: right">1077.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1166.29 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.61%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9716.T</span></td>
+                        <td>NOMURA CO LTD</td>
+                        <td class="mcap" style="text-align: right">121.86B JPY</td>
+                        <td class="price" style="text-align: right">1092.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1181.72 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2815.T</span></td>
+                        <td>ARIAKE JAPAN CO</td>
+                        <td class="mcap" style="text-align: right">162.75B JPY</td>
+                        <td class="price" style="text-align: right">5110.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5523.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3543.T</span></td>
+                        <td>KOMEDA HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">124.70B JPY</td>
+                        <td class="price" style="text-align: right">2740.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2957.06 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4666.T</span></td>
+                        <td>PARK 24 CO LTD</td>
+                        <td class="mcap" style="text-align: right">308.91B JPY</td>
+                        <td class="price" style="text-align: right">1810.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1951.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.25%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7545.T</span></td>
+                        <td>NISHIMATSUYA CHAIN CO</td>
+                        <td class="mcap" style="text-align: right">116.77B JPY</td>
+                        <td class="price" style="text-align: right">1955.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2107.78 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.25%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7552.T</span></td>
+                        <td>HAPPINET CORP</td>
+                        <td class="mcap" style="text-align: right">117.42B JPY</td>
+                        <td class="price" style="text-align: right">2711.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2922.40 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6544.T</span></td>
+                        <td>JAPAN ELEVATOR SERVICE HLDGS CO</td>
+                        <td class="mcap" style="text-align: right">289.06B JPY</td>
+                        <td class="price" style="text-align: right">1617.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1742.97 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7476.T</span></td>
+                        <td>AS ONE CORPORATION</td>
+                        <td class="mcap" style="text-align: right">154.51B JPY</td>
+                        <td class="price" style="text-align: right">2168.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2333.24 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2281.T</span></td>
+                        <td>PRIMA MEAT PACKERS</td>
+                        <td class="mcap" style="text-align: right">118.47B JPY</td>
+                        <td class="price" style="text-align: right">2357.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2534.87 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-7.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4046.T</span></td>
+                        <td>OSAKA SODA CO LTD</td>
+                        <td class="mcap" style="text-align: right">219.33B JPY</td>
+                        <td class="price" style="text-align: right">1803.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1936.48 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9201.T</span></td>
+                        <td>JAPAN AIRLINES CO LTD</td>
+                        <td class="mcap" style="text-align: right">1128.73B JPY</td>
+                        <td class="price" style="text-align: right">2626.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2818.35 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.82%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6807.T</span></td>
+                        <td>JAPAN AVIATION ELECTRONICS INDU</td>
+                        <td class="mcap" style="text-align: right">155.08B JPY</td>
+                        <td class="price" style="text-align: right">2300.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2466.25 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7988.T</span></td>
+                        <td>NIFCO INC</td>
+                        <td class="mcap" style="text-align: right">397.93B JPY</td>
+                        <td class="price" style="text-align: right">4273.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4581.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4922.T</span></td>
+                        <td>KOSE HLDGS CORP</td>
+                        <td class="mcap" style="text-align: right">297.18B JPY</td>
+                        <td class="price" style="text-align: right">5238.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5614.75 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4681.T</span></td>
+                        <td>RESORTTRUST INC</td>
+                        <td class="mcap" style="text-align: right">365.14B JPY</td>
+                        <td class="price" style="text-align: right">1719.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1838.35 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.47%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4768.T</span></td>
+                        <td>OTSUKA CORPORATION</td>
+                        <td class="mcap" style="text-align: right">1081.10B JPY</td>
+                        <td class="price" style="text-align: right">2851.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3045.57 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7984.T</span></td>
+                        <td>KOKUYO CO LTD</td>
+                        <td class="mcap" style="text-align: right">348.50B JPY</td>
+                        <td class="price" style="text-align: right">820.60 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">876.06 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4519.T</span></td>
+                        <td>CHUGAI PHARMACEUTICAL CO</td>
+                        <td class="mcap" style="text-align: right">12260.94B JPY</td>
+                        <td class="price" style="text-align: right">7450.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7950.85 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9830.T</span></td>
+                        <td>TRUSCO NAKAYAMA CORP</td>
+                        <td class="mcap" style="text-align: right">145.73B JPY</td>
+                        <td class="price" style="text-align: right">2210.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2357.00 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.24%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9989.T</span></td>
+                        <td>SUNDRUG CO LTD</td>
+                        <td class="mcap" style="text-align: right">449.33B JPY</td>
+                        <td class="price" style="text-align: right">3841.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4096.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9616.T</span></td>
+                        <td>KYORITSU MAINTENANCE</td>
+                        <td class="mcap" style="text-align: right">238.44B JPY</td>
+                        <td class="price" style="text-align: right">2622.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2796.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2897.T</span></td>
+                        <td>NISSIN FOODS HOLDINGS CO. LTD.</td>
+                        <td class="mcap" style="text-align: right">771.04B JPY</td>
+                        <td class="price" style="text-align: right">2686.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2860.93 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5947.T</span></td>
+                        <td>RINNAI CORP</td>
+                        <td class="mcap" style="text-align: right">480.91B JPY</td>
+                        <td class="price" style="text-align: right">3483.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3709.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.10%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7701.T</span></td>
+                        <td>SHIMADZU CORP</td>
+                        <td class="mcap" style="text-align: right">1071.97B JPY</td>
+                        <td class="price" style="text-align: right">3710.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3949.26 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8850.T</span></td>
+                        <td>STARTS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">213.76B JPY</td>
+                        <td class="price" style="text-align: right">4515.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4804.24 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-6.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7912.T</span></td>
+                        <td>DAI NIPPON PRINTING CO</td>
+                        <td class="mcap" style="text-align: right">1105.93B JPY</td>
+                        <td class="price" style="text-align: right">2572.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2735.85 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4751.T</span></td>
+                        <td>CYBER AGENT</td>
+                        <td class="mcap" style="text-align: right">691.68B JPY</td>
+                        <td class="price" style="text-align: right">1364.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1450.48 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7581.T</span></td>
+                        <td>SAIZERIYA COMPANY</td>
+                        <td class="mcap" style="text-align: right">262.35B JPY</td>
+                        <td class="price" style="text-align: right">5340.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5672.28 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9832.T</span></td>
+                        <td>AUTOBACS SEVEN CO</td>
+                        <td class="mcap" style="text-align: right">115.83B JPY</td>
+                        <td class="price" style="text-align: right">1475.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1564.70 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.73%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2811.T</span></td>
+                        <td>KAGOME CO LTD</td>
+                        <td class="mcap" style="text-align: right">233.66B JPY</td>
+                        <td class="price" style="text-align: right">2584.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2739.45 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3387.T</span></td>
+                        <td>CREATE RESTAURANTS HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">300.19B JPY</td>
+                        <td class="price" style="text-align: right">713.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">755.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9551.T</span></td>
+                        <td>METAWATER CO LTD</td>
+                        <td class="mcap" style="text-align: right">137.50B JPY</td>
+                        <td class="price" style="text-align: right">3145.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3330.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8425.T</span></td>
+                        <td>MIZUHO LEASING COMPANY LTD</td>
+                        <td class="mcap" style="text-align: right">356.12B JPY</td>
+                        <td class="price" style="text-align: right">1271.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1344.01 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4680.T</span></td>
+                        <td>ROUND ONE CORP</td>
+                        <td class="mcap" style="text-align: right">266.29B JPY</td>
+                        <td class="price" style="text-align: right">1013.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1071.18 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9744.T</span></td>
+                        <td>MEITEC GROUP HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">235.25B JPY</td>
+                        <td class="price" style="text-align: right">3047.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3217.71 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2784.T</span></td>
+                        <td>ALFRESA HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">387.02B JPY</td>
+                        <td class="price" style="text-align: right">2205.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2328.91 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4527.T</span></td>
+                        <td>ROHTO PHARMACEUTICAL CO</td>
+                        <td class="mcap" style="text-align: right">525.14B JPY</td>
+                        <td class="price" style="text-align: right">2324.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2453.97 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4534.T</span></td>
+                        <td>MOCHIDA PHARMACEUTICAL CO</td>
+                        <td class="mcap" style="text-align: right">113.35B JPY</td>
+                        <td class="price" style="text-align: right">3200.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3372.93 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-5.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1662.T</span></td>
+                        <td>JAPAN PETROLEUM EXPLORATION CO </td>
+                        <td class="mcap" style="text-align: right">424.45B JPY</td>
+                        <td class="price" style="text-align: right">1658.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1745.08 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1773.T</span></td>
+                        <td>YTL CORP</td>
+                        <td class="mcap" style="text-align: right">918.32B JPY</td>
+                        <td class="price" style="text-align: right">79.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">83.10 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.94%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2695.T</span></td>
+                        <td>KURA SUSHI INC</td>
+                        <td class="mcap" style="text-align: right">130.28B JPY</td>
+                        <td class="price" style="text-align: right">1639.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1723.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4507.T</span></td>
+                        <td>SHIONOGI & CO</td>
+                        <td class="mcap" style="text-align: right">2361.88B JPY</td>
+                        <td class="price" style="text-align: right">2775.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2918.34 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.89%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3382.T</span></td>
+                        <td>SEVEN & I HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">4498.65B JPY</td>
+                        <td class="price" style="text-align: right">1946.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2045.35 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4023.T</span></td>
+                        <td>KUREHA CORPORATION</td>
+                        <td class="mcap" style="text-align: right">143.89B JPY</td>
+                        <td class="price" style="text-align: right">3765.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3956.68 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6420.T</span></td>
+                        <td>GALILEI CO LTD</td>
+                        <td class="mcap" style="text-align: right">136.31B JPY</td>
+                        <td class="price" style="text-align: right">3400.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3571.19 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.79%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9504.T</span></td>
+                        <td>CHUGOKU ELECTRIC POWER CO INC</td>
+                        <td class="mcap" style="text-align: right">320.18B JPY</td>
+                        <td class="price" style="text-align: right">890.40 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">935.00 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.77%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1803.T</span></td>
+                        <td>SHIMIZU CORP</td>
+                        <td class="mcap" style="text-align: right">1671.51B JPY</td>
+                        <td class="price" style="text-align: right">2461.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2583.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1719.T</span></td>
+                        <td>HAZAMA ANDO CORP</td>
+                        <td class="mcap" style="text-align: right">273.45B JPY</td>
+                        <td class="price" style="text-align: right">1743.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1827.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.63%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8595.T</span></td>
+                        <td>JAFCO GROUP CO LTD</td>
+                        <td class="mcap" style="text-align: right">117.71B JPY</td>
+                        <td class="price" style="text-align: right">2237.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2345.16 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.61%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9068.T</span></td>
+                        <td>MARUZEN SHOWA UNYU CO</td>
+                        <td class="mcap" style="text-align: right">141.70B JPY</td>
+                        <td class="price" style="text-align: right">7350.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">7704.59 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3861.T</span></td>
+                        <td>OJI HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">671.74B JPY</td>
+                        <td class="price" style="text-align: right">791.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">829.04 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1801.T</span></td>
+                        <td>TAISEI CORP</td>
+                        <td class="mcap" style="text-align: right">2180.25B JPY</td>
+                        <td class="price" style="text-align: right">13375.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">14006.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8130.T</span></td>
+                        <td>SANGETSU CORPORATION</td>
+                        <td class="mcap" style="text-align: right">169.85B JPY</td>
+                        <td class="price" style="text-align: right">2889.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3022.77 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2181.T</span></td>
+                        <td>PERSOL HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">544.73B JPY</td>
+                        <td class="price" style="text-align: right">244.20 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">255.50 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.42%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2282.T</span></td>
+                        <td>NH FOODS LTD</td>
+                        <td class="mcap" style="text-align: right">571.11B JPY</td>
+                        <td class="price" style="text-align: right">6067.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6342.46 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4985.T</span></td>
+                        <td>EARTH CORPORATION</td>
+                        <td class="mcap" style="text-align: right">102.79B JPY</td>
+                        <td class="price" style="text-align: right">4705.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4912.17 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7994.T</span></td>
+                        <td>OKAMURA CORP</td>
+                        <td class="mcap" style="text-align: right">213.02B JPY</td>
+                        <td class="price" style="text-align: right">2250.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2348.59 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2212.T</span></td>
+                        <td>YAMAZAKI BAKING LTD</td>
+                        <td class="mcap" style="text-align: right">616.31B JPY</td>
+                        <td class="price" style="text-align: right">3130.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3265.38 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7267.T</span></td>
+                        <td>HONDA MOTOR CO</td>
+                        <td class="mcap" style="text-align: right">5492.43B JPY</td>
+                        <td class="price" style="text-align: right">1411.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1470.94 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5911.T</span></td>
+                        <td>YOKOGAWA BRIDGE HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">109.02B JPY</td>
+                        <td class="price" style="text-align: right">2770.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2886.24 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-4.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2121.T</span></td>
+                        <td>MIXI. INC</td>
+                        <td class="mcap" style="text-align: right">173.64B JPY</td>
+                        <td class="price" style="text-align: right">2667.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2777.66 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1762.T</span></td>
+                        <td>TAKAMATSU CONSTRUCTION GROUP CO</td>
+                        <td class="mcap" style="text-align: right">120.12B JPY</td>
+                        <td class="price" style="text-align: right">3450.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3591.76 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1808.T</span></td>
+                        <td>HASEKO CORPORATION</td>
+                        <td class="mcap" style="text-align: right">712.16B JPY</td>
+                        <td class="price" style="text-align: right">2691.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2801.14 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.93%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3288.T</span></td>
+                        <td>OPEN HOUSE GROUP CO LTD</td>
+                        <td class="mcap" style="text-align: right">942.10B JPY</td>
+                        <td class="price" style="text-align: right">8498.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">8839.93 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4452.T</span></td>
+                        <td>KAO CORP</td>
+                        <td class="mcap" style="text-align: right">2733.83B JPY</td>
+                        <td class="price" style="text-align: right">6044.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6286.21 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1802.T</span></td>
+                        <td>OBAYASHI CORP</td>
+                        <td class="mcap" style="text-align: right">2120.70B JPY</td>
+                        <td class="price" style="text-align: right">3085.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3208.60 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4928.T</span></td>
+                        <td>NOEVIR HLDGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">147.73B JPY</td>
+                        <td class="price" style="text-align: right">4325.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4498.20 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9008.T</span></td>
+                        <td>KEIO CORPORATION</td>
+                        <td class="mcap" style="text-align: right">428.20B JPY</td>
+                        <td class="price" style="text-align: right">739.70 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">769.17 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.83%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4911.T</span></td>
+                        <td>SHISEIDO COMPANY LIMITED</td>
+                        <td class="mcap" style="text-align: right">1041.64B JPY</td>
+                        <td class="price" style="text-align: right">2607.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2710.07 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7751.T</span></td>
+                        <td>CANON INC</td>
+                        <td class="mcap" style="text-align: right">3650.28B JPY</td>
+                        <td class="price" style="text-align: right">4273.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4441.85 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3769.T</span></td>
+                        <td>GMO PAYMENT GATEWAY INC</td>
+                        <td class="mcap" style="text-align: right">629.42B JPY</td>
+                        <td class="price" style="text-align: right">8288.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">8607.03 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9869.T</span></td>
+                        <td>KATO SANGYO CO</td>
+                        <td class="mcap" style="text-align: right">179.28B JPY</td>
+                        <td class="price" style="text-align: right">5940.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">6165.24 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1928.T</span></td>
+                        <td>SEKISUI HOUSE</td>
+                        <td class="mcap" style="text-align: right">2132.06B JPY</td>
+                        <td class="price" style="text-align: right">3289.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3413.22 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8214.T</span></td>
+                        <td>AOKI HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">135.41B JPY</td>
+                        <td class="price" style="text-align: right">1609.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1669.12 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4543.T</span></td>
+                        <td>TERUMO CORP</td>
+                        <td class="mcap" style="text-align: right">3244.45B JPY</td>
+                        <td class="price" style="text-align: right">2199.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2281.49 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4927.T</span></td>
+                        <td>POLA ORBIS HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">279.04B JPY</td>
+                        <td class="price" style="text-align: right">1261.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1307.75 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.58%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9706.T</span></td>
+                        <td>JAPAN AIRPORT TERMINAL CO</td>
+                        <td class="mcap" style="text-align: right">436.37B JPY</td>
+                        <td class="price" style="text-align: right">4701.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4874.18 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.55%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8923.T</span></td>
+                        <td>TOSEI CORPORATION</td>
+                        <td class="mcap" style="text-align: right">151.85B JPY</td>
+                        <td class="price" style="text-align: right">1566.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1623.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.54%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3591.T</span></td>
+                        <td>WACOAL HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">228.10B JPY</td>
+                        <td class="price" style="text-align: right">4614.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4781.95 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7733.T</span></td>
+                        <td>OLYMPUS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">1808.86B JPY</td>
+                        <td class="price" style="text-align: right">1703.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1764.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8570.T</span></td>
+                        <td>AEON FINANCIAL SERVICE CO LIMIT</td>
+                        <td class="mcap" style="text-align: right">325.88B JPY</td>
+                        <td class="price" style="text-align: right">1509.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1563.91 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1878.T</span></td>
+                        <td>DAITO TRUST CONSTRUCTION CO</td>
+                        <td class="mcap" style="text-align: right">998.06B JPY</td>
+                        <td class="price" style="text-align: right">3072.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3180.28 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1820.T</span></td>
+                        <td>NISHIMATSU CONSTRUCTION CO</td>
+                        <td class="mcap" style="text-align: right">211.87B JPY</td>
+                        <td class="price" style="text-align: right">5366.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5548.91 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2201.T</span></td>
+                        <td>MORINAGA & CO</td>
+                        <td class="mcap" style="text-align: right">214.75B JPY</td>
+                        <td class="price" style="text-align: right">2557.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2644.67 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7459.T</span></td>
+                        <td>MEDIPAL HOLDINGS CORP</td>
+                        <td class="mcap" style="text-align: right">540.00B JPY</td>
+                        <td class="price" style="text-align: right">2638.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2723.94 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9432.T</span></td>
+                        <td>NTT INC</td>
+                        <td class="mcap" style="text-align: right">12050.70B JPY</td>
+                        <td class="price" style="text-align: right">148.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">152.79 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8097.T</span></td>
+                        <td>SAN-AI OBBLI CO LTD</td>
+                        <td class="mcap" style="text-align: right">128.90B JPY</td>
+                        <td class="price" style="text-align: right">2083.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2149.06 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1414.T</span></td>
+                        <td>SHO-BOND HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">255.12B JPY</td>
+                        <td class="price" style="text-align: right">1269.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1309.75 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9507.T</span></td>
+                        <td>SHIKOKU ELECTRIC POWER CO INC</td>
+                        <td class="mcap" style="text-align: right">301.69B JPY</td>
+                        <td class="price" style="text-align: right">1468.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1514.47 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1663.T</span></td>
+                        <td>K&O ENERGY GROUP INC</td>
+                        <td class="mcap" style="text-align: right">105.34B JPY</td>
+                        <td class="price" style="text-align: right">3945.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4067.33 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-3.01%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3050.T</span></td>
+                        <td>DCM HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">205.11B JPY</td>
+                        <td class="price" style="text-align: right">1497.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1540.91 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8278.T</span></td>
+                        <td>FUJI CO(TOKYO)</td>
+                        <td class="mcap" style="text-align: right">172.25B JPY</td>
+                        <td class="price" style="text-align: right">1988.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2042.82 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8174.T</span></td>
+                        <td>NIPPON GAS CO LTD</td>
+                        <td class="mcap" style="text-align: right">296.18B JPY</td>
+                        <td class="price" style="text-align: right">2780.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2856.16 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3231.T</span></td>
+                        <td>NOMURA REAL ESTATE HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">802.18B JPY</td>
+                        <td class="price" style="text-align: right">939.10 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">963.89 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4151.T</span></td>
+                        <td>KYOWA KIRIN CO LTD</td>
+                        <td class="mcap" style="text-align: right">1256.63B JPY</td>
+                        <td class="price" style="text-align: right">2400.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2461.60 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4202.T</span></td>
+                        <td>DAICEL CORPORATION</td>
+                        <td class="mcap" style="text-align: right">331.76B JPY</td>
+                        <td class="price" style="text-align: right">1299.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1331.01 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.41%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6526.T</span></td>
+                        <td>SOCIONEXT INC</td>
+                        <td class="mcap" style="text-align: right">396.93B JPY</td>
+                        <td class="price" style="text-align: right">2265.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2320.36 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7313.T</span></td>
+                        <td>TS TECH CO.LTD.</td>
+                        <td class="mcap" style="text-align: right">205.31B JPY</td>
+                        <td class="price" style="text-align: right">1759.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1801.64 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8074.T</span></td>
+                        <td>YUASA CO LTD</td>
+                        <td class="mcap" style="text-align: right">112.01B JPY</td>
+                        <td class="price" style="text-align: right">5320.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5442.83 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.26%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9202.T</span></td>
+                        <td>ANA HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">1251.49B JPY</td>
+                        <td class="price" style="text-align: right">2839.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2900.90 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2229.T</span></td>
+                        <td>CALBEE INC</td>
+                        <td class="mcap" style="text-align: right">346.10B JPY</td>
+                        <td class="price" style="text-align: right">2846.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2907.90 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8227.T</span></td>
+                        <td>SHIMAMURA CO</td>
+                        <td class="mcap" style="text-align: right">697.39B JPY</td>
+                        <td class="price" style="text-align: right">3359.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3431.29 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3880.T</span></td>
+                        <td>DAIO PAPER CORP</td>
+                        <td class="mcap" style="text-align: right">143.42B JPY</td>
+                        <td class="price" style="text-align: right">930.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">949.27 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-2.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8804.T</span></td>
+                        <td>TOKYO TATEMONO CO</td>
+                        <td class="mcap" style="text-align: right">687.01B JPY</td>
+                        <td class="price" style="text-align: right">3309.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3375.02 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">8934.T</span></td>
+                        <td>SUN FRONTIER FUDOSAN CO LTD</td>
+                        <td class="mcap" style="text-align: right">136.10B JPY</td>
+                        <td class="price" style="text-align: right">2380.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2427.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4612.T</span></td>
+                        <td>NIPPON PAINT HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">2334.53B JPY</td>
+                        <td class="price" style="text-align: right">1006.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1025.08 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.81%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9045.T</span></td>
+                        <td>KEIHAN HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">322.38B JPY</td>
+                        <td class="price" style="text-align: right">3195.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3248.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4206.T</span></td>
+                        <td>AICA KOGYO CO</td>
+                        <td class="mcap" style="text-align: right">220.90B JPY</td>
+                        <td class="price" style="text-align: right">3491.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3549.96 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.66%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3549.T</span></td>
+                        <td>KUSURI NO AOKI HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">361.90B JPY</td>
+                        <td class="price" style="text-align: right">3811.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3872.16 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.58%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1515.T</span></td>
+                        <td>NITTETSU MINING CO</td>
+                        <td class="mcap" style="text-align: right">183.33B JPY</td>
+                        <td class="price" style="text-align: right">2330.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2366.38 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.54%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5451.T</span></td>
+                        <td>YODOKO LTD</td>
+                        <td class="mcap" style="text-align: right">184.50B JPY</td>
+                        <td class="price" style="text-align: right">1288.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1308.00 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6465.T</span></td>
+                        <td>HOSHIZAKI CORPORATION</td>
+                        <td class="mcap" style="text-align: right">722.61B JPY</td>
+                        <td class="price" style="text-align: right">5205.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5284.37 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5938.T</span></td>
+                        <td>LIXIL CORPORATION</td>
+                        <td class="mcap" style="text-align: right">494.91B JPY</td>
+                        <td class="price" style="text-align: right">1721.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1746.48 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.46%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1812.T</span></td>
+                        <td>KAJIMA CORP</td>
+                        <td class="mcap" style="text-align: right">2567.42B JPY</td>
+                        <td class="price" style="text-align: right">5521.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5598.08 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3201.T</span></td>
+                        <td>JAPAN WOOL TEXTILE CO</td>
+                        <td class="mcap" style="text-align: right">112.09B JPY</td>
+                        <td class="price" style="text-align: right">1721.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1744.31 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9006.T</span></td>
+                        <td>KEIKYU CORPORATION</td>
+                        <td class="mcap" style="text-align: right">397.39B JPY</td>
+                        <td class="price" style="text-align: right">1488.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1508.08 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.33%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6841.T</span></td>
+                        <td>YOKOGAWA ELECTRIC CORP</td>
+                        <td class="mcap" style="text-align: right">1223.99B JPY</td>
+                        <td class="price" style="text-align: right">4848.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4908.25 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9302.T</span></td>
+                        <td>MITSUI-SOKO HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">295.28B JPY</td>
+                        <td class="price" style="text-align: right">3878.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3925.74 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9508.T</span></td>
+                        <td>KYUSHU ELECTRIC POWER CO INC</td>
+                        <td class="mcap" style="text-align: right">774.18B JPY</td>
+                        <td class="price" style="text-align: right">1637.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1656.94 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1833.T</span></td>
+                        <td>OKUMURA CORP</td>
+                        <td class="mcap" style="text-align: right">202.31B JPY</td>
+                        <td class="price" style="text-align: right">5640.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5705.38 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4521.T</span></td>
+                        <td>KAKEN PHARMACEUTICAL</td>
+                        <td class="mcap" style="text-align: right">146.17B JPY</td>
+                        <td class="price" style="text-align: right">3860.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3902.64 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.09%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3076.T</span></td>
+                        <td>AI HOLDINGS CORPORATION</td>
+                        <td class="mcap" style="text-align: right">143.52B JPY</td>
+                        <td class="price" style="text-align: right">2694.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2722.86 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-1.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9948.T</span></td>
+                        <td>ARCS COMPANY LIMITED</td>
+                        <td class="mcap" style="text-align: right">177.96B JPY</td>
+                        <td class="price" style="text-align: right">3340.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3372.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">7740.T</span></td>
+                        <td>TAMRON CO LTD</td>
+                        <td class="mcap" style="text-align: right">164.31B JPY</td>
+                        <td class="price" style="text-align: right">1019.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1028.80 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4540.T</span></td>
+                        <td>TSUMURA & CO</td>
+                        <td class="mcap" style="text-align: right">277.61B JPY</td>
+                        <td class="price" style="text-align: right">3724.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3759.62 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">1980.T</span></td>
+                        <td>DAI-DAN CO LTD</td>
+                        <td class="mcap" style="text-align: right">319.95B JPY</td>
+                        <td class="price" style="text-align: right">2473.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2496.58 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.94%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2109.T</span></td>
+                        <td>MITSUI DM SUGAR CO LTD</td>
+                        <td class="mcap" style="text-align: right">100.51B JPY</td>
+                        <td class="price" style="text-align: right">3230.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3259.76 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">9434.T</span></td>
+                        <td>SOFTBANK CORP.</td>
+                        <td class="mcap" style="text-align: right">10205.57B JPY</td>
+                        <td class="price" style="text-align: right">213.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">215.43 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">5857.T</span></td>
+                        <td>ARE HOLDINGS INC</td>
+                        <td class="mcap" style="text-align: right">263.42B JPY</td>
+                        <td class="price" style="text-align: right">3065.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3092.68 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3002.T</span></td>
+                        <td>GUNZE LTD</td>
+                        <td class="mcap" style="text-align: right">120.52B JPY</td>
+                        <td class="price" style="text-align: right">3845.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3878.51 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3289.T</span></td>
+                        <td>TOKYU FUDOSAN HOLDINGS CORPORAT</td>
+                        <td class="mcap" style="text-align: right">944.02B JPY</td>
+                        <td class="price" style="text-align: right">1324.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1332.41 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">4324.T</span></td>
+                        <td>DENTSU GROUP INC</td>
+                        <td class="mcap" style="text-align: right">796.93B JPY</td>
+                        <td class="price" style="text-align: right">3070.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3083.26 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.43%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2768.T</span></td>
+                        <td>SOJITZ CORPORATION</td>
+                        <td class="mcap" style="text-align: right">1057.15B JPY</td>
+                        <td class="price" style="text-align: right">5081.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">5102.39 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.42%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3087.T</span></td>
+                        <td>DOUTOR NICHIRES HOLDINGS CO LTD</td>
+                        <td class="mcap" style="text-align: right">112.49B JPY</td>
+                        <td class="price" style="text-align: right">2677.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2686.75 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.36%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">2809.T</span></td>
+                        <td>KEWPIE CORP</td>
+                        <td class="mcap" style="text-align: right">570.49B JPY</td>
+                        <td class="price" style="text-align: right">4184.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">4192.89 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">3003.T</span></td>
+                        <td>HULIC CO LTD</td>
+                        <td class="mcap" style="text-align: right">1310.21B JPY</td>
+                        <td class="price" style="text-align: right">1725.50 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1728.48 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">6351.T</span></td>
+                        <td>TSURUMI MANUFACTURING CO LTD</td>
+                        <td class="mcap" style="text-align: right">100.63B JPY</td>
+                        <td class="price" style="text-align: right">2102.00 JPY</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">2102.44 JPY</td>
+                        <td class="pct-neg" style="text-align: right">-0.02%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer class="footer">
+            <p>Data provided by Yahoo Finance & Wikipedia Analysts. Generated on 2026-06-13 11:21:38</p>
+        </footer>
+    </div>
+</body>
+</html>

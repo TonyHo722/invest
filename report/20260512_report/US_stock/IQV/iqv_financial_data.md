@@ -1,0 +1,56 @@
+# IQVIA Holdings, Inc. (IQV) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — IQV
+[![IQV 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=IQV&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=IQV)
+
+### 📊 Long-Term Technical Analysis — IQV
+[![IQV 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=IQV&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=IQV)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | IQVIA Holdings, Inc. (IQV) |
+| :--- | :--- |
+| Sector | Healthcare |
+| Market Cap | $29.83B |
+| Current Price | $178.71 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **2022** | 14,410M | 5,028M | 1,827M | 1,091M | 5.82 | 0.00 | 1,586M | 1,168M |
+| **2023** | 14,984M | 5,239M | 2,061M | 1,358M | 7.39 | 0.00 | 1,500M | 992M |
+| **2024** | 15,405M | 5,375M | 2,269M | 1,373M | 7.57 | 0.00 | 2,114M | 1,350M |
+| **2025** | 16,310M | 5,430M | 2,287M | 1,360M | 7.91 | 0.00 | 2,051M | 1,244M |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📉 Bad | 📈 Good | 📈 Good |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Inventory Days | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- |
+| **2022** | 34.9% | N/A | 18.9% | 4.3% |
+| **2023** | 35.0% | N/A | 22.2% | 5.1% |
+| **2024** | 34.9% | N/A | 22.6% | 5.1% |
+| **2025** | 33.3% | N/A | 20.9% | 4.5% |
+| **Trend** | 📉 Bad | ⚠️ N/A | 📈 Good | 📈 Good |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **2022** | 2.64 | 35.20 | 6.60 |
+| **2023** | 2.82 | 31.31 | 6.91 |
+| **2024** | 2.32 | 25.96 | 5.88 |
+| **2025** | 1.79 | 22.23 | 4.66 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $29.83B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $178.71 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |

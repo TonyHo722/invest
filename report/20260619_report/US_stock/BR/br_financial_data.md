@@ -1,0 +1,63 @@
+# Broadridge Financial Solutions, (BR) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — BR
+[![BR 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=BR&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=BR)
+
+### 📊 Long-Term Technical Analysis — BR
+[![BR 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=BR&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=BR)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | Broadridge Financial Solutions, (BR) |
+| :--- | :--- |
+| Sector | Technology |
+| Market Cap | $15.91B |
+| Current Price | $137.60 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 5,709M | 1,592M | 760M | 539M | 4.62 | 2.73 | 1,071M | 23M |
+| **2023** | 6,061M | 1,785M | 936M | 631M | 5.36 | 3.05 | 978M | 24M |
+| **2024** | 6,507M | 1,934M | 1,017M | 698M | 5.93 | 3.36 | 974M | 485M |
+| **2025** | 6,889M | 2,137M | 1,189M | 840M | 7.17 | 3.71 | 1,281M | 135M |
+| **TTM** | 7,322M | 2,293M | 1,253M | 1,100M | 9.42 | 4.78 | 1,414M | 484M |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Op. Margin (%) | Net Margin (%) | Inventory Days | DSO | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 27.9% | 13.3% | 9.4% | N/A | 60 | 28.1% | 6.6% |
+| **2023** | 29.5% | 15.4% | 10.4% | N/A | 57 | 30.3% | 7.7% |
+| **2024** | 29.7% | 15.6% | 10.7% | N/A | 57 | 31.7% | 8.5% |
+| **2025** | 31.0% | 17.3% | 12.2% | N/A | 56 | 34.8% | 10.0% |
+| **TTM** | 31.3% | 17.1% | 15.0% | N/A | 62 | 42.3% | 12.9% |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | ⚠️ N/A | ⚠️ N/A | 📈 Good | 📈 Good |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 2.80 | 29.51 | 8.33 |
+| **2023** | 3.06 | 29.33 | 8.28 |
+| **2024** | 3.47 | 31.98 | 10.40 |
+| **2025** | 2.17 | 14.72 | 5.65 |
+| **TTM** | 2.17 | 14.72 | 5.65 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $15.91B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $137.60 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |
+
+---
+<a id="note-oldest-year"></a>
+> *** Note:** For the oldest year, `yfinance` limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.*

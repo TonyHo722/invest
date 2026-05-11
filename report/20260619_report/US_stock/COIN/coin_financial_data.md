@@ -1,0 +1,63 @@
+# Coinbase Global, Inc. (COIN) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — COIN
+[![COIN 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=COIN&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=COIN)
+
+### 📊 Long-Term Technical Analysis — COIN
+[![COIN 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=COIN&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=COIN)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | Coinbase Global, Inc. (COIN) |
+| :--- | :--- |
+| Sector | Financial Services |
+| Market Cap | $43.01B |
+| Current Price | $163.26 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 3,194M | 2,564M | -1,947M | -2,625M | -11.81 | 0.00 | -618M | nanM |
+| **2023** | 3,108M | 1,973M | -54M | 95M | 0.40 | 0.00 | 562M | 0M |
+| **2024** | 6,564M | 4,909M | 2,235M | 2,579M | 10.42 | 0.00 | 3,035M | 0M |
+| **2025** | 7,181M | 5,360M | 1,456M | 1,260M | 4.85 | 0.00 | 2,458M | 790M |
+| **TTM** | 6,560M | 4,813M | 730M | 801M | 3.27 | 0.00 | 1,853M | 1,062M |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📉 Bad | 📈 Good | 📉 Bad |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Op. Margin (%) | Net Margin (%) | Inventory Days | DSO | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 80.3% | -61.0% | -82.2% | N/A | 23 | -48.1% | -2.9% |
+| **2023** | 63.5% | -1.7% | 3.1% | N/A | 16 | 1.6% | 0.2% |
+| **2024** | 74.8% | 34.1% | 39.3% | N/A | 5 | 31.2% | 13.8% |
+| **2025** | 74.6% | 20.3% | 17.6% | N/A | 7 | 10.1% | 4.8% |
+| **TTM** | 73.4% | 11.1% | 12.2% | N/A | 9 | 6.7% | 3.2% |
+| **Trend** | 📉 Bad | 📈 Good | 📈 Good | ⚠️ N/A | ⚠️ N/A | 📈 Good | 📈 Good |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 2.90 | N/A | 1.70 |
+| **2023** | 13.39 | 434.80 | 6.62 |
+| **2024** | 9.47 | 23.83 | 6.05 |
+| **2025** | 6.84 | 59.80 | 3.19 |
+| **TTM** | 6.84 | 59.80 | 3.19 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $43.01B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $163.26 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |
+
+---
+<a id="note-oldest-year"></a>
+> *** Note:** For the oldest year, `yfinance` limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.*

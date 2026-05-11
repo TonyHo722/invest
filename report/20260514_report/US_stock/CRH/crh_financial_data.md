@@ -1,0 +1,66 @@
+# CRH PLC (CRH) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — CRH
+[![CRH 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=CRH&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=CRH)
+
+### 📊 Long-Term Technical Analysis — CRH
+[![CRH 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=CRH&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=CRH)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | CRH PLC (CRH) |
+| :--- | :--- |
+| Sector | Basic Materials |
+| Market Cap | $72.41B |
+| Current Price | $108.43 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **2022** | 32,723M | 10,815M | 3,759M | 3,862M | 5.07 | 2.23 | 2,277M | 1,178M |
+| **2023** | 34,949M | 11,963M | 4,487M | 3,154M | 4.36 | 2.36 | 3,200M | 3,067M |
+| **2024** | 35,572M | 12,701M | 4,922M | 3,458M | 5.06 | 1.40 | 2,411M | 1,482M |
+| **2025** | 37,447M | 13,528M | 5,323M | 3,730M | 5.54 | 0.74 | 2,912M | 1,181M |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📉 Bad | 📈 Good | 📉 Bad | 📈 Good | 📈 Good |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Inventory Days | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- |
+| **2022** | 33.1% | 69 | 17.4% | 8.5% |
+| **2023** | 34.2% | 68 | 15.1% | 6.6% |
+| **2024** | 35.7% | 75 | 16.0% | 6.8% |
+| **2025** | 36.1% | 80 | 15.5% | 6.4% |
+| **Trend** | 📈 Good | ⚠️ N/A | 📉 Bad | 📉 Bad |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **2022** | 0.84 | 7.32 | 1.25 |
+| **2023** | 1.36 | 15.44 | 2.28 |
+| **2024** | 1.74 | 18.08 | 2.87 |
+| **2025** | 1.90 | 20.11 | 3.14 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+### 4.2 Recent Quarterly Valuations (Past 4Q)
+*Values are TTM (Trailing Twelve Months) where available. **(A)** indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.*
+
+| Quarter | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **2025-06** | 1.53 (A) | 11.92 (A) | 2.80 |
+| **2025-09** | 1.81 (A) | 13.39 (A) | 3.44 |
+| **2025-12** | 2.22 | 22.37 | 3.47 |
+| **2026-03** | 1.87 | 19.52 | 3.08 |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $72.41B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $108.43 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |

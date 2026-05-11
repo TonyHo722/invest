@@ -1,0 +1,63 @@
+# Zscaler, Inc. (ZS) Detailed Financial Data
+Generated Automated Report — Based on "KQJ Global Investment Channel" Analysis Layout
+
+## 0. Stock Price Charts
+
+### 📈 Today's Quote — ZS
+[![ZS 1-Year Chart](https://charts2.finviz.com/chart.ashx?t=ZS&ty=c&ta=1&p=d&s=l)](https://finviz.com/quote.ashx?t=ZS)
+
+### 📊 Long-Term Technical Analysis — ZS
+[![ZS 5-Year Chart](https://charts2.finviz.com/chart.ashx?t=ZS&ty=c&ta=1&p=w&s=l)](https://finviz.com/quote.ashx?t=ZS)
+
+*Source: Finviz — Click chart to open interactive view*
+
+---
+
+## 1. Market Position ("Big / 又大")
+| Indicator | Zscaler, Inc. (ZS) |
+| :--- | :--- |
+| Sector | Technology |
+| Market Cap | $22.60B |
+| Current Price | $139.73 |
+
+## 2. Operational and Financial Performance ("Good / 又好")
+| Year / Status | Revenue | Gross Profit | Op. Profit | Net Income | EPS | Dividends/Share | Free Cash Flow | Buybacks |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 1,091M | 849M | -327M | -390M | -2.77 | 0.00 | 134M | nanM |
+| **2023** | 1,617M | 1,254M | -235M | -202M | -1.40 | 0.00 | 305M | nanM |
+| **2024** | 2,168M | 1,691M | -121M | -58M | -0.39 | 0.00 | 519M | nanM |
+| **2025** | 2,673M | 2,055M | -127M | -41M | -0.27 | 0.00 | 700M | nanM |
+| **TTM** | 3,174M | 2,433M | -149M | -77M | -0.48 | 0.00 | 948M | 0M |
+| **Trend** | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📈 Good | 📉 Bad | 📈 Good | 📉 Bad |
+
+## 3. Efficiency and Return Metrics
+| Year / Status | Gross Margin (%) | Op. Margin (%) | Net Margin (%) | Inventory Days | DSO | ROE (%) | ROA (%) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 77.8% | -30.0% | -35.8% | N/A | 133 | -68.1% | -13.8% |
+| **2023** | 77.6% | -14.5% | -12.5% | N/A | 110 | -31.2% | -6.3% |
+| **2024** | 78.0% | -5.6% | -2.7% | N/A | 111 | -5.8% | -1.4% |
+| **2025** | 76.9% | -4.8% | -1.6% | N/A | 118 | -2.7% | -0.7% |
+| **TTM** | 76.7% | -4.7% | -2.4% | N/A | 77 | -3.7% | -1.2% |
+| **Trend** | 📉 Bad | 📈 Good | 📈 Good | ⚠️ N/A | ⚠️ N/A | 📈 Good | 📈 Good |
+
+## 4. Valuations - 3P Model ("Cheap / 又便宜")
+| Year / Status | P/S | P/E | P/B |
+| :--- | :--- | :--- | :--- |
+| **[2022*](#note-oldest-year)** | 19.96 | N/A | 37.98 |
+| **2023** | 14.69 | N/A | 32.76 |
+| **2024** | 12.16 | N/A | 20.69 |
+| **2025** | 7.12 | N/A | 9.55 |
+| **TTM** | 7.12 | N/A | 9.55 |
+| **Trend** | ⚠️ MIXED | ⚠️ MIXED | ⚠️ MIXED |
+
+## 5. Automated Framework Assessment
+| Criterion | Status | Notes |
+| :--- | :--- | :--- |
+| Big (又大) | ✅ PASS | Market Cap: $22.60B |
+| Good (又好) | 📈 Good | Automated check of 4-year financial trajectory. |
+| Cheap (又便宜) | ✅ PASS | Current Price: $139.73 |
+| >50% Upside Potential | ⚠️ MIXED | Further qualitative analysis required for upside potential. |
+
+---
+<a id="note-oldest-year"></a>
+> *** Note:** For the oldest year, `yfinance` limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.*

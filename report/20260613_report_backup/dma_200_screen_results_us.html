@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener: Mega-Cap Value (US)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Market Value Screener</h1>
+            <p class="subtitle">Mega-Cap (US) Below 200-DMA - Generated when 2026-06-13 08:43:35</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">161</div>
+                <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">> $10B</div>
+                <div class="stat-label">Market Cap Filter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">200-DMA</div>
+                <div class="stat-label">Technical Level</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Company Name</th>
+                        <th class="mcap" style="text-align: right">Market Cap</th>
+                        <th style="text-align: right">Price</th>
+                        <th class="dma-col" style="text-align: right">200-DMA</th>
+                        <th style="text-align: right">% Discount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td><span class="ticker-badge">INTU</span></td>
+                        <td>Intuit Inc.</td>
+                        <td class="mcap" style="text-align: right">75.70B USD</td>
+                        <td class="price" style="text-align: right">276.73 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">529.00 USD</td>
+                        <td class="pct-neg" style="text-align: right">-47.69%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TTD</span></td>
+                        <td>The Trade Desk, Inc.</td>
+                        <td class="mcap" style="text-align: right">9.06B USD</td>
+                        <td class="price" style="text-align: right">19.28 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">34.43 USD</td>
+                        <td class="pct-neg" style="text-align: right">-44.00%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CSGP</span></td>
+                        <td>CoStar Group, Inc.</td>
+                        <td class="mcap" style="text-align: right">13.41B USD</td>
+                        <td class="price" style="text-align: right">32.84 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">58.02 USD</td>
+                        <td class="pct-neg" style="text-align: right">-43.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BSX</span></td>
+                        <td>Boston Scientific Corporation</td>
+                        <td class="mcap" style="text-align: right">69.72B USD</td>
+                        <td class="price" style="text-align: right">46.91 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">82.40 USD</td>
+                        <td class="pct-neg" style="text-align: right">-43.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">PODD</span></td>
+                        <td>Insulet Corporation</td>
+                        <td class="mcap" style="text-align: right">10.37B USD</td>
+                        <td class="price" style="text-align: right">149.70 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">260.28 USD</td>
+                        <td class="pct-neg" style="text-align: right">-42.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ZS</span></td>
+                        <td>Zscaler, Inc.</td>
+                        <td class="mcap" style="text-align: right">20.94B USD</td>
+                        <td class="price" style="text-align: right">129.52 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">214.57 USD</td>
+                        <td class="pct-neg" style="text-align: right">-39.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">INSM</span></td>
+                        <td>Insmed Incorporated</td>
+                        <td class="mcap" style="text-align: right">21.21B USD</td>
+                        <td class="price" style="text-align: right">97.85 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">154.40 USD</td>
+                        <td class="pct-neg" style="text-align: right">-36.63%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TSCO</span></td>
+                        <td>Tractor Supply Company</td>
+                        <td class="mcap" style="text-align: right">16.39B USD</td>
+                        <td class="price" style="text-align: right">31.25 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">48.34 USD</td>
+                        <td class="pct-neg" style="text-align: right">-35.36%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ZTS</span></td>
+                        <td>Zoetis Inc.</td>
+                        <td class="mcap" style="text-align: right">33.36B USD</td>
+                        <td class="price" style="text-align: right">79.57 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">121.39 USD</td>
+                        <td class="pct-neg" style="text-align: right">-34.45%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">COIN</span></td>
+                        <td>Coinbase Global, Inc.</td>
+                        <td class="mcap" style="text-align: right">42.10B USD</td>
+                        <td class="price" style="text-align: right">159.78 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">240.92 USD</td>
+                        <td class="pct-neg" style="text-align: right">-33.68%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">PTC</span></td>
+                        <td>PTC Inc.</td>
+                        <td class="mcap" style="text-align: right">13.13B USD</td>
+                        <td class="price" style="text-align: right">113.68 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">168.13 USD</td>
+                        <td class="pct-neg" style="text-align: right">-32.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CHTR</span></td>
+                        <td>Charter Communications, Inc.</td>
+                        <td class="mcap" style="text-align: right">22.85B USD</td>
+                        <td class="price" style="text-align: right">145.82 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">214.22 USD</td>
+                        <td class="pct-neg" style="text-align: right">-31.93%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ADBE</span></td>
+                        <td>Adobe Inc.</td>
+                        <td class="mcap" style="text-align: right">82.46B USD</td>
+                        <td class="price" style="text-align: right">204.02 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">298.34 USD</td>
+                        <td class="pct-neg" style="text-align: right">-31.61%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GDDY</span></td>
+                        <td>GoDaddy Inc.</td>
+                        <td class="mcap" style="text-align: right">10.09B USD</td>
+                        <td class="price" style="text-align: right">76.24 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">109.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-30.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TRI</span></td>
+                        <td>Thomson Reuters Corp</td>
+                        <td class="mcap" style="text-align: right">35.54B USD</td>
+                        <td class="price" style="text-align: right">81.41 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">116.74 USD</td>
+                        <td class="pct-neg" style="text-align: right">-30.27%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TRMB</span></td>
+                        <td>Trimble Inc.</td>
+                        <td class="mcap" style="text-align: right">11.75B USD</td>
+                        <td class="price" style="text-align: right">50.42 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">71.98 USD</td>
+                        <td class="pct-neg" style="text-align: right">-29.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">FISV</span></td>
+                        <td>Fiserv, Inc.</td>
+                        <td class="mcap" style="text-align: right">28.68B USD</td>
+                        <td class="price" style="text-align: right">53.78 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">76.72 USD</td>
+                        <td class="pct-neg" style="text-align: right">-29.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">LULU</span></td>
+                        <td>lululemon athletica inc.</td>
+                        <td class="mcap" style="text-align: right">13.49B USD</td>
+                        <td class="price" style="text-align: right">118.77 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">169.18 USD</td>
+                        <td class="pct-neg" style="text-align: right">-29.80%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">FIS</span></td>
+                        <td>Fidelity National Information S</td>
+                        <td class="mcap" style="text-align: right">20.26B USD</td>
+                        <td class="price" style="text-align: right">39.20 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.68 USD</td>
+                        <td class="pct-neg" style="text-align: right">-29.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">LDOS</span></td>
+                        <td>Leidos Holdings, Inc.</td>
+                        <td class="mcap" style="text-align: right">15.37B USD</td>
+                        <td class="price" style="text-align: right">122.16 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">172.21 USD</td>
+                        <td class="pct-neg" style="text-align: right">-29.06%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">WDAY</span></td>
+                        <td>Workday, Inc.</td>
+                        <td class="mcap" style="text-align: right">32.30B USD</td>
+                        <td class="price" style="text-align: right">130.80 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">181.76 USD</td>
+                        <td class="pct-neg" style="text-align: right">-28.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TYL</span></td>
+                        <td>Tyler Technologies, Inc.</td>
+                        <td class="mcap" style="text-align: right">12.29B USD</td>
+                        <td class="price" style="text-align: right">298.84 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">413.42 USD</td>
+                        <td class="pct-neg" style="text-align: right">-27.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VEEV</span></td>
+                        <td>Veeva Systems Inc.</td>
+                        <td class="mcap" style="text-align: right">25.92B USD</td>
+                        <td class="price" style="text-align: right">159.54 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">220.48 USD</td>
+                        <td class="pct-neg" style="text-align: right">-27.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BR</span></td>
+                        <td>Broadridge Financial Solutions,</td>
+                        <td class="mcap" style="text-align: right">16.76B USD</td>
+                        <td class="price" style="text-align: right">144.87 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">198.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-27.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ADSK</span></td>
+                        <td>Autodesk, Inc.</td>
+                        <td class="mcap" style="text-align: right">41.90B USD</td>
+                        <td class="price" style="text-align: right">198.43 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">271.88 USD</td>
+                        <td class="pct-neg" style="text-align: right">-27.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">PDD</span></td>
+                        <td>PDD Holdings Inc.</td>
+                        <td class="mcap" style="text-align: right">116.09B USD</td>
+                        <td class="price" style="text-align: right">81.56 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">111.40 USD</td>
+                        <td class="pct-neg" style="text-align: right">-26.78%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NOW</span></td>
+                        <td>ServiceNow, Inc.</td>
+                        <td class="mcap" style="text-align: right">105.35B USD</td>
+                        <td class="price" style="text-align: right">102.15 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">138.44 USD</td>
+                        <td class="pct-neg" style="text-align: right">-26.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">DASH</span></td>
+                        <td>DoorDash, Inc.</td>
+                        <td class="mcap" style="text-align: right">65.61B USD</td>
+                        <td class="price" style="text-align: right">150.58 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">203.92 USD</td>
+                        <td class="pct-neg" style="text-align: right">-26.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">UHS</span></td>
+                        <td>Universal Health Services, Inc.</td>
+                        <td class="mcap" style="text-align: right">8.86B USD</td>
+                        <td class="price" style="text-align: right">146.42 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">198.13 USD</td>
+                        <td class="pct-neg" style="text-align: right">-26.10%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BLDR</span></td>
+                        <td>Builders FirstSource, Inc.</td>
+                        <td class="mcap" style="text-align: right">8.36B USD</td>
+                        <td class="price" style="text-align: right">77.77 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">104.75 USD</td>
+                        <td class="pct-neg" style="text-align: right">-25.76%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ALNY</span></td>
+                        <td>Alnylam Pharmaceuticals, Inc.</td>
+                        <td class="mcap" style="text-align: right">37.76B USD</td>
+                        <td class="price" style="text-align: right">282.85 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">377.74 USD</td>
+                        <td class="pct-neg" style="text-align: right">-25.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ACN</span></td>
+                        <td>Accenture plc</td>
+                        <td class="mcap" style="text-align: right">104.80B USD</td>
+                        <td class="price" style="text-align: right">170.28 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">226.61 USD</td>
+                        <td class="pct-neg" style="text-align: right">-24.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">PYPL</span></td>
+                        <td>PayPal Holdings, Inc.</td>
+                        <td class="mcap" style="text-align: right">36.63B USD</td>
+                        <td class="price" style="text-align: right">41.53 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.07 USD</td>
+                        <td class="pct-neg" style="text-align: right">-24.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CRM</span></td>
+                        <td>Salesforce, Inc.</td>
+                        <td class="mcap" style="text-align: right">135.86B USD</td>
+                        <td class="price" style="text-align: right">165.89 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">217.09 USD</td>
+                        <td class="pct-neg" style="text-align: right">-23.59%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CTSH</span></td>
+                        <td>Cognizant Technology Solutions </td>
+                        <td class="mcap" style="text-align: right">24.68B USD</td>
+                        <td class="price" style="text-align: right">52.17 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">67.32 USD</td>
+                        <td class="pct-neg" style="text-align: right">-22.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ABT</span></td>
+                        <td>Abbott Laboratories</td>
+                        <td class="mcap" style="text-align: right">153.59B USD</td>
+                        <td class="price" style="text-align: right">88.18 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">113.48 USD</td>
+                        <td class="pct-neg" style="text-align: right">-22.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SHOP</span></td>
+                        <td>Shopify Inc.</td>
+                        <td class="mcap" style="text-align: right">140.46B USD</td>
+                        <td class="price" style="text-align: right">108.24 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">138.18 USD</td>
+                        <td class="pct-neg" style="text-align: right">-21.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CPRT</span></td>
+                        <td>Copart, Inc.</td>
+                        <td class="mcap" style="text-align: right">28.47B USD</td>
+                        <td class="price" style="text-align: right">30.75 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">38.76 USD</td>
+                        <td class="pct-neg" style="text-align: right">-20.67%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CEG</span></td>
+                        <td>Constellation Energy Corporatio</td>
+                        <td class="mcap" style="text-align: right">90.62B USD</td>
+                        <td class="price" style="text-align: right">253.76 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">319.31 USD</td>
+                        <td class="pct-neg" style="text-align: right">-20.53%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">PLTR</span></td>
+                        <td>Palantir Technologies Inc.</td>
+                        <td class="mcap" style="text-align: right">306.83B USD</td>
+                        <td class="price" style="text-align: right">127.99 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">160.42 USD</td>
+                        <td class="pct-neg" style="text-align: right">-20.21%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BRO</span></td>
+                        <td>Brown & Brown, Inc.</td>
+                        <td class="mcap" style="text-align: right">20.33B USD</td>
+                        <td class="price" style="text-align: right">59.99 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">75.13 USD</td>
+                        <td class="pct-neg" style="text-align: right">-20.15%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">MELI</span></td>
+                        <td>MercadoLibre, Inc.</td>
+                        <td class="mcap" style="text-align: right">80.59B USD</td>
+                        <td class="price" style="text-align: right">1589.60 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1989.73 USD</td>
+                        <td class="pct-neg" style="text-align: right">-20.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">RMD</span></td>
+                        <td>ResMed Inc.</td>
+                        <td class="mcap" style="text-align: right">28.25B USD</td>
+                        <td class="price" style="text-align: right">194.78 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">243.09 USD</td>
+                        <td class="pct-neg" style="text-align: right">-19.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AXON</span></td>
+                        <td>Axon Enterprise, Inc.</td>
+                        <td class="mcap" style="text-align: right">35.60B USD</td>
+                        <td class="price" style="text-align: right">441.73 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">551.07 USD</td>
+                        <td class="pct-neg" style="text-align: right">-19.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">EFX</span></td>
+                        <td>Equifax, Inc.</td>
+                        <td class="mcap" style="text-align: right">19.75B USD</td>
+                        <td class="price" style="text-align: right">163.71 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">203.86 USD</td>
+                        <td class="pct-neg" style="text-align: right">-19.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NRG</span></td>
+                        <td>NRG Energy, Inc.</td>
+                        <td class="mcap" style="text-align: right">26.47B USD</td>
+                        <td class="price" style="text-align: right">125.47 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">156.09 USD</td>
+                        <td class="pct-neg" style="text-align: right">-19.62%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NFLX</span></td>
+                        <td>Netflix, Inc.</td>
+                        <td class="mcap" style="text-align: right">338.30B USD</td>
+                        <td class="price" style="text-align: right">80.34 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">99.21 USD</td>
+                        <td class="pct-neg" style="text-align: right">-19.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GIS</span></td>
+                        <td>General Mills, Inc.</td>
+                        <td class="mcap" style="text-align: right">18.42B USD</td>
+                        <td class="price" style="text-align: right">34.51 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">42.25 USD</td>
+                        <td class="pct-neg" style="text-align: right">-18.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ROP</span></td>
+                        <td>Roper Technologies, Inc.</td>
+                        <td class="mcap" style="text-align: right">33.80B USD</td>
+                        <td class="price" style="text-align: right">334.97 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">408.28 USD</td>
+                        <td class="pct-neg" style="text-align: right">-17.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">FICO</span></td>
+                        <td>Fair Isaac Corporation</td>
+                        <td class="mcap" style="text-align: right">27.35B USD</td>
+                        <td class="price" style="text-align: right">1179.19 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1436.57 USD</td>
+                        <td class="pct-neg" style="text-align: right">-17.92%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ULTA</span></td>
+                        <td>Ulta Beauty, Inc.</td>
+                        <td class="mcap" style="text-align: right">20.11B USD</td>
+                        <td class="price" style="text-align: right">467.74 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">564.93 USD</td>
+                        <td class="pct-neg" style="text-align: right">-17.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">DPZ</span></td>
+                        <td>Domino's Pizza Inc</td>
+                        <td class="mcap" style="text-align: right">10.77B USD</td>
+                        <td class="price" style="text-align: right">323.88 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">390.59 USD</td>
+                        <td class="pct-neg" style="text-align: right">-17.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ERIE</span></td>
+                        <td>Erie Indemnity Company</td>
+                        <td class="mcap" style="text-align: right">11.85B USD</td>
+                        <td class="price" style="text-align: right">226.67 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">273.20 USD</td>
+                        <td class="pct-neg" style="text-align: right">-17.03%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">UBER</span></td>
+                        <td>Uber Technologies, Inc.</td>
+                        <td class="mcap" style="text-align: right">140.15B USD</td>
+                        <td class="price" style="text-align: right">68.85 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">82.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-16.57%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ISRG</span></td>
+                        <td>Intuitive Surgical, Inc.</td>
+                        <td class="mcap" style="text-align: right">145.58B USD</td>
+                        <td class="price" style="text-align: right">411.06 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">491.91 USD</td>
+                        <td class="pct-neg" style="text-align: right">-16.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">XYL</span></td>
+                        <td>Xylem Inc.</td>
+                        <td class="mcap" style="text-align: right">26.17B USD</td>
+                        <td class="price" style="text-align: right">110.08 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">131.67 USD</td>
+                        <td class="pct-neg" style="text-align: right">-16.40%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">OTIS</span></td>
+                        <td>Otis Worldwide Corporation</td>
+                        <td class="mcap" style="text-align: right">27.15B USD</td>
+                        <td class="price" style="text-align: right">70.75 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">84.27 USD</td>
+                        <td class="pct-neg" style="text-align: right">-16.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HCA</span></td>
+                        <td>HCA Healthcare, Inc.</td>
+                        <td class="mcap" style="text-align: right">85.89B USD</td>
+                        <td class="price" style="text-align: right">387.18 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">460.15 USD</td>
+                        <td class="pct-neg" style="text-align: right">-15.86%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CAG</span></td>
+                        <td>ConAgra Brands, Inc.</td>
+                        <td class="mcap" style="text-align: right">6.57B USD</td>
+                        <td class="price" style="text-align: right">13.74 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">16.29 USD</td>
+                        <td class="pct-neg" style="text-align: right">-15.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AZO</span></td>
+                        <td>AutoZone, Inc.</td>
+                        <td class="mcap" style="text-align: right">51.01B USD</td>
+                        <td class="price" style="text-align: right">3116.30 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">3669.25 USD</td>
+                        <td class="pct-neg" style="text-align: right">-15.07%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">KKR</span></td>
+                        <td>KKR & Co. Inc.</td>
+                        <td class="mcap" style="text-align: right">89.74B USD</td>
+                        <td class="price" style="text-align: right">96.24 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">113.28 USD</td>
+                        <td class="pct-neg" style="text-align: right">-15.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SMCI</span></td>
+                        <td>Super Micro Computer, Inc.</td>
+                        <td class="mcap" style="text-align: right">18.32B USD</td>
+                        <td class="price" style="text-align: right">30.46 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">35.81 USD</td>
+                        <td class="pct-neg" style="text-align: right">-14.95%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ALLE</span></td>
+                        <td>Allegion plc</td>
+                        <td class="mcap" style="text-align: right">11.51B USD</td>
+                        <td class="price" style="text-align: right">133.97 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">157.15 USD</td>
+                        <td class="pct-neg" style="text-align: right">-14.75%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">EXE</span></td>
+                        <td>Expand Energy Corporation</td>
+                        <td class="mcap" style="text-align: right">21.24B USD</td>
+                        <td class="price" style="text-align: right">88.78 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">103.40 USD</td>
+                        <td class="pct-neg" style="text-align: right">-14.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">WTW</span></td>
+                        <td>Willis Towers Watson Public Lim</td>
+                        <td class="mcap" style="text-align: right">24.80B USD</td>
+                        <td class="price" style="text-align: right">262.63 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">305.83 USD</td>
+                        <td class="pct-neg" style="text-align: right">-14.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">META</span></td>
+                        <td>Meta Platforms, Inc.</td>
+                        <td class="mcap" style="text-align: right">1439.24B USD</td>
+                        <td class="price" style="text-align: right">566.98 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">657.43 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.76%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BKNG</span></td>
+                        <td>Booking Holdings Inc. Common St</td>
+                        <td class="mcap" style="text-align: right">127.81B USD</td>
+                        <td class="price" style="text-align: right">164.94 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">190.80 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.55%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GPC</span></td>
+                        <td>Genuine Parts Company</td>
+                        <td class="mcap" style="text-align: right">14.43B USD</td>
+                        <td class="price" style="text-align: right">103.75 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">119.68 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VLTO</span></td>
+                        <td>Veralto Corp</td>
+                        <td class="mcap" style="text-align: right">20.47B USD</td>
+                        <td class="price" style="text-align: right">83.36 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">96.14 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HII</span></td>
+                        <td>Huntington Ingalls Industries, </td>
+                        <td class="mcap" style="text-align: right">11.73B USD</td>
+                        <td class="price" style="text-align: right">297.68 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">343.26 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.28%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VST</span></td>
+                        <td>Vistra Corp.</td>
+                        <td class="mcap" style="text-align: right">49.91B USD</td>
+                        <td class="price" style="text-align: right">148.02 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">170.64 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.26%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">COR</span></td>
+                        <td>Cencora, Inc.</td>
+                        <td class="mcap" style="text-align: right">54.80B USD</td>
+                        <td class="price" style="text-align: right">281.67 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">323.95 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">STE</span></td>
+                        <td>STERIS plc (Ireland)</td>
+                        <td class="mcap" style="text-align: right">20.26B USD</td>
+                        <td class="price" style="text-align: right">207.56 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">238.62 USD</td>
+                        <td class="pct-neg" style="text-align: right">-13.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CVNA</span></td>
+                        <td>Carvana Co.</td>
+                        <td class="mcap" style="text-align: right">70.31B USD</td>
+                        <td class="price" style="text-align: right">64.10 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">73.66 USD</td>
+                        <td class="pct-neg" style="text-align: right">-12.98%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GEHC</span></td>
+                        <td>GE HealthCare Technologies Inc.</td>
+                        <td class="mcap" style="text-align: right">29.65B USD</td>
+                        <td class="price" style="text-align: right">65.18 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">74.81 USD</td>
+                        <td class="pct-neg" style="text-align: right">-12.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CPB</span></td>
+                        <td>The Campbell's Company</td>
+                        <td class="mcap" style="text-align: right">6.80B USD</td>
+                        <td class="price" style="text-align: right">22.81 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">26.11 USD</td>
+                        <td class="pct-neg" style="text-align: right">-12.64%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VRSK</span></td>
+                        <td>Verisk Analytics, Inc.</td>
+                        <td class="mcap" style="text-align: right">24.08B USD</td>
+                        <td class="price" style="text-align: right">183.80 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">209.24 USD</td>
+                        <td class="pct-neg" style="text-align: right">-12.16%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AOS</span></td>
+                        <td>A.O. Smith Corporation</td>
+                        <td class="mcap" style="text-align: right">8.14B USD</td>
+                        <td class="price" style="text-align: right">59.08 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">67.20 USD</td>
+                        <td class="pct-neg" style="text-align: right">-12.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CBRE</span></td>
+                        <td>CBRE Group Inc</td>
+                        <td class="mcap" style="text-align: right">39.06B USD</td>
+                        <td class="price" style="text-align: right">133.41 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">151.44 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.90%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">DHR</span></td>
+                        <td>Danaher Corporation</td>
+                        <td class="mcap" style="text-align: right">127.47B USD</td>
+                        <td class="price" style="text-align: right">180.10 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">204.25 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.82%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ICE</span></td>
+                        <td>Intercontinental Exchange Inc.</td>
+                        <td class="mcap" style="text-align: right">79.47B USD</td>
+                        <td class="price" style="text-align: right">140.53 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">159.28 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.77%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">IDXX</span></td>
+                        <td>IDEXX Laboratories, Inc.</td>
+                        <td class="mcap" style="text-align: right">44.24B USD</td>
+                        <td class="price" style="text-align: right">560.88 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">634.13 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.55%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">COF</span></td>
+                        <td>Capital One Financial Corporati</td>
+                        <td class="mcap" style="text-align: right">114.96B USD</td>
+                        <td class="price" style="text-align: right">184.73 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">208.60 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CMCSA</span></td>
+                        <td>Comcast Corporation</td>
+                        <td class="mcap" style="text-align: right">87.52B USD</td>
+                        <td class="price" style="text-align: right">24.50 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">27.65 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.39%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SYK</span></td>
+                        <td>Stryker Corporation</td>
+                        <td class="mcap" style="text-align: right">119.69B USD</td>
+                        <td class="price" style="text-align: right">312.20 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">351.14 USD</td>
+                        <td class="pct-neg" style="text-align: right">-11.09%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BX</span></td>
+                        <td>Blackstone Inc.</td>
+                        <td class="mcap" style="text-align: right">150.08B USD</td>
+                        <td class="price" style="text-align: right">122.79 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">137.76 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GPN</span></td>
+                        <td>Global Payments Inc.</td>
+                        <td class="mcap" style="text-align: right">18.52B USD</td>
+                        <td class="price" style="text-align: right">67.71 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">75.93 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.83%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SPGI</span></td>
+                        <td>S&P Global Inc.</td>
+                        <td class="mcap" style="text-align: right">124.00B USD</td>
+                        <td class="price" style="text-align: right">418.91 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">469.30 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TMO</span></td>
+                        <td>Thermo Fisher Scientific Inc</td>
+                        <td class="mcap" style="text-align: right">174.42B USD</td>
+                        <td class="price" style="text-align: right">469.34 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">525.70 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.72%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CMG</span></td>
+                        <td>Chipotle Mexican Grill, Inc.</td>
+                        <td class="mcap" style="text-align: right">41.34B USD</td>
+                        <td class="price" style="text-align: right">32.23 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">36.02 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.52%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">LVS</span></td>
+                        <td>Las Vegas Sands Corp.</td>
+                        <td class="mcap" style="text-align: right">33.58B USD</td>
+                        <td class="price" style="text-align: right">50.67 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">56.42 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AJG</span></td>
+                        <td>Arthur J. Gallagher & Co.</td>
+                        <td class="mcap" style="text-align: right">56.19B USD</td>
+                        <td class="price" style="text-align: right">218.69 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">243.34 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ZBRA</span></td>
+                        <td>Zebra Technologies Corporation</td>
+                        <td class="mcap" style="text-align: right">10.88B USD</td>
+                        <td class="price" style="text-align: right">228.42 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">254.11 USD</td>
+                        <td class="pct-neg" style="text-align: right">-10.11%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">LOW</span></td>
+                        <td>Lowe's Companies, Inc.</td>
+                        <td class="mcap" style="text-align: right">123.79B USD</td>
+                        <td class="price" style="text-align: right">220.78 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">244.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-9.71%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HOOD</span></td>
+                        <td>Robinhood Markets, Inc.</td>
+                        <td class="mcap" style="text-align: right">83.92B USD</td>
+                        <td class="price" style="text-align: right">93.19 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">102.81 USD</td>
+                        <td class="pct-neg" style="text-align: right">-9.35%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CLX</span></td>
+                        <td>Clorox Company (The)</td>
+                        <td class="mcap" style="text-align: right">11.71B USD</td>
+                        <td class="price" style="text-align: right">96.82 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">106.57 USD</td>
+                        <td class="pct-neg" style="text-align: right">-9.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">IR</span></td>
+                        <td>Ingersoll Rand Inc.</td>
+                        <td class="mcap" style="text-align: right">28.96B USD</td>
+                        <td class="price" style="text-align: right">74.00 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">81.44 USD</td>
+                        <td class="pct-neg" style="text-align: right">-9.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">APTV</span></td>
+                        <td>Aptiv PLC</td>
+                        <td class="mcap" style="text-align: right">14.40B USD</td>
+                        <td class="price" style="text-align: right">68.05 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">74.67 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.87%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">T</span></td>
+                        <td>AT&T Inc.</td>
+                        <td class="mcap" style="text-align: right">163.84B USD</td>
+                        <td class="price" style="text-align: right">23.58 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">25.80 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">MA</span></td>
+                        <td>Mastercard Incorporated</td>
+                        <td class="mcap" style="text-align: right">432.94B USD</td>
+                        <td class="price" style="text-align: right">489.98 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">535.55 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TMUS</span></td>
+                        <td>T-Mobile US, Inc.</td>
+                        <td class="mcap" style="text-align: right">204.64B USD</td>
+                        <td class="price" style="text-align: right">189.10 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">206.36 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.36%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TTWO</span></td>
+                        <td>Take-Two Interactive Software, </td>
+                        <td class="mcap" style="text-align: right">39.31B USD</td>
+                        <td class="price" style="text-align: right">211.75 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">231.02 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">APP</span></td>
+                        <td>Applovin Corporation</td>
+                        <td class="mcap" style="text-align: right">166.88B USD</td>
+                        <td class="price" style="text-align: right">496.77 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">541.85 USD</td>
+                        <td class="pct-neg" style="text-align: right">-8.32%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NCLH</span></td>
+                        <td>Norwegian Cruise Line Holdings </td>
+                        <td class="mcap" style="text-align: right">8.92B USD</td>
+                        <td class="price" style="text-align: right">19.43 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">21.11 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.96%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">EQT</span></td>
+                        <td>EQT Corporation</td>
+                        <td class="mcap" style="text-align: right">32.49B USD</td>
+                        <td class="price" style="text-align: right">51.94 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">56.32 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.77%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HD</span></td>
+                        <td>Home Depot, Inc. (The)</td>
+                        <td class="mcap" style="text-align: right">327.44B USD</td>
+                        <td class="price" style="text-align: right">328.39 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">355.02 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">IP</span></td>
+                        <td>International Paper Company</td>
+                        <td class="mcap" style="text-align: right">19.14B USD</td>
+                        <td class="price" style="text-align: right">36.15 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">39.08 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CRH</span></td>
+                        <td>CRH PLC</td>
+                        <td class="mcap" style="text-align: right">71.15B USD</td>
+                        <td class="price" style="text-align: right">106.48 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">114.86 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.30%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">IQV</span></td>
+                        <td>IQVIA Holdings, Inc.</td>
+                        <td class="mcap" style="text-align: right">30.29B USD</td>
+                        <td class="price" style="text-align: right">181.46 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">195.60 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TAP</span></td>
+                        <td>Molson Coors Beverage Company</td>
+                        <td class="mcap" style="text-align: right">7.80B USD</td>
+                        <td class="price" style="text-align: right">41.58 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">44.73 USD</td>
+                        <td class="pct-neg" style="text-align: right">-7.04%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AVY</span></td>
+                        <td>Avery Dennison Corporation</td>
+                        <td class="mcap" style="text-align: right">12.18B USD</td>
+                        <td class="price" style="text-align: right">159.25 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">170.89 USD</td>
+                        <td class="pct-neg" style="text-align: right">-6.81%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ADP</span></td>
+                        <td>Automatic Data Processing, Inc.</td>
+                        <td class="mcap" style="text-align: right">90.42B USD</td>
+                        <td class="price" style="text-align: right">226.21 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">242.45 USD</td>
+                        <td class="pct-neg" style="text-align: right">-6.70%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">DIS</span></td>
+                        <td>Walt Disney Company (The)</td>
+                        <td class="mcap" style="text-align: right">173.72B USD</td>
+                        <td class="price" style="text-align: right">100.04 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">107.17 USD</td>
+                        <td class="pct-neg" style="text-align: right">-6.65%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">COO</span></td>
+                        <td>The Cooper Companies, Inc.</td>
+                        <td class="mcap" style="text-align: right">13.24B USD</td>
+                        <td class="price" style="text-align: right">67.88 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">72.69 USD</td>
+                        <td class="pct-neg" style="text-align: right">-6.62%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">FDS</span></td>
+                        <td>FactSet Research Systems Inc.</td>
+                        <td class="mcap" style="text-align: right">8.79B USD</td>
+                        <td class="price" style="text-align: right">241.16 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">257.76 USD</td>
+                        <td class="pct-neg" style="text-align: right">-6.44%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">EXPE</span></td>
+                        <td>Expedia Group, Inc.</td>
+                        <td class="mcap" style="text-align: right">26.99B USD</td>
+                        <td class="price" style="text-align: right">224.89 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">239.22 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.99%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">WYNN</span></td>
+                        <td>Wynn Resorts, Limited</td>
+                        <td class="mcap" style="text-align: right">11.13B USD</td>
+                        <td class="price" style="text-align: right">107.27 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">113.81 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.75%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TECH</span></td>
+                        <td>Bio-Techne Corp</td>
+                        <td class="mcap" style="text-align: right">8.45B USD</td>
+                        <td class="price" style="text-align: right">54.00 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">57.29 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.74%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CTAS</span></td>
+                        <td>Cintas Corporation</td>
+                        <td class="mcap" style="text-align: right">70.54B USD</td>
+                        <td class="price" style="text-align: right">176.28 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">186.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.49%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HSY</span></td>
+                        <td>The Hershey Company</td>
+                        <td class="mcap" style="text-align: right">36.85B USD</td>
+                        <td class="price" style="text-align: right">181.66 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">191.47 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.13%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SHW</span></td>
+                        <td>Sherwin-Williams Company (The)</td>
+                        <td class="mcap" style="text-align: right">78.26B USD</td>
+                        <td class="price" style="text-align: right">317.30 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">334.17 USD</td>
+                        <td class="pct-neg" style="text-align: right">-5.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ARE</span></td>
+                        <td>Alexandria Real Estate Equities</td>
+                        <td class="mcap" style="text-align: right">9.27B USD</td>
+                        <td class="price" style="text-align: right">53.17 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">55.74 USD</td>
+                        <td class="pct-neg" style="text-align: right">-4.62%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TEL</span></td>
+                        <td>TE Connectivity plc</td>
+                        <td class="mcap" style="text-align: right">61.41B USD</td>
+                        <td class="price" style="text-align: right">210.38 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">220.25 USD</td>
+                        <td class="pct-neg" style="text-align: right">-4.48%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">DG</span></td>
+                        <td>Dollar General Corporation</td>
+                        <td class="mcap" style="text-align: right">25.32B USD</td>
+                        <td class="price" style="text-align: right">114.80 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">120.05 USD</td>
+                        <td class="pct-neg" style="text-align: right">-4.38%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ZBH</span></td>
+                        <td>Zimmer Biomet Holdings, Inc.</td>
+                        <td class="mcap" style="text-align: right">17.13B USD</td>
+                        <td class="price" style="text-align: right">88.57 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">92.54 USD</td>
+                        <td class="pct-neg" style="text-align: right">-4.29%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BDX</span></td>
+                        <td>Becton, Dickinson and Company</td>
+                        <td class="mcap" style="text-align: right">40.30B USD</td>
+                        <td class="price" style="text-align: right">146.24 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">152.19 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ARES</span></td>
+                        <td>Ares Management Corporation</td>
+                        <td class="mcap" style="text-align: right">44.50B USD</td>
+                        <td class="price" style="text-align: right">134.90 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">140.15 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.75%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AWK</span></td>
+                        <td>American Water Works Company, I</td>
+                        <td class="mcap" style="text-align: right">24.67B USD</td>
+                        <td class="price" style="text-align: right">126.31 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">130.91 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.51%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SCHW</span></td>
+                        <td>Charles Schwab Corporation (The</td>
+                        <td class="mcap" style="text-align: right">158.44B USD</td>
+                        <td class="price" style="text-align: right">91.10 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">94.25 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.34%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">EL</span></td>
+                        <td>Estee Lauder Companies, Inc. (T</td>
+                        <td class="mcap" style="text-align: right">32.45B USD</td>
+                        <td class="price" style="text-align: right">89.68 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">92.62 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.17%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AXP</span></td>
+                        <td>American Express Company</td>
+                        <td class="mcap" style="text-align: right">222.06B USD</td>
+                        <td class="price" style="text-align: right">325.44 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">335.93 USD</td>
+                        <td class="pct-neg" style="text-align: right">-3.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AMP</span></td>
+                        <td>Ameriprise Financial, Inc.</td>
+                        <td class="mcap" style="text-align: right">41.27B USD</td>
+                        <td class="price" style="text-align: right">459.13 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">472.53 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">RSG</span></td>
+                        <td>Republic Services, Inc.</td>
+                        <td class="mcap" style="text-align: right">64.58B USD</td>
+                        <td class="price" style="text-align: right">209.91 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">215.71 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.69%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CDW</span></td>
+                        <td>CDW Corporation</td>
+                        <td class="mcap" style="text-align: right">16.89B USD</td>
+                        <td class="price" style="text-align: right">132.19 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">135.76 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.63%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BLK</span></td>
+                        <td>BlackRock, Inc.</td>
+                        <td class="mcap" style="text-align: right">168.06B USD</td>
+                        <td class="price" style="text-align: right">1032.00 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1059.37 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.58%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HIG</span></td>
+                        <td>The Hartford Insurance Group, I</td>
+                        <td class="mcap" style="text-align: right">35.53B USD</td>
+                        <td class="price" style="text-align: right">129.62 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">132.77 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.37%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">WRB</span></td>
+                        <td>W.R. Berkley Corporation</td>
+                        <td class="mcap" style="text-align: right">25.42B USD</td>
+                        <td class="price" style="text-align: right">68.27 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">69.84 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.25%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TSLA</span></td>
+                        <td>Tesla, Inc.</td>
+                        <td class="mcap" style="text-align: right">1526.44B USD</td>
+                        <td class="price" style="text-align: right">406.43 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">415.69 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">CME</span></td>
+                        <td>CME Group Inc.</td>
+                        <td class="mcap" style="text-align: right">97.39B USD</td>
+                        <td class="price" style="text-align: right">269.53 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">275.67 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GILD</span></td>
+                        <td>Gilead Sciences, Inc.</td>
+                        <td class="mcap" style="text-align: right">155.93B USD</td>
+                        <td class="price" style="text-align: right">125.59 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">128.33 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.14%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TDG</span></td>
+                        <td>Transdigm Group Incorporated</td>
+                        <td class="mcap" style="text-align: right">70.26B USD</td>
+                        <td class="price" style="text-align: right">1256.05 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">1282.74 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.08%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AIG</span></td>
+                        <td>American International Group, I</td>
+                        <td class="mcap" style="text-align: right">40.16B USD</td>
+                        <td class="price" style="text-align: right">75.74 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">77.30 USD</td>
+                        <td class="pct-neg" style="text-align: right">-2.02%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ATO</span></td>
+                        <td>Atmos Energy Corporation</td>
+                        <td class="mcap" style="text-align: right">28.37B USD</td>
+                        <td class="price" style="text-align: right">169.96 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">173.38 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.97%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SNPS</span></td>
+                        <td>Synopsys, Inc.</td>
+                        <td class="mcap" style="text-align: right">86.91B USD</td>
+                        <td class="price" style="text-align: right">453.89 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">462.42 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.85%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ACGL</span></td>
+                        <td>Arch Capital Group Ltd.</td>
+                        <td class="mcap" style="text-align: right">32.03B USD</td>
+                        <td class="price" style="text-align: right">91.66 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">93.38 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.84%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">V</span></td>
+                        <td>Visa Inc.</td>
+                        <td class="mcap" style="text-align: right">613.10B USD</td>
+                        <td class="price" style="text-align: right">322.39 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">328.34 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.81%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">TSN</span></td>
+                        <td>Tyson Foods, Inc.</td>
+                        <td class="mcap" style="text-align: right">20.22B USD</td>
+                        <td class="price" style="text-align: right">57.43 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">58.46 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.77%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NWSA</span></td>
+                        <td>News Corporation</td>
+                        <td class="mcap" style="text-align: right">13.99B USD</td>
+                        <td class="price" style="text-align: right">25.68 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">26.10 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.63%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">ECL</span></td>
+                        <td>Ecolab Inc.</td>
+                        <td class="mcap" style="text-align: right">74.70B USD</td>
+                        <td class="price" style="text-align: right">265.41 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">269.58 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.55%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NWS</span></td>
+                        <td>News Corporation</td>
+                        <td class="mcap" style="text-align: right">15.94B USD</td>
+                        <td class="price" style="text-align: right">29.26 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">29.70 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.50%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VMC</span></td>
+                        <td>Vulcan Materials Company (Holdi</td>
+                        <td class="mcap" style="text-align: right">37.17B USD</td>
+                        <td class="price" style="text-align: right">286.47 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">290.27 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.31%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">HAS</span></td>
+                        <td>Hasbro, Inc.</td>
+                        <td class="mcap" style="text-align: right">11.87B USD</td>
+                        <td class="price" style="text-align: right">83.90 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">84.93 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.22%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">VICI</span></td>
+                        <td>VICI Properties Inc.</td>
+                        <td class="mcap" style="text-align: right">30.71B USD</td>
+                        <td class="price" style="text-align: right">28.52 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">28.82 USD</td>
+                        <td class="pct-neg" style="text-align: right">-1.05%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">GEN</span></td>
+                        <td>Gen Digital Inc.</td>
+                        <td class="mcap" style="text-align: right">14.65B USD</td>
+                        <td class="price" style="text-align: right">24.32 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">24.54 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.91%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AON</span></td>
+                        <td>Aon plc</td>
+                        <td class="mcap" style="text-align: right">71.61B USD</td>
+                        <td class="price" style="text-align: right">335.31 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">337.97 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.79%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">NDAQ</span></td>
+                        <td>Nasdaq, Inc.</td>
+                        <td class="mcap" style="text-align: right">50.32B USD</td>
+                        <td class="price" style="text-align: right">88.98 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">89.52 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.60%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">SYF</span></td>
+                        <td>Synchrony Financial</td>
+                        <td class="mcap" style="text-align: right">24.68B USD</td>
+                        <td class="price" style="text-align: right">73.36 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">73.74 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.52%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">BRK-B</span></td>
+                        <td>Berkshire Hathaway Inc. New</td>
+                        <td class="mcap" style="text-align: right">1055.24B USD</td>
+                        <td class="price" style="text-align: right">489.25 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">490.39 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.23%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">AMCR</span></td>
+                        <td>Amcor plc</td>
+                        <td class="mcap" style="text-align: right">18.77B USD</td>
+                        <td class="price" style="text-align: right">40.60 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">40.68 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.20%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">A</span></td>
+                        <td>Agilent Technologies, Inc.</td>
+                        <td class="mcap" style="text-align: right">36.67B USD</td>
+                        <td class="price" style="text-align: right">129.84 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">129.99 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.12%</td>
+                    </tr>
+                    <tr>
+                        <td><span class="ticker-badge">WM</span></td>
+                        <td>Waste Management, Inc.</td>
+                        <td class="mcap" style="text-align: right">88.13B USD</td>
+                        <td class="price" style="text-align: right">219.45 USD</td>
+                        <td class="dma-col price" style="text-align: right; color: #94a3b8">219.68 USD</td>
+                        <td class="pct-neg" style="text-align: right">-0.10%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer class="footer">
+            <p>Data provided by Yahoo Finance & Wikipedia Analysts. Generated on 2026-06-13 08:43:35</p>
+        </footer>
+    </div>
+</body>
+</html>

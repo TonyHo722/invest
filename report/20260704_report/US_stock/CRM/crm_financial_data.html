@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce, Inc. (CRM) Financial Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 960px; margin: 0 auto; padding: 20px; color: #333; }
+        h1, h2, h3 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .good { color: green; font-weight: bold; }
+        .bad { color: red; font-weight: bold; }
+        .mixed { color: orange; font-weight: bold; }
+        .risk { color: red; font-weight: bold; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .chart-box { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .chart-box h3 { margin: 0; padding: 10px 14px; background: #2c3e50; color: #fff; font-size: 14px; }
+        .chart-box iframe { display: block; width: 100%; border: none; }
+        .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
+        .oldest-year-link { color: #0066cc; text-decoration: none; }
+        .oldest-year-link:hover { color: #3399ff; text-decoration: underline; }
+        @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>Salesforce, Inc. (CRM) Detailed Financial Data</h1>
+    <p>Automated Analysis Dashboard - Generated when 2026-07-04 21:17:25</p>
+
+    <h2>0. Stock Price Charts</h2>
+    
+    <div class="chart-grid">
+        <div class="chart-box">
+            <h3>📈 1-Year Price Chart (Daily)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:CRM&interval=D&range=12M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+        <div class="chart-box">
+            <h3>📈 5-Year Price Chart (Weekly)</h3>
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:CRM&interval=W&range=60M&theme=light&style=1&locale=en&hide_side_toolbar=true&allow_symbol_change=false"
+                height="300" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <h2>1. Market Position ("Big / 又大")</h2>
+    <table>
+        <tr><th>Indicator</th><th>Salesforce, Inc. (CRM)</th></tr>
+        <tr><td>Sector</td><td>Technology</td></tr>
+        <tr><td>Market Cap</td><td>$136.04B</td></tr>
+        <tr><td>Current Price</td><td>$166.11</td></tr>
+    </table>
+
+    <h2>2. Operational and Financial Performance ("Good / 又好")</h2>
+    <table>
+        <tr><th>Year</th><th>Revenue</th><th>Gross Profit</th><th>Op. Profit</th><th>Net Income</th><th>EPS</th><th>Dividends</th><th>FCF</th><th>Buybacks</th></tr>
+        <tr><td><strong><a href="#note-oldest-year" class="oldest-year-link" title="See note at bottom">2023*</a></strong></td><td>31,352M</td><td>22,992M</td><td>1,858M</td><td>208M</td><td>0.21</td><td>0.00</td><td>8,382M</td><td>4,000M</td></tr>
+<tr><td><strong>2024</strong></td><td>34,857M</td><td>26,316M</td><td>5,999M</td><td>4,136M</td><td>4.25</td><td>1.60</td><td>12,348M</td><td>7,620M</td></tr>
+<tr><td><strong>2025</strong></td><td>37,895M</td><td>29,252M</td><td>7,666M</td><td>6,197M</td><td>6.44</td><td>1.66</td><td>14,415M</td><td>7,829M</td></tr>
+<tr><td><strong>2026</strong></td><td>41,525M</td><td>32,255M</td><td>8,917M</td><td>7,457M</td><td>7.85</td><td>0.88</td><td>15,183M</td><td>12,596M</td></tr>
+<tr><td><strong>TTM</strong></td><td>42,829M</td><td>33,254M</td><td>9,366M</td><td>8,023M</td><td>8.68</td><td>2.13</td><td>15,386M</td><td>37,211M</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td></tr>
+    </table>
+
+    <h2>3. Efficiency and Return Metrics</h2>
+    <table>
+        <tr><th>Year</th><th>Gross Margin</th><th>Op. Margin</th><th>Net Margin</th><th>Inventory Days</th><th>DSO</th><th>ROE</th><th>ROA</th></tr>
+        <tr><td><strong><a href="#note-oldest-year" class="oldest-year-link" title="See note at bottom">2023*</a></strong></td><td>73.3%</td><td>5.9%</td><td>0.7%</td><td>N/A</td><td>125</td><td>0.4%</td><td>0.2%</td></tr>
+<tr><td><strong>2024</strong></td><td>75.5%</td><td>17.2%</td><td>11.9%</td><td>N/A</td><td>116</td><td>7.0%</td><td>4.2%</td></tr>
+<tr><td><strong>2025</strong></td><td>77.2%</td><td>20.2%</td><td>16.4%</td><td>N/A</td><td>112</td><td>10.3%</td><td>6.1%</td></tr>
+<tr><td><strong>2026</strong></td><td>77.7%</td><td>21.5%</td><td>18.0%</td><td>N/A</td><td>115</td><td>12.4%</td><td>6.9%</td></tr>
+<tr><td><strong>TTM</strong></td><td>77.6%</td><td>21.9%</td><td>18.7%</td><td>N/A</td><td>40</td><td>16.9%</td><td>7.8%</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="good">📈 Good</td><td class="mixed">⚠️ N/A</td><td class="mixed">⚠️ N/A</td><td class="good">📈 Good</td><td class="good">📈 Good</td></tr>
+    </table>
+
+    <h2>4. Valuations - 3P Model ("Cheap / 又便宜")</h2>
+    <table>
+        <tr><th>Year</th><th>P/S</th><th>P/E</th><th>P/B</th></tr>
+        <tr><td><strong><a href="#note-oldest-year" class="oldest-year-link" title="See note at bottom">2023*</a></strong></td><td>5.39</td><td>804.28</td><td>2.89</td></tr>
+<tr><td><strong>2024</strong></td><td>7.75</td><td>65.64</td><td>4.53</td></tr>
+<tr><td><strong>2025</strong></td><td>8.53</td><td>52.45</td><td>5.28</td></tr>
+<tr><td><strong>2026</strong></td><td>3.18</td><td>19.23</td><td>3.97</td></tr>
+<tr><td><strong>TTM</strong></td><td>3.18</td><td>19.23</td><td>3.97</td></tr>
+        <tr><td><strong>Trend</strong></td><td class="mixed">⚠️ MIXED</td><td class="mixed">⚠️ MIXED</td><td class="mixed">⚠️ MIXED</td></tr>
+    </table>
+
+    <h2>5. Framework Assessment</h2>
+    <table>
+        <tr><th>Criterion</th><th>Status</th><th>Notes</th></tr>
+        <tr><td>Big (又大)</td><td class="good">✅ PASS</td><td>Market Cap: $136.04B</td></tr>
+<tr><td>Good (又好)</td><td class="mixed">📈 Good</td><td>Automated check of 4-year financial trajectory.</td></tr>
+<tr><td>Cheap (又便宜)</td><td class="good">✅ PASS</td><td>Current Price: $166.11</td></tr>
+<tr><td>Upside Potential</td><td class="mixed">⚠️ MIXED</td><td>Further qualitative analysis required for upside potential.</td></tr>
+    </table>
+    <p id="note-oldest-year" style="font-size: 0.8em; color: #777;">* Note: For the oldest year, yfinance limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.</p>
+</body>
+</html>

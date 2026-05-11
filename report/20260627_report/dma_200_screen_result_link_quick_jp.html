@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Screener: Mega-Cap Value (JP)
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.2s ease;
+        }
+        
+        .ticker-badge {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .price { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .mcap { color: var(--text-dim); }
+        .pct-neg { color: var(--success); font-weight: 700; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ── Mobile Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 16px 12px; }
+            header { margin-bottom: 30px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .stat-card { padding: 14px 10px; border-radius: 12px; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.82rem; min-width: 400px; }
+            th, td { padding: 12px 14px; }
+
+            /* Hide lower-priority columns on phone */
+            .mcap, .dma-col { display: none; }
+
+            .footer { margin-top: 30px; font-size: 0.78rem; }
+        }
+   .ticker-badge {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .ticker-badge:hover {
+            filter: brightness(1.2);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <header>
+    <h1>
+     Market Value Screener (JP)
+    </h1>
+    <p class="subtitle">
+     Target: Nikkei 225 Index (223 stocks) | Generated: 2026-06-27 20:10:49 - Generated when 2026-06-27 20:10:53
+    </p>
+    <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+     <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Filter:
+      </span>
+      <input id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 100%; min-width: 100px;" type="text"/>
+     </div>
+     <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Metric:
+      </span>
+      <select id="metric-type" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
+       <option value="dma">
+        200-DMA
+       </option>
+       <option value="roe">
+        ROE
+       </option>
+       <option value="pe">
+        P/E
+       </option>
+       <option value="ps">
+        P/S
+       </option>
+       <option value="pb">
+        P/B
+       </option>
+      </select>
+     </div>
+     <div id="range-container" style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+      <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">
+       Range:
+      </span>
+      <select id="metric-range" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
+       <option value="avg">
+        Average
+       </option>
+       <option value="TTM">
+        TTM
+       </option>
+       <option value="2026">
+        2026
+       </option>
+       <option value="2025">
+        2025
+       </option>
+       <option value="2024">
+        2024
+       </option>
+       <option value="2023">
+        2023
+       </option>
+       <option value="2022">
+        2022
+       </option>
+       <option value="2021">
+        2021
+       </option>
+      </select>
+     </div>
+     <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 10px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; width: 100%;">
+      Apply
+     </button>
+    </div>
+   </header>
+   <div class="stats-grid">
+    <div class="stat-card">
+     <div class="stat-value">
+      20
+     </div>
+     <div class="stat-label">
+      Companies Found
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value" style="font-size: 1.25rem; line-height: 2.2rem; font-weight: 600;">
+      Nikkei 225 Index
+     </div>
+     <div class="stat-label">
+      Target Index
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      223
+     </div>
+     <div class="stat-label">
+      Scanned Targets
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      &gt; $10B
+     </div>
+     <div class="stat-label">
+      Market Cap Filter
+     </div>
+    </div>
+    <div class="stat-card">
+     <div class="stat-value">
+      200-DMA
+     </div>
+     <div class="stat-label">
+      Technical Level
+     </div>
+    </div>
+   </div>
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th>
+        Ticker
+       </th>
+       <th>
+        Company Name
+       </th>
+       <th class="mcap" style="text-align: right">
+        Market Cap
+       </th>
+       <th style="text-align: right">
+        Price
+       </th>
+       <th class="dma-col" style="text-align: right">
+        200-DMA
+       </th>
+       <th style="text-align: right">
+        % Discount
+       </th>
+       <th id="dynamic-metric-header" style="text-align: right">
+        Metric
+       </th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr data-discount="-34.85" data-pb-2023="2.52" data-pb-2024="3.52" data-pb-2025="4.67" data-pb-2026="2.57" data-pb-avg="3.57" data-pe-2023="12.97" data-pe-2024="18.67" data-pe-2025="42.54" data-pe-2026="18.08" data-pe-avg="24.73" data-ps-2023="3.57" data-ps-2024="5.48" data-ps-2025="10.91" data-ps-2026="3.28" data-ps-avg="6.65" data-roe-2023="19.1" data-roe-2024="20.1" data-roe-2025="10.5" data-roe-2026="14.9" data-roe-avg="16.57">
+       <td>
+        <a href="JP_stock/7974.T/7974.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          7974.T
+         </span>
+        </a>
+       </td>
+       <td>
+        NINTENDO CO LTD
+       </td>
+       <td class="mcap" style="text-align: right">
+        7595.99B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        6589.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        10113.10 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -34.85%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-34.49">
+       <td>
+        <a href="JP_stock/8267.T/8267.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          8267.T
+         </span>
+        </a>
+       </td>
+       <td>
+        AEON CO LTD
+       </td>
+       <td class="mcap" style="text-align: right">
+        3614.60B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        1306.50 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        1994.26 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -34.49%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-32.48" data-pb-2022="2.91" data-pb-2023="2.38" data-pb-2024="1.94" data-pb-2025="1.59" data-pb-avg="2.41" data-pe-2022="25.16" data-pe-2023="30.33" data-pe-2024="14.5" data-pe-2025="18.73" data-pe-avg="23.33" data-ps-2022="7.06" data-ps-2023="5.04" data-ps-2024="4.42" data-ps-2025="3.29" data-ps-avg="5.51" data-roe-2022="11.7" data-roe-2023="8.0" data-roe-2024="14.1" data-roe-2025="8.9" data-roe-TTM="0.0" data-roe-avg="10.68">
+       <td>
+        <a href="JP_stock/3659.T/3659.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          3659.T
+         </span>
+        </a>
+       </td>
+       <td>
+        NEXON CO LTD
+       </td>
+       <td class="mcap" style="text-align: right">
+        1689.08B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        2136.50 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        3164.33 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -32.48%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-31.49" data-pb-2023="0.25" data-pb-2024="0.41" data-pb-2025="0.18" data-pb-2026="0.22" data-pb-avg="0.28" data-pe-2023="0.0" data-pe-2024="5.42" data-pe-2025="4.08" data-pe-2026="0.0" data-pe-avg="4.75" data-ps-2023="0.1" data-ps-2024="0.21" data-ps-2025="0.1" data-ps-2026="0.12" data-ps-avg="0.14" data-roe-2023="-4.0" data-roe-2024="8.1" data-roe-2025="4.4" data-roe-2026="-12.7" data-roe-avg="6.25">
+       <td>
+        <a href="JP_stock/9501.T/9501.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          9501.T
+         </span>
+        </a>
+       </td>
+       <td>
+        TOKYO ELEC POWER CO HLDGS INC
+       </td>
+       <td class="mcap" style="text-align: right">
+        731.79B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        456.60 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        666.50 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -31.49%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-29.86" data-pb-2022="0.89" data-pb-2023="1.21" data-pb-2024="0.47" data-pb-2025="4.09" data-pb-avg="0.86" data-pe-2022="68.81" data-pe-2023="84.3" data-pe-2024="42.16" data-pe-2025="19.19" data-pe-avg="65.09" data-ps-2022="0.35" data-ps-2023="0.4" data-ps-2024="0.15" data-ps-2025="1.13" data-ps-avg="0.3" data-roe-2022="19.4" data-roe-2023="22.8" data-roe-2024="16.2" data-roe-2025="23.8" data-roe-avg="19.47">
+       <td>
+        <a href="JP_stock/3697.T/3697.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          3697.T
+         </span>
+        </a>
+       </td>
+       <td>
+        SHIFT INC
+       </td>
+       <td class="mcap" style="text-align: right">
+        157.71B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        617.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        879.71 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -29.86%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-28.19">
+       <td>
+        <a href="JP_stock/4506.T/4506.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          4506.T
+         </span>
+        </a>
+       </td>
+       <td>
+        SUMITOMO PHARMA CO LTD
+       </td>
+       <td class="mcap" style="text-align: right">
+        647.77B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        1444.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        2010.80 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -28.19%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-21.7" data-pb-2023="0.39" data-pb-2024="0.36" data-pb-2025="0.5" data-pb-2026="2.06" data-pb-avg="0.42" data-pe-2023="23.69" data-pe-2024="18.27" data-pe-2025="27.45" data-pe-2026="20.62" data-pe-avg="23.14" data-ps-2023="0.65" data-ps-2024="0.59" data-ps-2025="0.76" data-ps-2026="2.91" data-ps-avg="0.67" data-roe-2023="8.2" data-roe-2024="10.4" data-roe-2025="9.3" data-roe-2026="10.4" data-roe-avg="9.3">
+       <td>
+        <a href="JP_stock/9602.T/9602.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          9602.T
+         </span>
+        </a>
+       </td>
+       <td>
+        TOHO CO LTD
+       </td>
+       <td class="mcap" style="text-align: right">
+        1049.80B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        1262.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        1611.74 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -21.70%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-21.32" data-pb-2022="1.2" data-pb-2023="1.61" data-pb-2024="1.99" data-pb-2025="1.66" data-pb-avg="1.6" data-pe-2022="0.0" data-pe-2023="0.0" data-pe-2024="0.0" data-pe-2025="0.0" data-pe-avg="0.0" data-ps-2022="0.49" data-ps-2023="0.65" data-ps-2024="0.81" data-ps-2025="0.58" data-ps-avg="0.65" data-roe-2022="-47.7" data-roe-2023="-41.7" data-roe-2024="-18.4" data-roe-2025="-18.5" data-roe-avg="0.0">
+       <td>
+        <a href="JP_stock/4755.T/4755.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          4755.T
+         </span>
+        </a>
+       </td>
+       <td>
+        RAKUTEN GROUP INC
+       </td>
+       <td class="mcap" style="text-align: right">
+        1500.28B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        690.20 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        877.23 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -21.32%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-19.53" data-pb-2023="0.17" data-pb-2024="0.3" data-pb-2025="2.19" data-pb-2026="2.29" data-pb-avg="0.89" data-pe-2023="11.65" data-pe-2024="19.16" data-pe-2025="23.76" data-pe-2026="18.69" data-pe-avg="18.19" data-ps-2023="0.08" data-ps-2024="0.17" data-ps-2025="1.25" data-ps-2026="1.4" data-ps-avg="0.5" data-roe-2023="7.1" data-roe-2024="8.4" data-roe-2025="9.1" data-roe-2026="13.0" data-roe-avg="8.2">
+       <td>
+        <a href="JP_stock/6701.T/6701.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          6701.T
+         </span>
+        </a>
+       </td>
+       <td>
+        NEC CORP
+       </td>
+       <td class="mcap" style="text-align: right">
+        5033.48B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        3795.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        4716.30 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -19.53%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-19.23" data-pb-2022="0.44" data-pb-2023="0.38" data-pb-2024="0.39" data-pb-2025="0.22" data-pb-avg="0.4" data-pe-2022="9.3" data-pe-2023="8.56" data-pe-2024="5.15" data-pe-2025="0.0" data-pe-avg="7.67" data-ps-2022="0.24" data-ps-2023="0.18" data-ps-2024="0.18" data-ps-2025="0.09" data-ps-avg="0.2" data-roe-2022="4.7" data-roe-2023="4.6" data-roe-2024="7.7" data-roe-2025="-12.3" data-roe-avg="5.67">
+       <td>
+        <a href="JP_stock/7201.T/7201.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          7201.T
+         </span>
+        </a>
+       </td>
+       <td>
+        NISSAN MOTOR CO
+       </td>
+       <td class="mcap" style="text-align: right">
+        1048.91B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        300.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        371.45 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -19.23%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-18.98">
+       <td>
+        <a href="JP_stock/4568.T/4568.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          4568.T
+         </span>
+        </a>
+       </td>
+       <td>
+        DAIICHI SANKYO COMPANY LIMITED
+       </td>
+       <td class="mcap" style="text-align: right">
+        4613.73B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        2535.50 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        3129.43 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -18.98%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-17.49" data-pb-2023="0.7" data-pb-2024="0.9" data-pb-2025="0.7" data-pb-2026="0.62" data-pb-avg="0.77" data-pe-2023="7.2" data-pe-2024="6.04" data-pe-2025="5.69" data-pe-2026="19.12" data-pe-avg="6.31" data-ps-2023="0.39" data-ps-2024="0.49" data-ps-2025="0.41" data-ps-2026="0.36" data-ps-avg="0.43" data-roe-2023="9.5" data-roe-2024="16.5" data-roe-2025="12.8" data-roe-2026="3.3" data-roe-avg="12.93">
+       <td>
+        <a href="JP_stock/7270.T/7270.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          7270.T
+         </span>
+        </a>
+       </td>
+       <td>
+        SUBARU CORPORATION
+       </td>
+       <td class="mcap" style="text-align: right">
+        1717.74B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        2401.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        2909.98 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -17.49%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-16.95" data-pb-2023="2.13" data-pb-2024="3.14" data-pb-2025="5.21" data-pb-2026="4.15" data-pb-TTM="4.15" data-pb-avg="3.66" data-pe-2023="22.64" data-pe-2024="22.68" data-pe-2025="32.17" data-pe-2026="23.42" data-pe-TTM="23.42" data-pe-avg="25.23" data-ps-2023="2.55" data-ps-2024="3.73" data-ps-2025="5.96" data-ps-2026="4.74" data-ps-TTM="4.74" data-ps-avg="4.25" data-roe-2023="9.3" data-roe-2024="14.7" data-roe-2025="16.4" data-roe-2026="19.1" data-roe-TTM="19.1" data-roe-avg="14.88">
+       <td>
+        <a href="JP_stock/9766.T/9766.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          9766.T
+         </span>
+        </a>
+       </td>
+       <td>
+        KONAMI GROUP CORPORATION
+       </td>
+       <td class="mcap" style="text-align: right">
+        2342.42B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        17280.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        20807.31 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -16.95%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-16.68" data-pb-2023="0.16" data-pb-2024="0.84" data-pb-2025="0.63" data-pb-2026="0.64" data-pb-avg="0.54" data-pe-2023="13.83" data-pe-2024="9.14" data-pe-2025="6.08" data-pe-2026="5.99" data-pe-avg="9.68" data-ps-2023="0.44" data-ps-2024="2.05" data-ps-2025="1.58" data-ps-2026="1.63" data-ps-avg="1.36" data-roe-2023="5.8" data-roe-2024="9.7" data-roe-2025="10.5" data-roe-2026="11.4" data-roe-avg="8.67">
+       <td>
+        <a href="JP_stock/9022.T/9022.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          9022.T
+         </span>
+        </a>
+       </td>
+       <td>
+        CENTRAL JAPAN RAILWAY CO
+       </td>
+       <td class="mcap" style="text-align: right">
+        3260.16B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        3420.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        4104.71 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -16.68%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-16.59" data-pb-2023="4.45" data-pb-2024="5.89" data-pb-2025="6.58" data-pb-2026="5.69" data-pb-avg="5.64" data-pe-2023="22.82" data-pe-2024="29.67" data-pe-2025="29.85" data-pe-2026="161.27" data-pe-avg="27.45" data-ps-2023="2.56" data-ps-2024="3.19" data-ps-2025="3.73" data-ps-2026="2.96" data-ps-avg="3.16" data-roe-2023="19.1" data-roe-2024="19.9" data-roe-2025="22.5" data-roe-2026="3.5" data-roe-avg="20.5">
+       <td>
+        <a href="JP_stock/4307.T/4307.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          4307.T
+         </span>
+        </a>
+       </td>
+       <td>
+        NOMURA RESEARCH INSTITUTE
+       </td>
+       <td class="mcap" style="text-align: right">
+        2411.04B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        4301.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        5156.63 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -16.59%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-16.2" data-pb-2022="0.08" data-pb-2023="0.09" data-pb-2024="0.21" data-pb-2025="3.88" data-pb-avg="0.13" data-pe-2022="11.11" data-pe-2023="12.13" data-pe-2024="20.8" data-pe-2025="34.13" data-pe-avg="14.68" data-ps-2022="0.03" data-ps-2023="0.04" data-ps-2024="0.1" data-ps-2025="2.41" data-ps-avg="0.06" data-roe-2022="7.2" data-roe-2023="7.9" data-roe-2024="11.1" data-roe-2025="10.7" data-roe-avg="8.73">
+       <td>
+        <a href="JP_stock/7011.T/7011.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          7011.T
+         </span>
+        </a>
+       </td>
+       <td>
+        MITSUBISHI HEAVY INDUSTRIES
+       </td>
+       <td class="mcap" style="text-align: right">
+        11985.87B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        3567.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        4256.44 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -16.20%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-16.04" data-pb-2023="0.41" data-pb-2024="0.61" data-pb-2025="0.45" data-pb-2026="0.38" data-pb-avg="0.49" data-pe-2023="5.22" data-pe-2024="7.02" data-pe-2025="11.98" data-pe-2026="14.66" data-pe-avg="8.07" data-ps-2023="0.16" data-ps-2024="0.29" data-ps-2025="0.23" data-ps-2026="0.22" data-ps-avg="0.23" data-roe-2023="7.7" data-roe-2024="8.6" data-roe-2025="3.7" data-roe-2026="2.7" data-roe-avg="6.67">
+       <td>
+        <a href="JP_stock/5411.T/5411.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          5411.T
+         </span>
+        </a>
+       </td>
+       <td>
+        JFE HOLDINGS INC
+       </td>
+       <td class="mcap" style="text-align: right">
+        984.42B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        1547.50 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        1843.19 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -16.04%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-15.97" data-pb-2023="1.77" data-pb-2024="8.16" data-pb-2025="4.96" data-pb-2026="3.58" data-pb-avg="4.96" data-pe-2023="90.8" data-pe-2024="64.45" data-pe-2025="37.72" data-pe-2026="32.26" data-pe-avg="64.32" data-ps-2023="3.04" data-ps-2024="12.53" data-ps-2025="7.13" data-ps-2026="5.58" data-ps-avg="7.57" data-roe-2023="9.7" data-roe-2024="13.5" data-roe-2025="12.9" data-roe-2026="11.7" data-roe-avg="12.03">
+       <td>
+        <a href="JP_stock/4661.T/4661.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          4661.T
+         </span>
+        </a>
+       </td>
+       <td>
+        ORIENTAL LAND CO
+       </td>
+       <td class="mcap" style="text-align: right">
+        3932.86B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        2398.50 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        2854.29 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -15.97%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-15.57" data-pb-2023="2.92" data-pb-2024="3.9" data-pb-2025="3.99" data-pb-2026="1.4" data-pb-avg="3.6" data-pe-2023="0.0" data-pe-2024="0.0" data-pe-2025="16.52" data-pe-2026="8.3" data-pe-avg="16.52" data-ps-2023="0.24" data-ps-2024="0.24" data-ps-2025="0.29" data-ps-2026="0.21" data-ps-avg="0.26" data-roe-2023="-125.0" data-roe-2024="-85.2" data-roe-2025="24.2" data-roe-2026="21.7" data-roe-avg="24.2">
+       <td>
+        <a href="JP_stock/6753.T/6753.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          6753.T
+         </span>
+        </a>
+       </td>
+       <td>
+        SHARP CORP
+       </td>
+       <td class="mcap" style="text-align: right">
+        393.61B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        606.20 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        717.97 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -15.57%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+      <tr data-discount="-15.42" data-pb-2023="0.45" data-pb-2024="0.42" data-pb-2025="2.75" data-pb-2026="2.33" data-pb-TTM="2.33" data-pb-avg="1.49" data-pe-2023="15.5" data-pe-2024="16.32" data-pe-2025="19.42" data-pe-2026="18.66" data-pe-TTM="18.66" data-pe-avg="17.48" data-ps-2023="0.27" data-ps-2024="0.28" data-ps-2025="1.87" data-ps-2026="1.51" data-ps-TTM="1.51" data-ps-avg="0.98" data-roe-2023="15.2" data-roe-2024="13.7" data-roe-2025="14.5" data-roe-2026="-4.0" data-roe-TTM="-4.0" data-roe-avg="14.47">
+       <td>
+        <a href="JP_stock/6758.T/6758.t_financial_data.html" style="text-decoration: none; display: inline-block;" target="_blank">
+         <span class="ticker-badge">
+          6758.T
+         </span>
+        </a>
+       </td>
+       <td>
+        SONY GROUP CORPORATION
+       </td>
+       <td class="mcap" style="text-align: right">
+        18841.68B JPY
+       </td>
+       <td class="price" style="text-align: right">
+        3199.00 JPY
+       </td>
+       <td class="dma-col price" style="text-align: right; color: #94a3b8">
+        3782.22 JPY
+       </td>
+       <td class="pct-neg" style="text-align: right">
+        -15.42%
+       </td>
+       <td class="dynamic-metric-cell" style="text-align: right; font-weight: bold; color: #38bdf8;">
+        -
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <footer class="footer">
+    <p>
+     Data provided by Yahoo Finance &amp; Wikipedia Analysts. Generated on 2026-06-27 20:10:49
+    </p>
+   </footer>
+  </div>
+  <script>
+   function applySortAndFilter() {
+            const type = document.getElementById('metric-type').value;
+            const range = document.getElementById('metric-range').value;
+            const filterText = document.getElementById('ticker-filter').value.toLowerCase();
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const header = document.getElementById('dynamic-metric-header');
+            const rangeContainer = document.getElementById('range-container');
+
+            // Construct method key and handle UI state
+            let method = '';
+            let label = '';
+            
+            if (type === 'dma') {
+                method = 'discount';
+                label = '200-DMA % Discount';
+                rangeContainer.style.opacity = '0.3';
+                rangeContainer.style.pointerEvents = 'none';
+            } else {
+                method = type + '-' + range;
+                const typeLabel = type === 'roe' ? 'ROE' : type.toUpperCase();
+                const rangeLabel = range === 'avg' ? 'Average' : range;
+                label = typeLabel + ' (' + rangeLabel + ')';
+                rangeContainer.style.opacity = '1';
+                rangeContainer.style.pointerEvents = 'auto';
+            }
+            
+            header.innerText = label;
+
+            rows.sort((a, b) => {
+                let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
+                let valB = parseFloat(b.getAttribute('data-' + method)) || 0;
+                
+                // If both are 0 (likely N/A), put them at the end
+                if (valA === 0 && valB !== 0) return 1;
+                if (valB === 0 && valA !== 0) return -1;
+
+                // Ascending (Lower is better) for valuations and DMA discount
+                if (type === 'dma' || type === 'pe' || type === 'ps' || type === 'pb') {
+                    return valA - valB;
+                }
+                // Descending (Higher is better) for ROE
+                return valB - valA;
+            });
+
+            rows.forEach(row => {
+                // Filter logic
+                const ticker = row.cells[0].innerText.toLowerCase();
+                const name = row.cells[1].innerText.toLowerCase();
+                const matches = ticker.includes(filterText) || name.includes(filterText);
+                row.style.display = matches ? '' : 'none';
+
+                const cell = row.querySelector('.dynamic-metric-cell');
+                const val = row.getAttribute('data-' + method);
+                const roeVal = row.getAttribute('data-roe-' + range);
+                
+                if (val !== null && val !== '0' && val !== 0) {
+                    const numVal = parseFloat(val);
+                    let displayStr = '';
+                    
+                    if (type === 'roe') {
+                        displayStr = numVal.toFixed(1) + '%';
+                        cell.style.color = numVal > 15 ? '#4ade80' : (numVal > 0 ? '#fbbf24' : '#f87171');
+                    } else if (type === 'dma') {
+                        displayStr = numVal.toFixed(2) + '%';
+                        cell.style.color = '#38bdf8';
+                    } else {
+                        displayStr = numVal.toFixed(2);
+                        if (roeVal && type !== 'roe') {
+                            displayStr += ' <span style="font-size: 0.8em; color: #94a3b8;">(ROE: ' + parseFloat(roeVal).toFixed(1) + '%)</span>';
+                        }
+                        cell.style.color = '#38bdf8';
+                    }
+                    cell.innerHTML = displayStr;
+                } else {
+                    cell.innerText = 'N/A';
+                    cell.style.color = '#94a3b8';
+                }
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('apply-sort').addEventListener('click', applySortAndFilter);
+        document.getElementById('ticker-filter').addEventListener('input', applySortAndFilter);
+        document.getElementById('metric-type').addEventListener('change', applySortAndFilter);
+        document.getElementById('metric-range').addEventListener('change', applySortAndFilter);
+        
+        window.addEventListener('load', () => {
+            applySortAndFilter();
+        });
+  </script>
+ </body>
+</html>
