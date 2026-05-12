@@ -109,30 +109,32 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
         sorted_years = sorted(list(years), reverse=True)
 
         controls_html = f"""
-        <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-weight: 600; color: #94a3b8;">Filter:</span>
                 <input type="text" id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 150px;">
             </div>
+            
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: 600; color: #94a3b8;">Sort By:</span>
-                <select id="sort-method" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
-                    <option value="discount">200-DMA Discount</option>
-                    <optgroup label="ROE (Higher is Better)">
-                        <option value="roe-avg">Average ROE</option>
-                        {"".join([f'<option value="roe-{y}">ROE in {y}</option>' for y in sorted_years])}
-                    </optgroup>
-                    <optgroup label="Valuation (Lower is Better)">
-                        <option value="pe-avg">Average P/E</option>
-                        <option value="ps-avg">Average P/S</option>
-                        <option value="pb-avg">Average P/B</option>
-                        {"".join([f'<option value="pe-{y}">P/E in {y}</option>' for y in sorted_years])}
-                        {"".join([f'<option value="ps-{y}">P/S in {y}</option>' for y in sorted_years])}
-                        {"".join([f'<option value="pb-{y}">P/B in {y}</option>' for y in sorted_years])}
-                    </optgroup>
+                <span style="font-weight: 600; color: #94a3b8;">Metric:</span>
+                <select id="metric-type" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+                    <option value="dma">200-DMA</option>
+                    <option value="roe">ROE</option>
+                    <option value="pe">P/E</option>
+                    <option value="ps">P/S</option>
+                    <option value="pb">P/B</option>
                 </select>
             </div>
-            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;">Apply</button>
+
+            <div id="range-container" style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: 600; color: #94a3b8;">Range:</span>
+                <select id="metric-range" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+                    <option value="avg">Average</option>
+                    {"".join([f'<option value="{y}">{y}</option>' for y in sorted_years])}
+                </select>
+            </div>
+
+            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto;">Apply</button>
         </div>
         """
         controls_soup = BeautifulSoup(controls_html, 'html.parser')
@@ -144,19 +146,33 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
         js_code = """
         <script>
         function applySortAndFilter() {
-            const method = document.getElementById('sort-method').value;
+            const type = document.getElementById('metric-type').value;
+            const range = document.getElementById('metric-range').value;
             const filterText = document.getElementById('ticker-filter').value.toLowerCase();
             const tbody = document.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
             const header = document.getElementById('dynamic-metric-header');
-            
-            const select = document.getElementById('sort-method');
-            const selectedText = select.options[select.selectedIndex].text;
-            header.innerText = selectedText;
+            const rangeContainer = document.getElementById('range-container');
 
-            // Extract year from method if applicable
-            const yearMatch = method.match(/-(20\\d{2})$/);
-            const year = yearMatch ? yearMatch[1] : 'avg';
+            // Construct method key and handle UI state
+            let method = '';
+            let label = '';
+            
+            if (type === 'dma') {
+                method = 'discount';
+                label = '200-DMA % Discount';
+                rangeContainer.style.opacity = '0.3';
+                rangeContainer.style.pointerEvents = 'none';
+            } else {
+                method = type + '-' + range;
+                const typeLabel = type === 'roe' ? 'ROE' : type.toUpperCase();
+                const rangeLabel = range === 'avg' ? 'Average' : range;
+                label = typeLabel + ' (' + rangeLabel + ')';
+                rangeContainer.style.opacity = '1';
+                rangeContainer.style.pointerEvents = 'auto';
+            }
+            
+            header.innerText = label;
 
             rows.sort((a, b) => {
                 let valA = parseFloat(a.getAttribute('data-' + method)) || 0;
@@ -166,10 +182,12 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
                 if (valA === 0 && valB !== 0) return 1;
                 if (valB === 0 && valA !== 0) return -1;
 
-                if (method === 'discount' || method.startsWith('pe-') || method.startsWith('ps-') || method.startsWith('pb-') || method.includes('-avg') && !method.startsWith('roe')) {
-                    return valA - valB; // Ascending (Lower is better)
+                // Ascending (Lower is better) for valuations and DMA discount
+                if (type === 'dma' || type === 'pe' || type === 'ps' || type === 'pb') {
+                    return valA - valB;
                 }
-                return valB - valA; // Descending (Higher is better)
+                // Descending (Higher is better) for ROE
+                return valB - valA;
             });
 
             rows.forEach(row => {
@@ -181,18 +199,21 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
 
                 const cell = row.querySelector('.dynamic-metric-cell');
                 const val = row.getAttribute('data-' + method);
-                const roeVal = row.getAttribute('data-roe-' + year);
+                const roeVal = row.getAttribute('data-roe-' + range);
                 
                 if (val !== null && val !== '0' && val !== 0) {
                     const numVal = parseFloat(val);
                     let displayStr = '';
                     
-                    if (method.startsWith('roe')) {
+                    if (type === 'roe') {
                         displayStr = numVal.toFixed(1) + '%';
                         cell.style.color = numVal > 15 ? '#4ade80' : (numVal > 0 ? '#fbbf24' : '#f87171');
+                    } else if (type === 'dma') {
+                        displayStr = numVal.toFixed(2) + '%';
+                        cell.style.color = '#38bdf8';
                     } else {
                         displayStr = numVal.toFixed(2);
-                        if (roeVal) {
+                        if (roeVal && type !== 'roe') {
                             displayStr += ' <span style="font-size: 0.8em; color: #94a3b8;">(ROE: ' + parseFloat(roeVal).toFixed(1) + '%)</span>';
                         }
                         cell.style.color = '#38bdf8';
@@ -208,6 +229,8 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
 
         document.getElementById('apply-sort').addEventListener('click', applySortAndFilter);
         document.getElementById('ticker-filter').addEventListener('input', applySortAndFilter);
+        document.getElementById('metric-type').addEventListener('change', applySortAndFilter);
+        document.getElementById('metric-range').addEventListener('change', applySortAndFilter);
         
         window.addEventListener('load', () => {
             applySortAndFilter();
