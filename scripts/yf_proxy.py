@@ -27,7 +27,11 @@ def get_cached_ticker(ticker_sym):
     if os.path.exists(cache_path):
         try:
             with open(cache_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                cached_data = json.load(f)
+                # Check if all required keys are present (handle migration for quarterly data)
+                if "quarterly_financials" in cached_data:
+                    return cached_data
+                print(f"🔄 Cache for {ticker_sym} is missing quarterly data. Re-fetching...")
         except Exception:
             pass
 
@@ -50,6 +54,9 @@ def get_cached_ticker(ticker_sym):
             "financials": df_to_dict(t.financials),
             "balance_sheet": df_to_dict(t.balance_sheet),
             "cashflow": df_to_dict(t.cashflow),
+            "quarterly_financials": df_to_dict(t.quarterly_financials),
+            "quarterly_balance_sheet": df_to_dict(t.quarterly_balance_sheet),
+            "quarterly_cashflow": df_to_dict(t.quarterly_cashflow),
             "dividends": df_to_dict(t.dividends),
             "history_5y": df_to_dict(t.history(period="5y"))
         }
@@ -91,6 +98,9 @@ class ProxyTicker:
             self.financials = pd.DataFrame()
             self.balance_sheet = pd.DataFrame()
             self.cashflow = pd.DataFrame()
+            self.quarterly_financials = pd.DataFrame()
+            self.quarterly_balance_sheet = pd.DataFrame()
+            self.quarterly_cashflow = pd.DataFrame()
             self.dividends = pd.Series()
             self.history_5y = pd.DataFrame()
             return
@@ -117,6 +127,9 @@ class ProxyTicker:
         self.financials = restore_df("financials")
         self.balance_sheet = restore_df("balance_sheet")
         self.cashflow = restore_df("cashflow")
+        self.quarterly_financials = restore_df("quarterly_financials")
+        self.quarterly_balance_sheet = restore_df("quarterly_balance_sheet")
+        self.quarterly_cashflow = restore_df("quarterly_cashflow")
         
         # Restore dividends (Series)
         div_dict = self.data.get("dividends", {})
