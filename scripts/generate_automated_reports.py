@@ -131,6 +131,17 @@ def build_md(s):
         lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
     lines.append("| **Trend** | " + " | ".join(s["val_trends"]) + " |")
 
+    lines += [
+        "",
+        "### 4.2 Recent Quarterly Valuations (Past 4Q)",
+        "*Values are TTM (Trailing Twelve Months) where available. **(A)** indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.*",
+        "",
+        "| " + " | ".join(["Quarter", "P/S", "P/E", "P/B"]) + " |",
+        "| " + " | ".join([":---"]*4) + " |",
+    ]
+    for row in s["q_val"]:
+        lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
+
     kqj_labels = ["Big (又大)","Good (又好)","Cheap (又便宜)",">50% Upside Potential"]
     lines += [
         "",
@@ -306,10 +317,18 @@ def build_html(s):
     </table>
 
     <h2>4. Valuations - 3P Model ("Cheap / 又便宜")</h2>
+    <h3>4.1 Historical Annual Valuations</h3>
     <table>
         <tr>{"".join(f"<th>{h}</th>" for h in val_headers)}</tr>
         {val_rows}
         {val_trend}
+    </table>
+
+    <h3>4.2 Recent Quarterly Valuations (Past 4Q)</h3>
+    <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">* Values are TTM (Trailing Twelve Months) where available. <strong>(A)</strong> indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.</p>
+    <table>
+        <tr>{"".join(f"<th>{h}</th>" for h in ["Quarter", "P/S", "P/E", "P/B"])}</tr>
+        {"".join(f"<tr><td>{q[0]}</td><td>{q[1]}</td><td>{q[2]}</td><td>{q[3]}</td></tr>" for q in s['q_val'])}
     </table>
 
     <h2>5. Framework Assessment</h2>
@@ -457,6 +476,115 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         except:
             pass
         
+        # Quarterly Valuations (Past 4Q)
+        q_val_data = []
+        try:
+            q_fin = ticker.quarterly_financials
+            q_bs = ticker.quarterly_balance_sheet
+            
+            if not q_fin.empty:
+                # Last 4 quarters available in financials
+                q_cols = q_fin.columns[:4]
+                for q_date in q_cols:
+                    try:
+                        q_label = q_date.strftime('%Y-%m')
+                        
+                        # Fetch price at quarter end
+                        if q_date.tz is None:
+                            q_date_tz = q_date.tz_localize('UTC')
+                        else:
+                            q_date_tz = q_date.tz_convert('UTC')
+                        
+                        q_hist = ticker.history(start=q_date_tz - pd.Timedelta(days=10), end=q_date_tz + pd.Timedelta(days=2))
+                        q_price = q_hist['Close'].iloc[-1] if not q_hist.empty else 0
+                        
+                        y_q_fin = q_fin[q_date]
+                        
+                        # Find closest balance sheet date
+                        q_equity = 0
+                        if not q_bs.empty:
+                            # Try exact match first
+                            if q_date in q_bs.columns:
+                                q_equity = q_bs[q_date].get('Stockholders Equity', 0)
+                            else:
+                                # Find closest previous date
+                                past_bs_dates = [d for d in q_bs.columns if d <= q_date]
+                                if past_bs_dates:
+                                    closest_date = max(past_bs_dates)
+                                    q_equity = q_bs[closest_date].get('Stockholders Equity', 0)
+                        
+                        # Get historical shares if possible, else current
+                        q_shares = 0
+                        if not shares_history.empty:
+                            s_at_q = shares_history[shares_history.index <= q_date_tz]
+                            if not s_at_q.empty:
+                                q_shares = s_at_q.iloc[-1]
+                        if not q_shares:
+                            q_shares = info.get('sharesOutstanding', 0)
+                        
+                        q_ps = "N/A"
+                        q_pe = "N/A"
+                        q_pb = "N/A"
+                        
+                        # TTM Calculation (Trailing Twelve Months)
+                        q_cols_list = q_fin.columns.tolist()
+                        try:
+                            q_idx = q_cols_list.index(q_date)
+                            if q_idx + 3 < len(q_cols_list):
+                                # Full 4-quarter window available
+                                window = q_cols_list[q_idx : q_idx + 4]
+                                ttm_eps = q_fin.loc['Basic EPS', window].sum() if 'Basic EPS' in q_fin.index else 0
+                                ttm_rev = q_fin.loc['Total Revenue', window].sum() if 'Total Revenue' in q_fin.index else 0
+                                
+                                if q_price > 0:
+                                    if ttm_eps and not pd.isna(ttm_eps) and ttm_eps != 0:
+                                        q_pe = f"{q_price / ttm_eps:.2f}"
+                                    if q_shares > 0 and ttm_rev and not pd.isna(ttm_rev) and ttm_rev > 0:
+                                        q_ps = f"{(q_price * q_shares) / ttm_rev:.2f}"
+                            else:
+                                # Fallback to Annualized (Q*4)
+                                # Try multiple possible keys for EPS and Revenue
+                                q_eps = 0
+                                for k in ['Basic EPS', 'Diluted EPS', 'EPS', 'BasicEPS']:
+                                    val = y_q_fin.get(k, 0)
+                                    if val and not pd.isna(val):
+                                        q_eps = val
+                                        break
+                                
+                                q_rev = 0
+                                for k in ['Total Revenue', 'Revenue', 'TotalRevenue']:
+                                    val = y_q_fin.get(k, 0)
+                                    if val and not pd.isna(val):
+                                        q_rev = val
+                                        break
+                                
+                                if q_price > 0:
+                                    if q_eps and not pd.isna(q_eps) and q_eps != 0:
+                                        q_pe = f"{q_price / (q_eps * 4):.2f} (A)"
+                                    if q_shares > 0 and q_rev and not pd.isna(q_rev) and q_rev > 0:
+                                        q_ps = f"{(q_price * q_shares) / (q_rev * 4):.2f} (A)"
+                        except:
+                            pass
+
+                        if q_price > 0 and q_shares > 0 and q_equity and not pd.isna(q_equity) and q_equity > 0:
+                            q_pb = f"{(q_price * q_shares) / q_equity:.2f}"
+                        
+                        q_val_data.append((q_label, q_ps, q_pe, q_pb))
+                    except:
+                        continue
+            
+            # Sort chronologically for the display
+            q_val_data.sort(key=lambda x: x[0] if x[0] != "N/A" else "")
+            
+        except Exception as e:
+            print(f"⚠️ Error processing quarterly data for {ticker_sym}: {e}")
+        
+        if not q_val_data:
+            q_val_data = [("N/A", "N/A", "N/A", "N/A")] * 4
+        elif len(q_val_data) < 4:
+            # Pad with N/A if fewer than 4 quarters
+            q_val_data = [("N/A", "N/A", "N/A", "N/A")] * (4 - len(q_val_data)) + q_val_data
+
         # Compute Trends
         fin_trends = [
             get_trend_emoji([r[1] for r in fin_data]),
@@ -501,6 +629,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             "fin": fin_data, "fin_trends": fin_trends,
             "eff": eff_data, "eff_trends": eff_trends,
             "val": val_data, "val_trends": val_trends,
+            "q_val": q_val_data,
             "note": f"Automated report generated from live data. Sector: {info.get('sector', 'N/A')}."
         }
         
