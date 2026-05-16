@@ -114,15 +114,15 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
         sorted_years = sorted(list(years), reverse=True)
 
         controls_html = f"""
-        <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: 600; color: #94a3b8;">Filter:</span>
-                <input type="text" id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 150px;">
+        <div class="sorting-controls" style="margin-bottom: 30px; background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+                <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">Filter:</span>
+                <input type="text" id="ticker-filter" placeholder="Ticker or Name..." style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; outline: none; width: 100%; min-width: 100px;">
             </div>
             
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: 600; color: #94a3b8;">Metric:</span>
-                <select id="metric-type" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+                <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">Metric:</span>
+                <select id="metric-type" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
                     <option value="dma">200-DMA</option>
                     <option value="roe">ROE</option>
                     <option value="pe">P/E</option>
@@ -131,15 +131,15 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
                 </select>
             </div>
 
-            <div id="range-container" style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: 600; color: #94a3b8;">Range:</span>
-                <select id="metric-range" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none;">
+            <div id="range-container" style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px;">
+                <span style="font-weight: 600; color: #94a3b8; white-space: nowrap;">Range:</span>
+                <select id="metric-range" style="background: #1e293b; color: white; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 6px; cursor: pointer; outline: none; flex: 1;">
                     <option value="avg">Average</option>
                     {"".join([f'<option value="{y}">{y}</option>' for y in sorted_years])}
                 </select>
             </div>
 
-            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 8px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto;">Apply</button>
+            <button id="apply-sort" style="background: #38bdf8; color: #000; border: none; padding: 10px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; width: 100%;">Apply</button>
         </div>
         """
         controls_soup = BeautifulSoup(controls_html, 'html.parser')
