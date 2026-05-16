@@ -30,6 +30,11 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
         soup = BeautifulSoup(f, 'html.parser')
 
     # Find all ticker badges (e.g., <span class="ticker-badge">TTD</span>)
+    subtitle = soup.find('p', class_='subtitle')
+    if subtitle and " - Generated when " not in subtitle.get_text():
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        subtitle.string = f"{subtitle.get_text().strip()} - Generated when {now_str}"
+
     badges = soup.find_all('span', class_='ticker-badge')
     print(f"Found {len(badges)} ticker badges to link.")
 
