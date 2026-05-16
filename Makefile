@@ -4,15 +4,16 @@
 #
 # USAGE
 # -----
-#   make                    Run the full pipeline for ALL markets (us -> tw -> jp)
+#   make                    Run the full pipeline for ALL markets and sync to report/last
 #   make all                Same as above
-#   make pipeline-us        Run the complete pipeline for US only
-#   make pipeline-tw        Run the complete pipeline for TW only
-#   make pipeline-jp        Run the complete pipeline for JP only
+#   make pipeline-us        Run the complete pipeline for US only (auto-syncs to report/last)
+#   make pipeline-tw        Run the complete pipeline for TW only (auto-syncs to report/last)
+#   make pipeline-jp        Run the complete pipeline for JP only (auto-syncs to report/last)
 #
 #   DEBUG=1 make ...        Run any command using the FROZEN debug cache (offline)
 #   make freeze-cache       Snapshot today's live data into the debug cache
 #   make clean              Clear old cache folders (preserves today and debug)
+#   make update-last        Force sync today's reports to report/last folder
 #
 #   make screen             Screen stocks only (all markets)
 #   make reports            Generate individual financial reports (all markets)
@@ -44,6 +45,9 @@ REPORTS   := scripts/generate_automated_reports.py
 LINKS      := scripts/add_report_links.py
 GEN_REPORT := scripts/gen_report.py
 CHECK_YF   := scripts/check_yf.py
+LAST_DIR   := report/last
+TODAY      := $(shell date +%Y%m%d)
+TODAY_DIR  := report/$(TODAY)_report
 
 # Debug mode support
 ifdef DEBUG
@@ -66,17 +70,17 @@ check:
 
 # ── Full pipeline shortcuts ───────────────────────────────────────────────────
 .PHONY: pipeline-us
-pipeline-us: screen-us reports-us links-us
+pipeline-us: screen-us reports-us links-us update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for US market."
 
 .PHONY: pipeline-tw
-pipeline-tw: screen-tw reports-tw links-tw
+pipeline-tw: screen-tw reports-tw links-tw update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for TW market."
 
 .PHONY: pipeline-jp
-pipeline-jp: screen-jp reports-jp links-jp
+pipeline-jp: screen-jp reports-jp links-jp update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for JP market."
 
@@ -178,6 +182,16 @@ links-jp:
 links-test:
 	@echo "🔗  Injecting ticker links for TEST market…"
 	$(PYTHON) $(LINKS) --market test
+
+# ── Step 4: Sync Latest ───────────────────────────────────────────────────────
+# Copies the CSV and HTML results from the current date folder to report/last/
+# for easy version control and quick access.
+.PHONY: update-last
+update-last:
+	@mkdir -p $(LAST_DIR)
+	@echo "📂  Syncing all reports and sub-folders to $(LAST_DIR)…"
+	@cp -rf $(TODAY_DIR)/* $(LAST_DIR)/ 2>/dev/null || true
+	@echo "✅  $(LAST_DIR) updated."
 
 # ── Developer Tools ───────────────────────────────────────────────────────────
 .PHONY: freeze-cache
