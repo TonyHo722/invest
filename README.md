@@ -12,6 +12,19 @@ The calculation logic, efficiency metrics, and valuation frameworks used in this
 - **Historical Snapshots**: Annual valuation tables (P/S, P/E, P/B) based on exact Fiscal Year-End closing prices.
 - **Interactive Dashboards**: Premium HTML dashboards with automated ticker-to-report linking.
 
+## 📊 Latest Reports
+The `report/last/` folder always contains the most recently generated screening results.
+Click the links below to open the interactive dashboards directly on GitHub:
+
+| Market | Interactive Dashboard |
+| :--- | :--- |
+| 🇺🇸 US (S&P 500 / NASDAQ) | [dma_200_screen_result_link_us.html](report/last/dma_200_screen_result_link_us.html) |
+| 🇹🇼 Taiwan (TWSE / TPEx) | [dma_200_screen_result_link_tw.html](report/last/dma_200_screen_result_link_tw.html) |
+| 🇯🇵 Japan (Nikkei 225) | [dma_200_screen_result_link_jp.html](report/last/dma_200_screen_result_link_jp.html) |
+
+> [!NOTE]
+> GitHub renders HTML files as raw code. To view the interactive dashboard, download the file and open it in a browser, or use the [Mobile Viewing Guide](#-mobile-viewing-guides) to serve it via a local server.
+
 ## 📱 Mobile Viewing Guides
 If you want to view the generated HTML reports on your Android/iOS device with working links, please follow the guides below:
 - 🇺🇸 [English Mobile Guide](OPEN_IN_PHONE_ENGLISH_VERSION.md)
