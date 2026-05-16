@@ -430,9 +430,35 @@ def main():
             font-size: 0.85rem;
         }}
 
+        /* ── Mobile Responsive ──────────────────────────────── */
         @media (max-width: 768px) {{
-            h1 {{ font-size: 2rem; }}
+            body {{ padding: 16px 12px; }}
+            header {{ margin-bottom: 30px; }}
+            h1 {{ font-size: 1.8rem; }}
+            .subtitle {{ font-size: 0.85rem; }}
+
+            .stats-grid {{
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }}
+            .stat-card {{ padding: 14px 10px; border-radius: 12px; }}
+            .stat-value {{ font-size: 1.3rem; }}
+            .stat-label {{ font-size: 0.75rem; }}
+
+            /* Allow horizontal scrolling for the table on small screens */
+            .table-container {{
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }}
+            table {{ font-size: 0.82rem; min-width: 400px; }}
+            th, td {{ padding: 12px 14px; }}
+
+            /* Hide lower-priority columns on phone */
             .mcap, .dma-col {{ display: none; }}
+
+            .footer {{ margin-top: 30px; font-size: 0.78rem; }}
         }}
     </style>
 </head>
