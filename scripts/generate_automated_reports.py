@@ -703,21 +703,23 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         if metrics_list is not None:
             roe_values = {}
             for year_label, _, _, _, roe_str, _ in eff_data:
+                clean_key = str(year_label).rstrip('*')  # Strip display-only asterisk
                 try:
-                    roe_values[year_label] = float(roe_str.replace('%', ''))
+                    roe_values[clean_key] = float(roe_str.replace('%', ''))
                 except:
-                    roe_values[year_label] = 0.0
+                    roe_values[clean_key] = 0.0
             
             ps_values = {}
             pe_values = {}
             pb_values = {}
             for year_label, ps_str, pe_str, pb_str in val_data:
-                try: ps_values[year_label] = float(ps_str)
-                except: ps_values[year_label] = 0.0
-                try: pe_values[year_label] = float(pe_str)
-                except: pe_values[year_label] = 0.0
-                try: pb_values[year_label] = float(pb_str)
-                except: pb_values[year_label] = 0.0
+                clean_key = str(year_label).rstrip('*')  # Strip display-only asterisk
+                try: ps_values[clean_key] = float(ps_str)
+                except: ps_values[clean_key] = 0.0
+                try: pe_values[clean_key] = float(pe_str)
+                except: pe_values[clean_key] = 0.0
+                try: pb_values[clean_key] = float(pb_str)
+                except: pb_values[clean_key] = 0.0
             
             def calc_avg(values_dict):
                 if len(values_dict) < 2: return 0.0
