@@ -21,7 +21,13 @@ If you want to view the generated HTML reports on your Android/iOS device with w
 
 ## 🛠️ Getting Started
 
-### Installation
+### 📦 How to Download (ZIP)
+If you are not using Git, you can download the entire repository as a ZIP file:
+1. Click the green **Code** button at the top of this GitHub page.
+2. Select **Download ZIP**.
+3. Extract the `invest-master` folder to your computer or phone.
+
+### ⚙️ Installation (for Developers)
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
