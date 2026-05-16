@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>Financial Report Calculation Guide</title>
+
+<style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 960px; margin: 0 auto; padding: 20px; color: #333; }
+    h1, h2, h3 { color: #2c3e50; margin-top: 1.5em; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; font-family: monospace; color: #e83e8c; }
+    pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>Financial Report Calculation Guide</h1>
+<p>This document explains the calculation logic and data sources used in the automated financial reports.</p>
+<h2>1. Operational and Financial Performance</h2>
+<p>This section provides a 4-year trajectory of the company's "health."</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;">Source / Formula</th>
+<th style="text-align: left;">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Revenue</strong></td>
+<td style="text-align: left;">Income Statement: <code>Total Revenue</code></td>
+<td style="text-align: left;">Total top-line sales.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gross Profit</strong></td>
+<td style="text-align: left;">Income Statement: <code>Gross Profit</code></td>
+<td style="text-align: left;">Revenue minus Cost of Goods Sold (COGS).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Op. Profit</strong></td>
+<td style="text-align: left;">Income Statement: <code>Operating Income</code></td>
+<td style="text-align: left;">Profit after operating expenses but before interest/taxes.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Net Income</strong></td>
+<td style="text-align: left;">Income Statement: <code>Net Income</code></td>
+<td style="text-align: left;">The final "bottom line" profit.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EPS</strong></td>
+<td style="text-align: left;">Income Statement: <code>Basic EPS</code></td>
+<td style="text-align: left;">Earnings per share.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Dividends</strong></td>
+<td style="text-align: left;"><code>ticker.dividends</code> (Summed by year)</td>
+<td style="text-align: left;">Cash paid out to shareholders per share.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Free Cash Flow (FCF)</strong></td>
+<td style="text-align: left;">Cash Flow: <code>Operating Cash Flow - Change in Working Capital - abs(Capital Expenditures)</code></td>
+<td style="text-align: left;">Custom KQJ formula for true free cash flow.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Buybacks</strong></td>
+<td style="text-align: left;">Cash Flow: <code>Repurchase Of Capital Stock</code></td>
+<td style="text-align: left;">Cash spent by the company to buy back its own shares (shown as absolute value).</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Efficiency and Return Metrics</h2>
+<p>These ratios measure how effectively the company uses its capital. We use the <strong>KQJ Average Methodology</strong>, calculating the average of the current and previous year's balance sheet values.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;">Formula</th>
+<th style="text-align: left;">Goal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Gross Margin</strong></td>
+<td style="text-align: left;"><code>(Gross Profit / Revenue) * 100</code></td>
+<td style="text-align: left;">Higher is better (pricing power).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Inventory Days</strong></td>
+<td style="text-align: left;"><code>(Average Inventory / Cost of Revenue) * 365</code></td>
+<td style="text-align: left;">Lower is better (efficient inventory turnover).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DSO</strong></td>
+<td style="text-align: left;"><code>(Average Accounts Receivable / Revenue) * 365</code></td>
+<td style="text-align: left;">Lower is better (efficient cash collection).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ROE (%)</strong></td>
+<td style="text-align: left;"><code>(Net Income / Average Stockholders Equity) * 100</code></td>
+<td style="text-align: left;">Return on Equity. Measures profitability relative to shareholder capital.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ROA (%)</strong></td>
+<td style="text-align: left;"><code>(Net Income / Average Total Assets) * 100</code></td>
+<td style="text-align: left;">Return on Assets. Measures efficiency of total asset base.</td>
+</tr>
+</tbody>
+</table>
+<h2>3. Valuations - 3P Model ("Cheap")</h2>
+<p>We use the historical table to assess if a stock is "Cheap" relative to its history.</p>
+<p>Calculated using the stock price and share count at the <strong>Fiscal Year-End (FYE) Date</strong>.</p>
+<ul>
+<li><strong>Logic</strong>: The script identifies the exact date of the financial statement (e.g., Dec 31st for most US stocks) and fetches the <strong>Closing Price</strong> from that specific trading day.</li>
+<li><strong>P/S (Price to Sales)</strong>: <code>(FYE Price * FYE Shares) / Annual Revenue</code></li>
+<li><strong>P/E (Price to Earnings)</strong>: <code>FYE Price / Annual EPS</code></li>
+<li><strong>P/B (Price to Book)</strong>: <code>(FYE Price * FYE Shares) / Year-End Stockholders Equity</code></li>
+</ul>
+<h2>4. Framework Assessment (Big/Good/Cheap)</h2>
+<ul>
+<li><strong>Big (又大)</strong>: Check if Market Cap is above threshold (default ~¥100B or $1B).</li>
+<li><strong>Good (又好)</strong>: Automated check for upward trajectory in Revenue, Net Income, and FCF over 4 years.</li>
+<li><strong>Cheap (又便宜)</strong>: Qualitative check against historical P/E and P/S averages.</li>
+</ul>
+<hr />
+<h2>5. Worked Example: Pool Corporation (POOL) 2024</h2>
+<p>This example shows how the script derived the numbers for POOL's 2024 Annual report using exact data from Yahoo Finance.</p>
+<h3>A. Raw Data (Extracted from yfinance for 2024)</h3>
+<ul>
+<li><strong>Data Date</strong>: December 31, 2024 (Fiscal Year End)</li>
+<li><strong>Total Revenue</strong>: $5,311M | <strong>Cost of Revenue</strong>: $3,736M</li>
+<li><strong>Net Income</strong>: $434M | <strong>Basic EPS</strong>: $11.37</li>
+<li><strong>Operating Cash Flow</strong>: $659M | <strong>Change In Working Capital</strong>: $146M | <strong>Capital Expenditures</strong>: -$59M</li>
+<li><strong>Inventory (2024)</strong>: $1,289M | <strong>Inventory (2023)</strong>: $1,365M <em>(Average: $1,327M)</em></li>
+<li><strong>Accounts Receivable (2024)</strong>: $31.4M | <strong>Accounts Receivable (2023)</strong>: $61.0M <em>(Average: $46.2M)</em></li>
+<li><strong>Stockholders Equity (2024)</strong>: $1,273M | <strong>Stockholders Equity (2023)</strong>: $1,313M <em>(Average: $1,293M)</em></li>
+<li><strong>Price (at FYE)</strong>: $327.42 | <strong>Shares Outstanding</strong>: 38.05M</li>
+</ul>
+<h3>B. Formula Execution (KQJ Methodology)</h3>
+<ol>
+<li><strong>Free Cash Flow (FCF)</strong>:<ul>
+<li><code>Formula</code>: Operating Cash Flow - Change in Working Capital - abs(Capital Expenditures)</li>
+<li><code>Execution</code>: $659M - $146M - abs(-$59M) = $659M - $146M - $59M = <strong>$454M</strong></li>
+</ul>
+</li>
+<li><strong>Inventory Days</strong>:<ul>
+<li><code>Formula</code>: (Average Inventory / Cost of Revenue) * 365</li>
+<li><code>Execution</code>: ($1,327M / $3,736M) * 365 = <strong>129 Days</strong></li>
+</ul>
+</li>
+<li><strong>DSO (Days Sales Outstanding)</strong>:<ul>
+<li><code>Formula</code>: (Average Accounts Receivable / Revenue) * 365</li>
+<li><code>Execution</code>: ($46.2M / $5,311M) * 365 = <strong>3 Days</strong></li>
+</ul>
+</li>
+<li><strong>ROE (Return on Equity)</strong>:<ul>
+<li><code>Formula</code>: (Net Income / Average Equity) * 100</li>
+<li><code>Execution</code>: ($434M / $1,293M) * 100 = <strong>33.6%</strong></li>
+</ul>
+</li>
+<li><strong>P/E (Price to Earnings)</strong>:<ul>
+<li><code>Formula</code>: FYE Price / Basic EPS</li>
+<li><code>Execution</code>: $327.42 / $11.37 = <strong>28.8</strong></li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>6. Technical Transparency: Why My Numbers Might Differ</h2>
+<p>Financial data often varies across platforms (Yahoo, Bloomberg, Morningstar) due to specific accounting choices. Here is exactly what this script uses:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Data Point</th>
+<th style="text-align: left;">Exact Field / Logic Used</th>
+<th style="text-align: left;">Common Reasons for Discrepancy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Earnings (EPS)</strong></td>
+<td style="text-align: left;"><code>Basic EPS</code> (Income Statement)</td>
+<td style="text-align: left;">Other sites may use <strong>Diluted EPS</strong> or <strong>Adjusted (Non-GAAP) EPS</strong>, which excludes one-time costs.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Share Count</strong></td>
+<td style="text-align: left;"><code>sharesOutstanding</code> (Current) or <code>Basic Average Shares</code> (Historical)</td>
+<td style="text-align: left;">Some sites use <strong>Diluted Shares</strong>, which results in lower EPS and higher P/E ratios.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Valuation Price</strong></td>
+<td style="text-align: left;">Closing Price on <strong>Fiscal Year-End Date</strong></td>
+<td style="text-align: left;">Other sites often show <strong>Current P/E</strong> based on today's price, which changes daily. Our annual table is a "snapshot" of the past.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Market Cap</strong></td>
+<td style="text-align: left;"><code>Price * SharesOutstanding</code></td>
+<td style="text-align: left;">Discrepancies occur if a site uses "Weighted Average Shares" instead of "Period-End Shares."</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Equity</strong></td>
+<td style="text-align: left;"><code>Stockholders Equity</code></td>
+<td style="text-align: left;">We use total equity. Some analysts use "Tangible Book Value" (Equity minus Goodwill).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Quarterly Data</strong></td>
+<td style="text-align: left;"><strong>TTM (Trailing Twelve Months)</strong> Sum</td>
+<td style="text-align: left;">Many sites only show <strong>Annualized</strong> (Q<em>1) or </em><em>Forward P/E</em>*, which are more volatile than our TTM sum.</td>
+</tr>
+</tbody>
+</table>
+<h3>How to reconcile:</h3>
+<p>If you see a different P/E ratio on another site:
+1.  Check if they are using <strong>Current Price</strong> vs. our <strong>Historical FYE Price</strong>.
+2.  Check if they are using <strong>Diluted EPS</strong> vs. our <strong>Basic EPS</strong>.
+3.  Check if they are using <strong>Forward Earnings (estimates)</strong> vs. our <strong>Actual Reported Earnings</strong>.</p>
+<hr />
+<p><em>Note: All data is sourced via Yahoo Finance. Non-US stocks are converted to their local currency (JPY for .T, TWD for .TW).</em></p>
+</body>
+</html>
