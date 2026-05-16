@@ -289,7 +289,7 @@ def build_html(s):
 </head>
 <body>
     <h1>{s['company']} ({t}) Detailed Financial Data</h1>
-    <p>Automated Analysis Dashboard</p>
+    <p>Automated Analysis Dashboard - Generated when {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
 
     <h2>0. Stock Price Charts</h2>
     {chart_html}

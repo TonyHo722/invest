@@ -101,7 +101,7 @@ def fetch_wikipedia_tickers(url, table_id):
         print(f"Error fetching tickers from {url}: {e}")
         return []
 
-def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=10, min_mcap_twd_billion=10, min_mcap_jpy_billion=100):
+def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=5, min_mcap_twd_billion=10, min_mcap_jpy_billion=100):
     """
     Screens tickers for Price < 200-DMA and Market Cap > min_mcap_billion.
     Optimized by fetching technicals in batch before checking fundamentals.
@@ -440,7 +440,7 @@ def main():
     <div class="container">
         <header>
             <h1>Market Value Screener</h1>
-            <p class="subtitle">Mega-Cap ({args.market.upper()}) Below 200-DMA</p>
+            <p class="subtitle">Mega-Cap ({args.market.upper()}) Below 200-DMA - Generated when {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
         </header>
         
         <div class="stats-grid">
