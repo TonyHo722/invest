@@ -701,7 +701,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         # Save metrics for summary
         if metrics_list is not None:
             roe_values = {}
-            for year_label, _, _, roe_str, _ in eff_data:
+            for year_label, _, _, _, roe_str, _ in eff_data:
                 try:
                     roe_values[year_label] = float(roe_str.replace('%', ''))
                 except:
