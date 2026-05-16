@@ -554,7 +554,8 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
                 ttm_eps = get_ttm_sum(q_fin, ['Basic EPS', 'Diluted EPS', 'EPS', 'BasicEPS'])
                 
                 last_date = q_fin.columns[0]
-                ttm_div = ticker.dividends[ticker.dividends.index > (last_date - pd.Timedelta(days=365))].sum()
+                # Ensure timezone compatibility for comparison
+                ttm_div = ticker.dividends[pd.to_datetime(ticker.dividends.index).tz_localize(None) > (pd.to_datetime(last_date).tz_localize(None) - pd.Timedelta(days=365))].sum()
                 
                 ttm_fcf = 0
                 ttm_buyback = 0
