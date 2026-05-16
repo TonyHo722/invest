@@ -237,7 +237,7 @@ def build_html(s):
         .chart-box iframe { display: block; width: 100%; border: none; }
         .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
         .oldest-year-link { color: #0066cc; text-decoration: none; }
-        .oldest-year-link:hover { color: #00ffff; text-decoration: underline; }
+        .oldest-year-link:hover { color: #3399ff; text-decoration: underline; }
         @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
 
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
