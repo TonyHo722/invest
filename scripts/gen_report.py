@@ -122,18 +122,24 @@ def build_md(s):
         "| " + " | ".join(fin_headers) + " |",
         "| " + " | ".join([":---"]*len(fin_headers)) + " |",
     ]
+    def format_md_label(v):
+        v = str(v)
+        if v.endswith("*"):
+            return f'[{v}](#note-oldest-year)'
+        return v
+
     for row in s["fin"]:
-        lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
+        lines.append("| **" + format_md_label(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
     lines.append("| **Trend** | " + " | ".join(s["fin_trends"]) + " |")
 
     lines += [
         "",
         "## 3. Efficiency and Return Metrics",
-        "| " + " | ".join(eff_headers) + " |",
-        "| " + " | ".join([":---"]*len(eff_headers)) + " |",
+        "| " + " | ".join(["Year / Status","Gross Margin (%)","Inventory Days","DSO","ROE (%)","ROA (%)"]) + " |",
+        "| " + " | ".join([":---"]*6) + " |",
     ]
     for row in s["eff"]:
-        lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
+        lines.append("| **" + format_md_label(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
     lines.append("| **Trend** | " + " | ".join(s["eff_trends"]) + " |")
 
     lines += [
@@ -143,19 +149,8 @@ def build_md(s):
         "| " + " | ".join([":---"]*len(val_headers)) + " |",
     ]
     for row in s["val"]:
-        lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
+        lines.append("| **" + format_md_label(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
     lines.append("| **Trend** | " + " | ".join(s["val_trends"]) + " |")
-
-    lines += [
-        "",
-        "### 4.2 Recent Quarterly Valuations (Past 4Q)",
-        "*Values are TTM (Trailing Twelve Months) where available. **(A)** indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.*",
-        "",
-        "| " + " | ".join(["Quarter", "P/S", "P/E", "P/B"]) + " |",
-        "| " + " | ".join([":---"]*4) + " |",
-    ]
-    for row in s["q_val"]:
-        lines.append("| **" + str(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
 
     kqj_labels = ["Big (又大)","Good (又好)","Cheap (又便宜)",">50% Upside Potential"]
     lines += [
@@ -166,6 +161,13 @@ def build_md(s):
     ]
     for label, status, note in zip(kqj_labels, s["kqj"], s["notes"]):
         lines.append(f"| {label} | {status} | {note} |")
+
+    lines += [
+        "",
+        "---",
+        "<a id=\"note-oldest-year\"></a>",
+        "> *** Note:** For the oldest year, `yfinance` limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.*",
+    ]
 
     return "\n".join(lines) + "\n"
 
@@ -180,6 +182,8 @@ def build_html(s):
         .chart-box h3 { margin: 0; padding: 10px 14px; background: #2c3e50; color: #fff; font-size: 14px; }
         .chart-box iframe { display: block; width: 100%; border: none; }
         .chart-note { background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 10px 16px; margin-bottom: 30px; font-size: 0.9em; color: #555; }
+        .oldest-year-link { color: #0066cc; text-decoration: none; }
+        .oldest-year-link:hover { color: #00ffff; text-decoration: underline; }
         @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
 
     is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
@@ -236,7 +240,7 @@ def build_html(s):
     </div>"""
 
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
-    eff_headers = ["Year","Gross Margin","Inventory Days","ROE","ROA"]
+    eff_headers = ["Year","Gross Margin","Inventory Days","DSO","ROE","ROA"]
     val_headers = ["Year","P/S","P/E","P/B"]
 
     def trend_cell(v):
@@ -244,20 +248,26 @@ def build_html(s):
         if "RISK" in v: cls = "risk"
         return f'<td class="{cls}">{v}</td>'
 
+    def format_html_label(v):
+        v = str(v)
+        if v.endswith("*"):
+            return f'<a href="#note-oldest-year" class="oldest-year-link" title="See note at bottom">{v}</a>'
+        return v
+
     fin_rows = "\n".join(
-        "<tr><td><strong>" + str(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
+        "<tr><td><strong>" + format_html_label(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
         for r in s["fin"]
     )
     fin_trend = "<tr><td><strong>Trend</strong></td>" + "".join(trend_cell(v) for v in s["fin_trends"]) + "</tr>"
 
     eff_rows = "\n".join(
-        "<tr><td><strong>" + str(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
+        "<tr><td><strong>" + format_html_label(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
         for r in s["eff"]
     )
     eff_trend = "<tr><td><strong>Trend</strong></td>" + "".join(trend_cell(v) for v in s["eff_trends"]) + "</tr>"
 
     val_rows = "\n".join(
-        "<tr><td><strong>" + str(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
+        "<tr><td><strong>" + format_html_label(r[0]) + "</strong></td>" + "".join(f"<td>{c}</td>" for c in r[1:]) + "</tr>"
         for r in s["val"]
     )
     val_trend = "<tr><td><strong>Trend</strong></td>" + "".join(trend_cell(v) for v in s["val_trends"]) + "</tr>"
@@ -316,18 +326,10 @@ def build_html(s):
     </table>
 
     <h2>4. Valuations - 3P Model ("Cheap / 又便宜")</h2>
-    <h3>4.1 Historical Annual Valuations</h3>
     <table>
         <tr>{"".join(f"<th>{h}</th>" for h in val_headers)}</tr>
         {val_rows}
         {val_trend}
-    </table>
-
-    <h3>4.2 Recent Quarterly Valuations (Past 4Q)</h3>
-    <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">* Values are TTM (Trailing Twelve Months) where available. <strong>(A)</strong> indicates Annualized Quarterly figures (Q*4) used when full TTM data is missing.</p>
-    <table>
-        <tr>{"".join(f"<th>{h}</th>" for h in ["Quarter", "P/S", "P/E", "P/B"])}</tr>
-        {"".join(f"<tr><td>{q[0]}</td><td>{q[1]}</td><td>{q[2]}</td><td>{q[3]}</td></tr>" for q in s['q_val'])}
     </table>
 
     <h2>5. Framework Assessment</h2>
@@ -335,6 +337,7 @@ def build_html(s):
         <tr><th>Criterion</th><th>Status</th><th>Notes</th></tr>
         {kqj_rows}
     </table>
+    <p id="note-oldest-year" style="font-size: 0.8em; color: #777;">* Note: For the oldest year, yfinance limits historical balance sheet data to 4 years, meaning the previous year's data is unavailable to calculate true averages. The script intelligently falls back to year-end values for Average Equity, Average Assets, and Average Inventory for this specific year.</p>
 </body>
 </html>"""
 
@@ -370,8 +373,12 @@ def fetch_and_generate(ticker_sym):
         eff_data = []
         val_data = []
         
+        is_oldest_year = True
         for year in years:
             y_label = str(year.year)
+            if is_oldest_year:
+                y_label += "*"
+                is_oldest_year = False
             
             # Operational
             rev = fin.get(year).get('Total Revenue', 0)
@@ -386,20 +393,76 @@ def fetch_and_generate(ticker_sym):
             except:
                 div = 0
                 
-            fcf = cf.get(year).get('Free Cash Flow', 0)
+            y_cf = cf.get(year)
+            if y_cf is not None and 'Operating Cash Flow' in y_cf and not pd.isna(y_cf.get('Operating Cash Flow')):
+                ocf = y_cf.get('Operating Cash Flow', 0)
+                wc_change = y_cf.get('Change In Working Capital', 0)
+                capex = y_cf.get('Capital Expenditure', 0)
+                if pd.isna(wc_change): wc_change = 0
+                if pd.isna(capex): capex = 0
+                fcf = ocf - wc_change - abs(capex)
+            else:
+                fcf = cf.get(year).get('Free Cash Flow', 0) if cf.get(year) is not None else 0
+                if pd.isna(fcf): fcf = 0
             buyback = cf.get(year).get('Repurchase Of Capital Stock', 0)
             
             fin_data.append((y_label, f"{rev/1e6:,.0f}M", f"{gp/1e6:,.0f}M", f"{op/1e6:,.0f}M", f"{ni/1e6:,.0f}M", f"{eps:.2f}", f"{div:.2f}", f"{fcf/1e6:,.0f}M", f"{abs(buyback)/1e6:,.0f}M"))
             
             # Efficiency
             gm = (gp / rev * 100) if rev else 0
+            
+            # KQJ Methodology: Average Inventory & AR
             inv = bs.get(year).get('Inventory', 0)
+            ar = bs.get(year).get('Accounts Receivable', bs.get(year).get('Receivables', 0))
+            
+            prev_inv = inv
+            prev_ar = ar
+            older_cols = [c for c in bs.columns if c < year]
+            if older_cols:
+                prev_col = max(older_cols)
+                prev_inv = bs[prev_col].get('Inventory', inv)
+                if pd.isna(prev_inv): prev_inv = inv
+                prev_ar = bs[prev_col].get('Accounts Receivable', bs[prev_col].get('Receivables', ar))
+                if pd.isna(prev_ar): prev_ar = ar
+                
+            avg_inv = (inv + prev_inv) / 2
+            avg_ar = (ar + prev_ar) / 2
+            
             equity = bs.get(year).get('Stockholders Equity', 1)
             assets = bs.get(year).get('Total Assets', 1)
-            roe = (ni / equity * 100)
-            roa = (ni / assets * 100)
             
-            eff_data.append((y_label, f"{gm:.1f}%", "N/A", f"{roe:.1f}%", f"{roa:.1f}%"))
+            # KQJ Methodology: Use Average Equity and Average Assets for ROE and ROA
+            prev_equity = equity
+            prev_assets = assets
+            older_cols = [c for c in bs.columns if c < year]
+            if older_cols:
+                prev_col = max(older_cols)
+                prev_equity = bs[prev_col].get('Stockholders Equity', equity)
+                if pd.isna(prev_equity): prev_equity = equity
+                prev_assets = bs[prev_col].get('Total Assets', assets)
+                if pd.isna(prev_assets): prev_assets = assets
+                
+            avg_equity = (equity + prev_equity) / 2
+            avg_assets = (assets + prev_assets) / 2
+            
+            roe = (ni / avg_equity * 100) if avg_equity else 0
+            roa = (ni / avg_assets * 100) if avg_assets else 0
+            
+            cogs = fin.get(year).get('Cost Of Revenue', 0) or (rev - gp if rev and gp else 0)
+            
+            inv_days = "N/A"
+            if avg_inv and cogs and cogs > 0:
+                val = avg_inv / cogs * 365
+                if not pd.isna(val):
+                    inv_days = f"{int(val)}"
+                    
+            ar_days = "N/A"
+            if avg_ar and rev and rev > 0:
+                val = avg_ar / rev * 365
+                if not pd.isna(val):
+                    ar_days = f"{int(val)}"
+            
+            eff_data.append((y_label, f"{gm:.1f}%", inv_days, ar_days, f"{roe:.1f}%", f"{roa:.1f}%"))
             
             # Historical Valuations Calculation
             try:
@@ -456,100 +519,113 @@ def fetch_and_generate(ticker_sym):
             val_data[-1] = (y, ps, pe, pb)
         except:
             pass
-        
-        # Quarterly Valuations (Past 4Q)
-        q_val_data = []
+
+        # TTM Calculation for main tables
         try:
             q_fin = ticker.quarterly_financials
+            q_cf = ticker.quarterly_cashflow
             q_bs = ticker.quarterly_balance_sheet
             
-            if not q_fin.empty:
-                # Last 4 quarters available in financials
+            if not q_fin.empty and len(q_fin.columns) >= 4:
                 q_cols = q_fin.columns[:4]
-                for q_date in q_cols:
-                    try:
-                        q_label = q_date.strftime('%Y-%m')
-                        
-                        # Fetch price at quarter end
-                        if q_date.tz is None:
-                            q_date_tz = q_date.tz_localize('UTC')
-                        else:
-                            q_date_tz = q_date.tz_convert('UTC')
-                        
-                        q_hist = ticker.history(start=q_date_tz - pd.Timedelta(days=10), end=q_date_tz + pd.Timedelta(days=2))
-                        q_price = q_hist['Close'].iloc[-1] if not q_hist.empty else 0
-                        
-                        # Find closest balance sheet date
-                        q_equity = 0
-                        if not q_bs.empty:
-                            # Try exact match first
-                            if q_date in q_bs.columns:
-                                q_equity = q_bs[q_date].get('Stockholders Equity', 0)
-                            else:
-                                # Find closest previous date
-                                past_bs_dates = [d for d in q_bs.columns if d <= q_date]
-                                if past_bs_dates:
-                                    closest_date = max(past_bs_dates)
-                                    q_equity = q_bs[closest_date].get('Stockholders Equity', 0)
-                        
-                        # Get historical shares if possible, else current
-                        q_shares = 0
-                        if not shares_history.empty:
-                            s_at_q = shares_history[shares_history.index <= q_date_tz]
-                            if not s_at_q.empty:
-                                q_shares = s_at_q.iloc[-1]
-                        if not q_shares:
-                            q_shares = info.get('sharesOutstanding', 0)
-                        
-                        q_ps = "N/A"
-                        q_pe = "N/A"
-                        q_pb = "N/A"
-                        
-                        # TTM Calculation (Trailing Twelve Months)
-                        q_cols_list = q_fin.columns.tolist()
-                        try:
-                            q_idx = q_cols_list.index(q_date)
-                            if q_idx + 3 < len(q_cols_list):
-                                # Full 4-quarter window available
-                                window = q_cols_list[q_idx : q_idx + 4]
-                                ttm_eps = q_fin.loc['Basic EPS', window].sum() if 'Basic EPS' in q_fin.index else 0
-                                ttm_rev = q_fin.loc['Total Revenue', window].sum() if 'Total Revenue' in q_fin.index else 0
-                                
-                                if q_price > 0:
-                                    if ttm_eps and not pd.isna(ttm_eps) and ttm_eps != 0:
-                                        q_pe = f"{q_price / ttm_eps:.2f}"
-                                    if q_shares > 0 and ttm_rev and not pd.isna(ttm_rev) and ttm_rev > 0:
-                                        q_ps = f"{(q_price * q_shares) / ttm_rev:.2f}"
-                            else:
-                                # Fallback to Annualized (Q*4)
-                                q_eps = y_q_fin.get('Basic EPS', 0)
-                                q_rev = y_q_fin.get('Total Revenue', 0)
-                                if q_price > 0:
-                                    if q_eps and not pd.isna(q_eps) and q_eps != 0:
-                                        q_pe = f"{q_price / (q_eps * 4):.2f} (A)"
-                                    if q_shares > 0 and q_rev and not pd.isna(q_rev) and q_rev > 0:
-                                        q_ps = f"{(q_price * q_shares) / (q_rev * 4):.2f} (A)"
-                        except:
-                            pass
+                
+                # Financials TTM
+                def get_ttm_sum(df, keys):
+                    for k in keys:
+                        if k in df.index:
+                            return df.loc[k, q_cols].sum()
+                    return 0
 
-                        if q_price > 0 and q_shares > 0 and q_equity and not pd.isna(q_equity) and q_equity > 0:
-                            q_pb = f"{(q_price * q_shares) / q_equity:.2f}"
+                ttm_rev = get_ttm_sum(q_fin, ['Total Revenue', 'Revenue', 'TotalRevenue'])
+                ttm_gp = get_ttm_sum(q_fin, ['Gross Profit', 'GrossProfit'])
+                ttm_op = get_ttm_sum(q_fin, ['Operating Income', 'OperatingIncome'])
+                ttm_ni = get_ttm_sum(q_fin, ['Net Income', 'NetIncome'])
+                ttm_eps = get_ttm_sum(q_fin, ['Basic EPS', 'Diluted EPS', 'EPS', 'BasicEPS'])
+                
+                last_date = q_fin.columns[0]
+                ttm_div = ticker.dividends[ticker.dividends.index > (last_date - pd.Timedelta(days=365))].sum()
+                
+                ttm_fcf = 0
+                ttm_buyback = 0
+                if not q_cf.empty:
+                    q_cf_cols = [c for c in q_cf.columns if c in q_cols]
+                    # KQJ FCF TTM
+                    if 'Operating Cash Flow' in q_cf.index:
+                        ttm_ocf = q_cf.loc['Operating Cash Flow', q_cf_cols].sum()
+                        ttm_wc = q_cf.loc['Change In Working Capital', q_cf_cols].sum() if 'Change In Working Capital' in q_cf.index else 0
+                        ttm_capex = q_cf.loc['Capital Expenditure', q_cf_cols].sum() if 'Capital Expenditure' in q_cf.index else 0
+                        ttm_fcf = ttm_ocf - ttm_wc - abs(ttm_capex)
+                    else:
+                        ttm_fcf = q_cf.loc['Free Cash Flow', q_cf_cols].sum() if 'Free Cash Flow' in q_cf.index else 0
+                    ttm_buyback = q_cf.loc['Repurchase Of Capital Stock', q_cf_cols].sum() if 'Repurchase Of Capital Stock' in q_cf.index else 0
+
+                fin_data.append(("TTM", f"{ttm_rev/1e6:,.0f}M", f"{ttm_gp/1e6:,.0f}M", f"{ttm_op/1e6:,.0f}M", f"{ttm_ni/1e6:,.0f}M", f"{ttm_eps:.2f}", f"{ttm_div:.2f}", f"{ttm_fcf/1e6:,.0f}M", f"{abs(ttm_buyback)/1e6:,.0f}M"))
+
+                # Efficiency TTM
+                ttm_gm = (ttm_gp / ttm_rev * 100) if ttm_rev else 0
+                curr_inv = q_bs.loc['Inventory', q_bs.columns[0]] if not q_bs.empty and 'Inventory' in q_bs.index else 0
+                curr_ar = q_bs.loc['Accounts Receivable', q_bs.columns[0]] if not q_bs.empty and 'Accounts Receivable' in q_bs.index else (q_bs.loc['Receivables', q_bs.columns[0]] if not q_bs.empty and 'Receivables' in q_bs.index else 0)
+                
+                curr_equity = q_bs.loc['Stockholders Equity', q_bs.columns[0]] if not q_bs.empty and 'Stockholders Equity' in q_bs.index else 1
+                curr_assets = q_bs.loc['Total Assets', q_bs.columns[0]] if not q_bs.empty and 'Total Assets' in q_bs.index else 1
+                
+                # KQJ Methodology: TTM Average Equity/Assets & Inventory & AR
+                prev_ttm_equity = curr_equity
+                prev_ttm_assets = curr_assets
+                prev_ttm_inv = curr_inv
+                prev_ttm_ar = curr_ar
+                if not q_bs.empty:
+                    q_idx = q_bs.columns.get_loc(q_cols[-1]) if q_cols[-1] in q_bs.columns else 0
+                    if q_idx + 1 < len(q_bs.columns):
+                        prev_q = q_bs.columns[q_idx + 1]
+                    else:
+                        prev_q = q_bs.columns[-1]
+                    
+                    if 'Stockholders Equity' in q_bs.index:
+                        prev_ttm_equity = q_bs.loc['Stockholders Equity', prev_q]
+                        if pd.isna(prev_ttm_equity): prev_ttm_equity = curr_equity
+                    if 'Total Assets' in q_bs.index:
+                        prev_ttm_assets = q_bs.loc['Total Assets', prev_q]
+                        if pd.isna(prev_ttm_assets): prev_ttm_assets = curr_assets
+                    if 'Inventory' in q_bs.index:
+                        prev_ttm_inv = q_bs.loc['Inventory', prev_q]
+                        if pd.isna(prev_ttm_inv): prev_ttm_inv = curr_inv
+                    if 'Accounts Receivable' in q_bs.index:
+                        prev_ttm_ar = q_bs.loc['Accounts Receivable', prev_q]
+                        if pd.isna(prev_ttm_ar): prev_ttm_ar = curr_ar
+                    elif 'Receivables' in q_bs.index:
+                        prev_ttm_ar = q_bs.loc['Receivables', prev_q]
+                        if pd.isna(prev_ttm_ar): prev_ttm_ar = curr_ar
                         
-                        q_val_data.append((q_label, q_ps, q_pe, q_pb))
-                    except:
-                        continue
-            
-            # Sort chronologically for the display
-            q_val_data.sort(key=lambda x: x[0] if x[0] != "N/A" else "")
-            
+                avg_ttm_equity = (curr_equity + prev_ttm_equity) / 2
+                avg_ttm_assets = (curr_assets + prev_ttm_assets) / 2
+                avg_ttm_inv = (curr_inv + prev_ttm_inv) / 2
+                avg_ttm_ar = (curr_ar + prev_ttm_ar) / 2
+                
+                ttm_cogs = ttm_rev - ttm_gp
+                ttm_inv_days = "N/A"
+                if avg_ttm_inv and ttm_cogs > 0:
+                    ttm_inv_days = f"{int(avg_ttm_inv / ttm_cogs * 365)}"
+                    
+                ttm_ar_days = "N/A"
+                if avg_ttm_ar and ttm_rev > 0:
+                    ttm_ar_days = f"{int(avg_ttm_ar / ttm_rev * 365)}"
+                
+                ttm_roe = (ttm_ni / avg_ttm_equity * 100) if avg_ttm_equity else 0
+                ttm_roa = (ttm_ni / avg_ttm_assets * 100) if avg_ttm_assets else 0
+                
+                eff_data.append(("TTM", f"{ttm_gm:.1f}%", ttm_inv_days, ttm_ar_days, f"{ttm_roe:.1f}%", f"{ttm_roa:.1f}%"))
+                
+                # Valuations TTM
+                ttm_ps = f"{info.get('priceToSalesTrailing12Months', mcap/ttm_rev):.2f}" if ttm_rev or info.get('priceToSalesTrailing12Months') else "N/A"
+                ttm_pe = f"{info.get('trailingPE', current_price/ttm_eps):.2f}" if (ttm_eps and ttm_eps > 0) or info.get('trailingPE') else "N/A"
+                ttm_pb = f"{info.get('priceToBook', mcap/curr_equity):.2f}" if curr_equity or info.get('priceToBook') else "N/A"
+                
+                val_data.append(("TTM", ttm_ps, ttm_pe, ttm_pb))
         except Exception as e:
-            pass
-        
-        if not q_val_data:
-            q_val_data = [("N/A", "N/A", "N/A", "N/A")] * 4
-        elif len(q_val_data) < 4:
-            # Pad with N/A if fewer than 4 quarters
-            q_val_data = [("N/A", "N/A", "N/A", "N/A")] * (4 - len(q_val_data)) + q_val_data
+            print(f"⚠️ Error processing TTM data for {ticker_sym}: {e}")
+
+        q_val_data = [] # No longer used but kept empty for safety
 
         # Compute Trends
         fin_trends = [
@@ -566,8 +642,9 @@ def fetch_and_generate(ticker_sym):
         eff_trends = [
             get_trend_emoji([r[1] for r in eff_data]),
             "⚠️ N/A",
-            get_trend_emoji([r[3] for r in eff_data]),
-            get_trend_emoji([r[4] for r in eff_data])
+            "⚠️ N/A",
+            get_trend_emoji([r[4] for r in eff_data]),
+            get_trend_emoji([r[5] for r in eff_data])
         ]
         
         val_trends = ["⚠️ MIXED", "⚠️ MIXED", "⚠️ MIXED"]
