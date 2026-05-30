@@ -167,3 +167,15 @@ Use two side-by-side TradingView iframes in a responsive CSS grid. Replace `EXCH
 - `interval=W` + `range=60M` → 5-Year weekly chart
 - `theme=light` → Light theme (use `dark` for dark mode)
 - Charts require an active internet connection to render.
+
+---
+
+## 7. Model Execution Rules: Prioritizing Specific Tools
+
+When executing tasks or modifying files in this workspace, the AI assistant MUST strictly prioritize specific APIs and tools over generic commands to ensure performance, security, and cleanliness.
+
+### Core Guidelines:
+- **No `cat` for File Creation/Appends:** Never run `cat << 'EOF' > file` or `echo "text" >> file` in a bash command to create, overwrite, or append content to files. 
+- **Use Dedicated APIs:** Use the direct file tools like `write_to_file` or `replace_file_content` (or native python file methods) to perform atomic file operations. Spawning a terminal process for simple file modifications is inefficient and error-prone.
+- **Specific CLI Tools:** Avoid using generic, nested shell pipelines (e.g., `grep | sed | awk`) inside terminal runs if specific tools or standard language scripts can do it cleaner.
+- **Verification:** Always check the status of running commands immediately and verify syntax changes using structured verification rather than generic shell scripts.

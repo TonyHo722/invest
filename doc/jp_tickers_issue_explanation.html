@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Ticker Issue & Rollover Explanation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 800px;
+            padding: 20px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .highlight {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f6f8;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Why the Code Was Rolled Back</h1>
+        
+        <p>Hi! I understand you specifically changed the source from the Nikkei 225 Wikipedia page to the iShares EWJ ETF to get more tickers, and you're wondering why I rolled it back. Here is the technical explanation:</p>
+
+        <div class="highlight">
+            <strong>The Problem:</strong> The iShares URL you were using for the EWJ holdings <code>(https://www.ishares.com/.../1467271812596.ajax)</code> recently implemented anti-bot/anti-scraping protection. 
+            When <code>screener.py</code> tried to download the CSV, the iShares server recognized it as an automated script and returned an empty response (0 tickers) instead of the actual data.
+        </div>
+
+        <p>Because the script couldn't fetch any tickers, the entire <code>make pipeline-jp</code> command failed to generate any reports. To get your pipeline working immediately, I temporarily rolled back to scraping the <strong>Nikkei 225 Wikipedia page</strong>, which is a reliable source that doesn't block automated scripts.</p>
+
+        <h2>Nikkei 225 vs. EWJ (iShares MSCI Japan)</h2>
+        <p>You mentioned you switched to EWJ to get more tickers. Here is a comparison of the two sources to show the differences in what they track:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Nikkei 225 (Current Script)</th>
+                    <th>EWJ ETF (Previous Script)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Number of Tickers</strong></td>
+                    <td>Exactly 225</td>
+                    <td>~230 (Currently 218-225 constituents)</td>
+                </tr>
+                <tr>
+                    <td><strong>Weighting Methodology</strong></td>
+                    <td>Price-weighted (similar to the Dow Jones)</td>
+                    <td>Market-cap weighted (similar to the S&P 500)</td>
+                </tr>
+                <tr>
+                    <td><strong>Market Segments</strong></td>
+                    <td>Exclusively Large-Cap Blue-Chip companies.</td>
+                    <td>Large and Mid-Cap companies, representing ~85% of the free float-adjusted market capitalization in Japan.</td>
+                </tr>
+                <tr>
+                    <td><strong>Reason you preferred it</strong></td>
+                    <td>-</td>
+                    <td>It tracks the broader MSCI Japan index, pulling in some mid-caps that the Nikkei 225 ignores.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Next Steps: Getting You More Tickers!</h2>
+        <p>Since the iShares URL is actively blocking automated scripts, we can't easily go back to that exact EWJ link. However, if your primary goal is to <strong>scan more Japanese tickers</strong>, we have a few great alternatives that won't get blocked:</p>
+        
+        <ol>
+            <li><strong>Tokyo Stock Exchange (JPX) Official Data:</strong> We can pull the official Excel file directly from the JPX website, which contains <em>all ~4,000 listed companies</em> in Japan. We could filter this for the "Prime Market" (the top ~1,800 companies).</li>
+            <li><strong>TOPIX 500:</strong> We can scrape the TOPIX 500 (Tokyo Stock Price Index), which gives you 500 of the largest and most liquid Japanese companies—more than double the size of EWJ or Nikkei 225.</li>
+        </ol>
+
+        <p>Let me know if you would like me to implement one of these broader data sources to replace the Nikkei 225 workaround!</p>
+    </div>
+</body>
+</html>
