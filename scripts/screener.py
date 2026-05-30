@@ -27,23 +27,35 @@ def get_nasdaq100_tickers():
     return fetch_wikipedia_tickers(url, "constituents")
 
 def get_all_jp_tickers():
-    """Fetches large-cap Japanese tickers from the iShares MSCI Japan ETF (EWJ) holdings.
+    """Fetches Japanese tickers from the Tokyo Stock Exchange (JPX) Official Data.
+    Filters for the 'Prime Market' (approx 1,600+ companies).
     Returns tickers with the Yahoo Finance .T suffix.
     """
-    url = "https://www.ishares.com/us/products/239665/ishares-msci-japan-etf/1467271812596.ajax?fileType=csv&fileName=EWJ_holdings&dataType=fund"
+    url = "https://www.jpx.co.jp/english/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_e.xls"
     try:
+        import io
         headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=15)
+        
+        # Read the Excel file into a Pandas DataFrame
+        df = pd.read_excel(io.BytesIO(response.content))
+        
+        # Filter for Prime Market
+        prime_df = df[df['Section/Products'].astype(str).str.contains('Prime', na=False, case=False)]
+        
         tickers = []
-        for line in response.text.splitlines():
-            parts = line.split(',')
-            if parts:
-                first_col = parts[0].replace('"', '').strip()
-                if re.fullmatch(r"\d{4}", first_col):
-                    tickers.append(first_col + '.T')
+        for code in prime_df['Local Code']:
+            code_str = str(code).strip()
+            # Handle float conversions (e.g. 7203.0) by taking the first 4 chars if it's longer, 
+            # but usually it's just the 4 digit code.
+            if '.' in code_str:
+                code_str = code_str.split('.')[0]
+            if len(code_str) == 4 and code_str.isdigit():
+                tickers.append(code_str + '.T')
+                
         return list(set(tickers))
     except Exception as e:
-        print(f"Error fetching JP tickers from EWJ: {e}")
+        print(f"Error fetching JP tickers from JPX Official Data: {e}")
         return []
 
 def get_tw_tickers(market_type='all'):
