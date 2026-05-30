@@ -192,32 +192,42 @@
         </div>
 
         <div class="card">
-            <h2>The Rate-Limiting Blind Spot</h2>
-            <div class="alert-box">
-                <strong><span class="badge badge-danger">Vulnerability</span> Sequential Requests Without Delay</strong>
-                Unlike the initial screening phase (which downloads chunks of 20 tickers with a 1-second pause), the <strong>Market Cap Verification Loop</strong> queries each candidate <strong>individually</strong> and <strong>sequentially</strong> with zero sleep intervals.
+            <h2>Parallel Querying & Thread-Safe Rate Limiting</h2>
+            <div class="highlight-box">
+                <strong><span class="badge badge-success">Resolution</span> Optimized Concurrency & Safe Pacing</strong>
+                To make the pipeline fast yet highly stable, the <strong>Market Cap Verification Loop</strong> is parallelized using a ThreadPoolExecutor. To protect our IP from getting blacklisted, we enforce a thread-safe sliding-window rate limiter inside the caching proxy.
             </div>
 
-            <p>Here is the loop code in <code>scripts/screener.py</code>:</p>
+            <p><strong>1. Concurrency: Parallel Thread Pool (<code>scripts/screener.py</code>)</strong></p>
+            <p>Instead of single-threaded sequential querying, candidates are processed concurrently in 10 worker threads, using a lock to ensure thread safety when writing results:</p>
             <div class="code-container">
-                <span class="code-keyword">for</span> c <span class="code-keyword">in</span> candidates:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">try</span>:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t = ProxyTicker(c[<span class="code-keyword">'symbol'</span>]) <span class="code-comment"># Queries cache or runs live request</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;info = t.info<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mcap = info.get(<span class="code-keyword">'marketCap'</span>, <span class="code-keyword">0</span>)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;...<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;progress.advance(task) <span class="code-comment"># NO delay sleep is present here!</span>
+                <span class="code-keyword">with</span> ThreadPoolExecutor(max_workers=<span class="code-function">10</span>) <span class="code-keyword">as</span> executor:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;futures = {executor.submit(check_candidate, c): c <span class="code-keyword">for</span> c <span class="code-keyword">in</span> candidates}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> future <span class="code-keyword">in</span> as_completed(futures):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progress.advance(task)
             </div>
 
-            <p>If you have 692 candidates below the 200-DMA, and 100 of them are missing from the cache, the script will trigger **100 rapid-fire live requests** to the yfinance API. This high frequency is highly likely to trigger rate limits, returning empty responses or blocking your IP.</p>
+            <p><strong>2. Safe Pacing: Sliding-Window Rate Limiter (<code>scripts/yf_proxy.py</code>)</strong></p>
+            <p>A lock-protected rate limiter intercepts all live API calls, ensuring they never exceed **100 requests per 60 seconds**. Threads calling the API will auto-sleep if they hit the rate limit cap, pacing requests safely:</p>
+            <div class="code-container">
+                <span class="code-keyword">class</span> RateLimiter:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">def</span> wait_if_needed(self):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">with</span> self.lock:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;now = time.time()<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.requests = [t <span class="code-keyword">for</span> t <span class="code-keyword">in</span> self.requests <span class="code-keyword">if</span> now - t &lt; self.period]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> <span class="code-function">len</span>(self.requests) &gt;= self.max_requests:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep_time = self.period - (now - self.requests[<span class="code-function">0</span>])<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time.sleep(sleep_time)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.requests.append(now)
+            </div>
         </div>
 
         <div class="card">
-            <h2>Best Practices to Avoid Blocks</h2>
+            <h2>Best Practices</h2>
             <ul>
-                <li><strong>Maintain Caches</strong>: Running the pipeline daily keeps the cache warm, reducing the number of missing tickers.</li>
-                <li><strong>Use Debug Mode</strong>: When testing script logic or report layout modifications, run with <code>DEBUG=1 make pipeline-jpx</code> so it forces local reads from the frozen cache directory.</li>
-                <li><strong>Safe Fallbacks</strong>: If needed, we can implement a 0.5-second cooldown in `screener.py` that only triggers if a live fetch was executed during the market cap check.</li>
+                <li><strong>Safe Concurrency</strong>: The worker threads are I/O bound. The 10 concurrent connections drastically reduce overall wait times without overloading CPU resources.</li>
+                <li><strong>Caching Synergy</strong>: Cached files bypass both the rate-limiter and the thread pool's network overhead entirely, loading in fractions of a millisecond.</li>
+                <li><strong>Debug Environment</strong>: You can still run with <code>YF_DEBUG=1</code> to use the offline cache for testing logic changes instantly.</li>
             </ul>
         </div>
 
