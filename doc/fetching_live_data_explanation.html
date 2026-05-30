@@ -163,12 +163,12 @@
             <p>During the pipeline run, you will see output like this:</p>
             <div class="code-container" style="color: #e2e8f0;">
                 Found 692 candidates below 200-DMA. Checking Market Caps...<br>
-                📡 Fetching live data for 1301.T...<br>
-                📡 Fetching live data for 1379.T...<br>
-                📡 Fetching live data for 1414.T...<br>
-                📡 Fetching live data for 1419.T...
+                📡 Fetching live data for 1301.T (Live requests in last 60s: 2/100)...<br>
+                📡 Fetching live data for 1379.T (Live requests in last 60s: 3/100)...<br>
+                📡 Fetching live data for 1414.T (Live requests in last 60s: 4/100)...<br>
+                📡 Fetching live data for 1419.T (Live requests in last 60s: 5/100)...
             </div>
-            <p>This message means the local cache proxy system bypassed local storage and fetched data directly from the Yahoo Finance API.</p>
+            <p>This message means the local cache proxy system bypassed local storage and fetched data directly from the Yahoo Finance API, keeping track of active requests in the sliding 60-second window.</p>
         </div>
 
         <div class="card">
@@ -185,7 +185,7 @@
                     <strong>Deciding Action</strong>:
                     <ul>
                         <li>If the file exists and is valid, the script loads it instantly from disk (silently).</li>
-                        <li>If the file does not exist (or lacks key data), it outputs <code>📡 Fetching live data for [TICKER]...</code>, queries the API, and caches the fresh response.</li>
+                        <li>If the file does not exist (or lacks key data), it outputs <code>📡 Fetching live data for [TICKER] (Live requests in last 60s: X/100)...</code>, queries the API, and caches the fresh response.</li>
                     </ul>
                 </li>
             </ol>
