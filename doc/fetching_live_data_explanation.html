@@ -197,6 +197,8 @@
             <ul>
                 <li><strong>Expected Speed</strong>: Downloading and parsing 5 years of history for 20 tickers typically takes <strong>~4 to 6 seconds per chunk</strong> under normal Yahoo Finance API conditions. For 1,552 tickers (78 chunks), a full live scan from scratch takes <strong>~6 to 8 minutes</strong>.</li>
                 <li><strong>Strict Timeout</strong>: To prevent the entire script from hanging indefinitely if a single ticker or connection stalls, we pass a strict <code>timeout=10</code> seconds to the batch download method.</li>
+                <li><strong>Sequential Design & Bandwidth</strong>: This phase runs sequentially (single-threaded) with a 1-second pause between requests. Because the script spends most of its time waiting for the server's response (latency round-trips), network bandwidth is never fully utilized, presenting alternating peaks and valleys.</li>
+                <li><strong>Rate Limiter Naturally Capped</strong>: Due to the 5-second round-trip time plus the 1-second sleep, the rate limiter naturally registers only ~13 to 14 requests per 60 seconds. This intentional sequential pacing is crucial to protect our IP from WAF bans during large data transfers.</li>
             </ul>
             <div class="code-container">
                 df_chunk, is_cached = proxy_download(<br>
