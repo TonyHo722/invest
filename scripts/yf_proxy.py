@@ -23,7 +23,9 @@ class RateLimiter:
                 if sleep_time > 0:
                     time.sleep(sleep_time)
                 now = time.time()
+                self.requests = [t for t in self.requests if now - t < self.period]
             self.requests.append(now)
+            return len(self.requests)
 
 _limiter = RateLimiter(max_requests=100, period=60.0)
 
@@ -58,8 +60,8 @@ def get_cached_ticker(ticker_sym):
         except Exception:
             pass
 
-    _limiter.wait_if_needed()
-    print(f"📡 Fetching live data for {ticker_sym}...")
+    req_count = _limiter.wait_if_needed()
+    print(f"📡 Fetching live data for {ticker_sym} (Live requests in last 60s: {req_count}/100)...")
     try:
         t = yf.Ticker(ticker_sym)
         
@@ -214,7 +216,8 @@ def proxy_download(tickers, **kwargs):
         except Exception:
             pass
             
-    print(f"📡 Downloading live batch data for {len(tickers)} tickers...")
+    req_count = _limiter.wait_if_needed()
+    print(f"📡 Downloading live batch data for {len(tickers)} tickers (Live requests in last 60s: {req_count}/100)...")
     df = yf.download(tickers, **kwargs)
     
     if not df.empty:
