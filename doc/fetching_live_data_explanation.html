@@ -192,6 +192,22 @@
         </div>
 
         <div class="card">
+            <h2>Historical Batch Download Timeout & Pace</h2>
+            <p>During the initial screening phase, we fetch 5 years of daily price history for the entire market (e.g., 1,552 Japan tickers) in chunks of 20 tickers at a time:</p>
+            <ul>
+                <li><strong>Expected Speed</strong>: Downloading and parsing 5 years of history for 20 tickers typically takes <strong>~4 to 6 seconds per chunk</strong> under normal Yahoo Finance API conditions. For 1,552 tickers (78 chunks), a full live scan from scratch takes <strong>~6 to 8 minutes</strong>.</li>
+                <li><strong>Strict Timeout</strong>: To prevent the entire script from hanging indefinitely if a single ticker or connection stalls, we pass a strict <code>timeout=10</code> seconds to the batch download method.</li>
+            </ul>
+            <div class="code-container">
+                df_chunk, is_cached = proxy_download(<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;chunk, period=<span class="code-keyword">"5y"</span>, interval=<span class="code-keyword">"1d"</span>, group_by=<span class="code-keyword">'ticker'</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;progress=<span class="code-keyword">False</span>, threads=<span class="code-keyword">True</span>, <strong>timeout=10</strong><br>
+                )
+            </div>
+            <p>If any chunk times out, the script catches the exception, logs it, and immediately proceeds to the next chunk, preserving pipeline progress.</p>
+        </div>
+
+        <div class="card">
             <h2>Parallel Querying & Thread-Safe Rate Limiting</h2>
             <div class="highlight-box">
                 <strong><span class="badge badge-success">Resolution</span> Optimized Concurrency & Safe Pacing</strong>
