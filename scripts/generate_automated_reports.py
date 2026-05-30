@@ -51,7 +51,7 @@ def build_md(s):
     """Generates Markdown report based on company data."""
     t = s["ticker"]
     fin_headers = ["Year / Status","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends/Share","Free Cash Flow","Buybacks"]
-    eff_headers = ["Year / Status","Gross Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
+    eff_headers = ["Year / Status","Gross Margin (%)","Op. Margin (%)","Net Margin (%)","Inventory Days","ROE (%)","ROA (%)"]
     val_headers = ["Year / Status","P/S","P/E","P/B"]
 
     is_us_stock = not (t.endswith('.TW') or t.endswith('.TWO') or t.endswith('.T'))
@@ -120,8 +120,8 @@ def build_md(s):
     lines += [
         "",
         "## 3. Efficiency and Return Metrics",
-        "| " + " | ".join(["Year / Status","Gross Margin (%)","Inventory Days","DSO","ROE (%)","ROA (%)"]) + " |",
-        "| " + " | ".join([":---"]*6) + " |",
+        "| " + " | ".join(["Year / Status","Gross Margin (%)","Op. Margin (%)","Net Margin (%)","Inventory Days","DSO","ROE (%)","ROA (%)"]) + " |",
+        "| " + " | ".join([":---"]*8) + " |",
     ]
     for row in s["eff"]:
         lines.append("| **" + format_md_label(row[0]) + "** | " + " | ".join(str(x) for x in row[1:]) + " |")
@@ -241,7 +241,7 @@ def build_html(s):
         @media (max-width: 600px) { .chart-grid { grid-template-columns: 1fr; } }"""
 
     fin_headers = ["Year","Revenue","Gross Profit","Op. Profit","Net Income","EPS","Dividends","FCF","Buybacks"]
-    eff_headers = ["Year","Gross Margin","Inventory Days","DSO","ROE","ROA"]
+    eff_headers = ["Year","Gross Margin","Op. Margin","Net Margin","Inventory Days","DSO","ROE","ROA"]
     val_headers = ["Year","P/S","P/E","P/B"]
 
     def trend_cell(v):
@@ -413,6 +413,8 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             
             # Efficiency
             gm = (gp / rev * 100) if rev else 0
+            om = (op / rev * 100) if rev else 0
+            nim = (ni / rev * 100) if rev else 0
             
             # KQJ Methodology: Average Inventory & AR
             inv = y_bs.get('Inventory', 0)
@@ -465,7 +467,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
             roe = (ni / avg_equity * 100) if avg_equity else 0
             roa = (ni / avg_assets * 100) if avg_assets else 0
             
-            eff_data.append((y_label, f"{gm:.1f}%", inv_days, ar_days, f"{roe:.1f}%", f"{roa:.1f}%"))
+            eff_data.append((y_label, f"{gm:.1f}%", f"{om:.1f}%", f"{nim:.1f}%", inv_days, ar_days, f"{roe:.1f}%", f"{roa:.1f}%"))
             
             # Historical Valuations Calculation
             try:
@@ -637,7 +639,10 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
                 ttm_roe = (ttm_ni / avg_ttm_equity * 100) if avg_ttm_equity else 0
                 ttm_roa = (ttm_ni / avg_ttm_assets * 100) if avg_ttm_assets else 0
                 
-                eff_data.append(("TTM", f"{ttm_gm:.1f}%", ttm_inv_days, ttm_ar_days, f"{ttm_roe:.1f}%", f"{ttm_roa:.1f}%"))
+                ttm_om = (ttm_op / ttm_rev * 100) if ttm_rev else 0
+                ttm_nim = (ttm_ni / ttm_rev * 100) if ttm_rev else 0
+                
+                eff_data.append(("TTM", f"{ttm_gm:.1f}%", f"{ttm_om:.1f}%", f"{ttm_nim:.1f}%", ttm_inv_days, ttm_ar_days, f"{ttm_roe:.1f}%", f"{ttm_roa:.1f}%"))
                 
                 # Valuations TTM
                 ttm_ps = f"{info.get('priceToSalesTrailing12Months', mcap/ttm_rev):.2f}" if ttm_rev or info.get('priceToSalesTrailing12Months') else "N/A"
@@ -664,10 +669,12 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         
         eff_trends = [
             get_trend_emoji([r[1] for r in eff_data]),
+            get_trend_emoji([r[2] for r in eff_data]),
+            get_trend_emoji([r[3] for r in eff_data]),
             "⚠️ N/A",
             "⚠️ N/A",
-            get_trend_emoji([r[4] for r in eff_data]),
-            get_trend_emoji([r[5] for r in eff_data])
+            get_trend_emoji([r[6] for r in eff_data]),
+            get_trend_emoji([r[7] for r in eff_data])
         ]
         
         val_trends = ["⚠️ MIXED", "⚠️ MIXED", "⚠️ MIXED"]
@@ -702,7 +709,7 @@ def fetch_and_generate(ticker_sym, company_name, current_price, mcap, metrics_li
         # Save metrics for summary
         if metrics_list is not None:
             roe_values = {}
-            for year_label, _, _, _, roe_str, _ in eff_data:
+            for year_label, _, _, _, _, _, roe_str, _ in eff_data:
                 clean_key = str(year_label).rstrip('*')  # Strip display-only asterisk
                 try:
                     roe_values[clean_key] = float(roe_str.replace('%', ''))

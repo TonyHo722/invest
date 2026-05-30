@@ -22,6 +22,8 @@ These ratios measure how effectively the company uses its capital. We use the **
 | Metric | Formula | Goal |
 | :--- | :--- | :--- |
 | **Gross Margin** | `(Gross Profit / Revenue) * 100` | Higher is better (pricing power). |
+| **Op. Margin (%)** | `(Operating Profit / Revenue) * 100` | Higher is better (measures operational efficiency and cost control). |
+| **Net Margin (%)** | `(Net Income / Revenue) * 100` | Higher is better (overall bottom-line profitability). |
 | **Inventory Days** | `(Average Inventory / Cost of Revenue) * 365` | Lower is better (efficient inventory turnover). |
 | **DSO** | `(Average Accounts Receivable / Revenue) * 365` | Lower is better (efficient cash collection). |
 | **ROE (%)** | `(Net Income / Average Stockholders Equity) * 100` | Return on Equity. Measures profitability relative to shareholder capital. |
@@ -49,7 +51,7 @@ This example shows how the script derived the numbers for POOL's 2024 Annual rep
 
 ### A. Raw Data (Extracted from yfinance for 2024)
 *   **Data Date**: December 31, 2024 (Fiscal Year End)
-*   **Total Revenue**: $5,311M | **Cost of Revenue**: $3,736M
+*   **Total Revenue**: $5,311M | **Cost of Revenue**: $3,736M | **Operating Income (Operating Profit)**: $617M
 *   **Net Income**: $434M | **Basic EPS**: $11.37
 *   **Operating Cash Flow**: $659M | **Change In Working Capital**: $146M | **Capital Expenditures**: -$59M
 *   **Inventory (2024)**: $1,289M | **Inventory (2023)**: $1,365M *(Average: $1,327M)*
@@ -67,10 +69,16 @@ This example shows how the script derived the numbers for POOL's 2024 Annual rep
 3.  **DSO (Days Sales Outstanding)**:
     *   `Formula`: (Average Accounts Receivable / Revenue) * 365
     *   `Execution`: ($46.2M / $5,311M) * 365 = **3 Days**
-4.  **ROE (Return on Equity)**:
+4.  **Operating Margin**:
+    *   `Formula`: (Operating Profit / Revenue) * 100
+    *   `Execution`: ($617M / $5,311M) * 100 = **11.6%**
+5.  **Net Margin**:
+    *   `Formula`: (Net Income / Revenue) * 100
+    *   `Execution`: ($434M / $5,311M) * 100 = **8.2%**
+6.  **ROE (Return on Equity)**:
     *   `Formula`: (Net Income / Average Equity) * 100
     *   `Execution`: ($434M / $1,293M) * 100 = **33.6%**
-5.  **P/E (Price to Earnings)**:
+7.  **P/E (Price to Earnings)**:
     *   `Formula`: FYE Price / Basic EPS
     *   `Execution`: $327.42 / $11.37 = **28.8**
 
