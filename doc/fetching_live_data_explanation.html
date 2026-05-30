@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cache Proxy & Live Data Fetching Architecture</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-color: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --border-color: #334155;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: #fff;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .alert-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger-color);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+        }
+
+        .alert-box strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .code-container {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 20px 0;
+            color: #38bdf8;
+        }
+
+        .code-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #f472b6;
+        }
+
+        .code-function {
+            color: #fb7185;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        ol, ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        li strong {
+            color: #fff;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Understanding "Fetching Live Data"</h1>
+            <p class="subtitle">An architectural breakdown of the caching layer and its rate-limiting behaviors</p>
+        </header>
+
+        <div class="card">
+            <h2>The Log Context</h2>
+            <p>During the pipeline run, you will see output like this:</p>
+            <div class="code-container" style="color: #e2e8f0;">
+                Found 692 candidates below 200-DMA. Checking Market Caps...<br>
+                📡 Fetching live data for 1301.T...<br>
+                📡 Fetching live data for 1379.T...<br>
+                📡 Fetching live data for 1414.T...<br>
+                📡 Fetching live data for 1419.T...
+            </div>
+            <p>This message means the local cache proxy system bypassed local storage and fetched data directly from the Yahoo Finance API.</p>
+        </div>
+
+        <div class="card">
+            <h2>How the Caching Proxy Works</h2>
+            <p>To avoid hitting yfinance limits, our scripts route requests through a custom caching layer in <code>scripts/yf_proxy.py</code>. When a ticker is requested:</p>
+            <ol>
+                <li>
+                    <strong>File Check</strong>: It looks for a cached file named <code>[TICKER].json</code> inside the daily folder <code>scratch/cache/[YYYYMMDD]/</code> (or the debug folder <code>scratch/cache/debug/</code> if running with <code>YF_DEBUG=1</code>).
+                </li>
+                <li>
+                    <strong>Validation Check</strong>: It validates the file schema. For example, it checks if <code>"quarterly_financials"</code> exists.
+                </li>
+                <li>
+                    <strong>Deciding Action</strong>:
+                    <ul>
+                        <li>If the file exists and is valid, the script loads it instantly from disk (silently).</li>
+                        <li>If the file does not exist (or lacks key data), it outputs <code>📡 Fetching live data for [TICKER]...</code>, queries the API, and caches the fresh response.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>The Rate-Limiting Blind Spot</h2>
+            <div class="alert-box">
+                <strong><span class="badge badge-danger">Vulnerability</span> Sequential Requests Without Delay</strong>
+                Unlike the initial screening phase (which downloads chunks of 20 tickers with a 1-second pause), the <strong>Market Cap Verification Loop</strong> queries each candidate <strong>individually</strong> and <strong>sequentially</strong> with zero sleep intervals.
+            </div>
+
+            <p>Here is the loop code in <code>scripts/screener.py</code>:</p>
+            <div class="code-container">
+                <span class="code-keyword">for</span> c <span class="code-keyword">in</span> candidates:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">try</span>:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t = ProxyTicker(c[<span class="code-keyword">'symbol'</span>]) <span class="code-comment"># Queries cache or runs live request</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;info = t.info<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mcap = info.get(<span class="code-keyword">'marketCap'</span>, <span class="code-keyword">0</span>)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;...<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;progress.advance(task) <span class="code-comment"># NO delay sleep is present here!</span>
+            </div>
+
+            <p>If you have 692 candidates below the 200-DMA, and 100 of them are missing from the cache, the script will trigger **100 rapid-fire live requests** to the yfinance API. This high frequency is highly likely to trigger rate limits, returning empty responses or blocking your IP.</p>
+        </div>
+
+        <div class="card">
+            <h2>Best Practices to Avoid Blocks</h2>
+            <ul>
+                <li><strong>Maintain Caches</strong>: Running the pipeline daily keeps the cache warm, reducing the number of missing tickers.</li>
+                <li><strong>Use Debug Mode</strong>: When testing script logic or report layout modifications, run with <code>DEBUG=1 make pipeline-jpx</code> so it forces local reads from the frozen cache directory.</li>
+                <li><strong>Safe Fallbacks</strong>: If needed, we can implement a 0.5-second cooldown in `screener.py` that only triggers if a live fetch was executed during the market cap check.</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Investment Screener &bull; Caching and Scraping Architecture Guidelines</p>
+        </footer>
+    </div>
+</body>
+</html>
