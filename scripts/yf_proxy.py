@@ -1,8 +1,31 @@
 import yfinance as yf
 import json
 import os
+import time
 import pandas as pd
 from datetime import datetime
+from threading import Lock
+
+class RateLimiter:
+    def __init__(self, max_requests=100, period=60.0):
+        self.max_requests = max_requests
+        self.period = period
+        self.requests = []
+        self.lock = Lock()
+
+    def wait_if_needed(self):
+        with self.lock:
+            now = time.time()
+            self.requests = [t for t in self.requests if now - t < self.period]
+            if len(self.requests) >= self.max_requests:
+                oldest = self.requests[0]
+                sleep_time = self.period - (now - oldest)
+                if sleep_time > 0:
+                    time.sleep(sleep_time)
+                now = time.time()
+            self.requests.append(now)
+
+_limiter = RateLimiter(max_requests=100, period=60.0)
 
 CACHE_DIR = "scratch/cache"
 
@@ -35,6 +58,7 @@ def get_cached_ticker(ticker_sym):
         except Exception:
             pass
 
+    _limiter.wait_if_needed()
     print(f"📡 Fetching live data for {ticker_sym}...")
     try:
         t = yf.Ticker(ticker_sym)

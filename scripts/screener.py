@@ -8,6 +8,8 @@ from rich.table import Table
 from rich.progress import Progress
 import time
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 import urllib.request
 import ssl
 import re
@@ -172,29 +174,30 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=5, min_mcap_twd_
 
     console.print(f"[green]Found {len(candidates)} candidates below 200-DMA. Checking Market Caps...[/green]")
 
-    # Check Market Cap for candidates (Slow but only for a small set)
-    with Progress() as progress:
-        task = progress.add_task("[yellow]Querying Market Caps...", total=len(candidates))
-        
-        for c in candidates:
-            try:
-                t = ProxyTicker(c['symbol'])
-                info = t.info
-                mcap = info.get('marketCap', 0)
-                currency = info.get('currency', 'USD')
+    results_lock = Lock()
+    results = []
+
+    def check_candidate(c):
+        try:
+            t = ProxyTicker(c['symbol'])
+            info = t.info
+            mcap = info.get('marketCap', 0)
+            currency = info.get('currency', 'USD')
+            
+            if currency == 'TWD':
+                threshold = min_mcap_twd_billion * 1e9
+            elif currency == 'JPY':
+                threshold = min_mcap_jpy_billion * 1e9
+            else:
+                threshold = min_mcap_usd_billion * 1e9
+            
+            if mcap >= threshold:
+                pct_diff = ((c['price'] / c['dma200']) - 1) * 100
+                company_name = info.get('shortName', c['symbol'])
+                if names_map and c['symbol'] in names_map:
+                    company_name = f"{company_name} ({names_map[c['symbol']]})"
                 
-                if currency == 'TWD':
-                    threshold = min_mcap_twd_billion * 1e9
-                elif currency == 'JPY':
-                    threshold = min_mcap_jpy_billion * 1e9
-                else:
-                    threshold = min_mcap_usd_billion * 1e9
-                
-                if mcap >= threshold:
-                    pct_diff = ((c['price'] / c['dma200']) - 1) * 100
-                    company_name = info.get('shortName', c['symbol'])
-                    if names_map and c['symbol'] in names_map:
-                        company_name = f"{company_name} ({names_map[c['symbol']]})"
+                with results_lock:
                     results.append({
                         'Ticker': c['symbol'],
                         'Name': company_name,
@@ -204,9 +207,16 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=5, min_mcap_twd_
                         '200-DMA': c['dma200'],
                         '% Diff': pct_diff
                     })
-            except Exception:
-                pass
-            progress.advance(task)
+        except Exception:
+            pass
+
+    # Check Market Cap for candidates in parallel
+    with Progress() as progress:
+        task = progress.add_task("[yellow]Querying Market Caps...", total=len(candidates))
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {executor.submit(check_candidate, c): c for c in candidates}
+            for future in as_completed(futures):
+                progress.advance(task)
             
     return results
 
