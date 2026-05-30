@@ -133,7 +133,7 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=5, min_mcap_twd_
             chunk = tickers[i:i+chunk_size]
             try:
                 # Fetch 5 years of history to support historical valuations in reports
-                df_chunk, is_cached = proxy_download(chunk, period="5y", interval="1d", group_by='ticker', progress=False, threads=True)
+                df_chunk, is_cached = proxy_download(chunk, period="5y", interval="1d", group_by='ticker', progress=False, threads=True, timeout=10)
                 if not df_chunk.empty:
                     data_frames.append(df_chunk)
             except Exception:
