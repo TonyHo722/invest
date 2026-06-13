@@ -6,12 +6,17 @@ import pandas as pd
 from datetime import datetime
 from threading import Lock
 
+# Fetch max requests from environment if set, default to 50 requests per minute
+max_req_env = os.environ.get('YF_MAX_REQUESTS')
+default_max_requests = int(max_req_env) if max_req_env and max_req_env.isdigit() else 50
+
 class RateLimiter:
-    def __init__(self, max_requests=100, period=60.0):
+    def __init__(self, max_requests=default_max_requests, period=60.0):
         self.max_requests = max_requests
         self.period = period
         self.requests = []
         self.lock = Lock()
+        self.last_cooldown = 0.0
 
     def wait_if_needed(self):
         with self.lock:
@@ -27,7 +32,129 @@ class RateLimiter:
             self.requests.append(now)
             return len(self.requests)
 
-_limiter = RateLimiter(max_requests=100, period=60.0)
+    def report_rate_limit(self, cooldown_duration=15.0):
+        with self.lock:
+            now = time.time()
+            if now - self.last_cooldown < self.period:
+                # Cooldown was already triggered recently, no need to repeat
+                return
+            print(f"\n⚠️ [Rate Limiter] Rate limit warning detected from Yahoo Finance! Cooling down for {cooldown_duration}s and pausing subsequent requests...")
+            time.sleep(cooldown_duration)
+            now = time.time()
+            self.last_cooldown = now
+            # Fill the requests history to block immediate new requests
+            self.requests = [now] * self.max_requests
+
+def adjust_single_splits(df):
+    if df.empty or 'Stock Splits' not in df.columns:
+        return df
+        
+    df = df.copy()
+    if isinstance(df.index, pd.DatetimeIndex):
+        df = df.sort_index()
+        
+    # Find all rows where 'Stock Splits' is not 0, not NaN, and not 1
+    split_rows = df[df['Stock Splits'].notna() & (df['Stock Splits'] > 0) & (df['Stock Splits'] != 1.0)]
+    
+    # Process from latest to earliest split
+    for date in sorted(split_rows.index, reverse=True):
+        R = split_rows.loc[date, 'Stock Splits']
+        
+        # Look around the split date to find where the unadjusted price drop happened
+        # We search from the split date backwards up to 5 trading days
+        try:
+            target_idx = df.index.get_loc(date)
+        except KeyError:
+            continue
+            
+        found_drop = False
+        for i in range(5):
+            idx = target_idx - i
+            if idx <= 0:
+                break
+            
+            p_curr = df.iloc[idx]['Close']
+            p_prev = df.iloc[idx-1]['Close']
+            if pd.isna(p_curr) or pd.isna(p_prev) or p_prev == 0:
+                continue
+            ratio = p_curr / p_prev
+            expected_ratio = 1.0 / R
+            
+            # Check if ratio is close to expected_ratio
+            if abs(ratio - expected_ratio) < 0.15:
+                drop_date = df.index[idx]
+                # Adjust all prices before drop_date
+                for metric in ['Open', 'High', 'Low', 'Close']:
+                    if metric in df.columns:
+                        df.loc[df.index < drop_date, metric] /= R
+                found_drop = True
+                break
+    return df
+
+def adjust_multi_splits(df):
+    if df.empty:
+        return df
+        
+    df = df.copy()
+    if isinstance(df.index, pd.DatetimeIndex):
+        df = df.sort_index()
+        
+    # Check if column is multi-index
+    if not isinstance(df.columns, pd.MultiIndex):
+        return adjust_single_splits(df)
+        
+    # Detect level of Tickers and Metrics
+    if 'Close' in df.columns.levels[0]:
+        ticker_level = 1
+        metric_level = 0
+    elif 'Close' in df.columns.levels[1]:
+        ticker_level = 0
+        metric_level = 1
+    else:
+        # If 'Close' is not in either, return as is
+        return df
+        
+    tickers = df.columns.levels[ticker_level]
+    for ticker in tickers:
+        stock_splits_col = ('Stock Splits', ticker) if metric_level == 0 else (ticker, 'Stock Splits')
+        close_col = ('Close', ticker) if metric_level == 0 else (ticker, 'Close')
+        
+        if stock_splits_col not in df.columns or close_col not in df.columns:
+            continue
+            
+        splits = df[stock_splits_col]
+        split_rows = df[splits.notna() & (splits > 0) & (splits != 1.0)]
+        
+        for date in sorted(split_rows.index, reverse=True):
+            R = df.loc[date, stock_splits_col]
+            
+            try:
+                target_idx = df.index.get_loc(date)
+            except KeyError:
+                continue
+                
+            found_drop = False
+            for i in range(5):
+                idx = target_idx - i
+                if idx <= 0:
+                    break
+                p_curr = df.iloc[idx][close_col]
+                p_prev = df.iloc[idx-1][close_col]
+                if pd.isna(p_curr) or pd.isna(p_prev) or p_prev == 0:
+                    continue
+                ratio = p_curr / p_prev
+                expected_ratio = 1.0 / R
+                if abs(ratio - expected_ratio) < 0.15:
+                    drop_date = df.index[idx]
+                    for metric in ['Open', 'High', 'Low', 'Close']:
+                        metric_col = (metric, ticker) if metric_level == 0 else (ticker, metric)
+                        if metric_col in df.columns:
+                            df.loc[df.index < drop_date, metric_col] /= R
+                    found_drop = True
+                    break
+    return df
+
+_limiter = RateLimiter(max_requests=default_max_requests, period=60.0)
 
 CACHE_DIR = "scratch/cache"
 
@@ -61,7 +188,7 @@ def get_cached_ticker(ticker_sym):
             pass
 
     req_count = _limiter.wait_if_needed()
-    print(f"📡 Fetching live data for {ticker_sym} (Live requests in last 60s: {req_count}/100)...")
+    print(f"📡 Fetching live data for {ticker_sym} (Live requests in last 60s: {req_count}/{_limiter.max_requests})...")
     try:
         t = yf.Ticker(ticker_sym)
         
@@ -96,9 +223,11 @@ def get_cached_ticker(ticker_sym):
         with open(cache_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, default=str)
         
-        return data
     except Exception as e:
-        print(f"⚠️ Error fetching {ticker_sym}: {e}")
+        err_msg = str(e)
+        print(f"⚠️ Error fetching {ticker_sym}: {err_msg}")
+        if "too many requests" in err_msg.lower() or "rate limited" in err_msg.lower():
+            _limiter.report_rate_limit()
         return None
 
 def try_datetime(idx):
@@ -168,7 +297,7 @@ class ProxyTicker:
         else:
             self.dividends = pd.Series()
             
-        self.history_5y = restore_df("history_5y")
+        self.history_5y = adjust_single_splits(restore_df("history_5y"))
 
     def history(self, start=None, end=None, **kwargs):
         """Mock history method using cached 5y data."""
@@ -200,8 +329,12 @@ def proxy_download(tickers, **kwargs):
     """
     import hashlib
     
-    # Create a unique key for this request
-    key_str = f"{sorted(tickers)}_{kwargs.get('period')}_{kwargs.get('interval')}"
+    # We must enforce actions=True to get Stock Splits information
+    kwargs_copy = kwargs.copy()
+    kwargs_copy['actions'] = True
+    
+    # Create a unique key for this request using kwargs_copy to ensure consistent cache keys
+    key_str = f"{sorted(tickers)}_{kwargs_copy.get('period')}_{kwargs_copy.get('interval')}_{kwargs_copy.get('actions')}"
     key_hash = hashlib.md5(key_str.encode()).hexdigest()
     
     cache_dir = get_cache_dir()
@@ -212,13 +345,20 @@ def proxy_download(tickers, **kwargs):
     if os.path.exists(cache_path):
         try:
             print(f"📦 Loading cached batch data ({len(tickers)} tickers)...")
-            return pd.read_pickle(cache_path), True
+            df = pd.read_pickle(cache_path)
+            return adjust_multi_splits(df), True
         except Exception:
             pass
             
     req_count = _limiter.wait_if_needed()
-    print(f"📡 Downloading live batch data for {len(tickers)} tickers (Live requests in last 60s: {req_count}/100)...")
-    df = yf.download(tickers, **kwargs)
+    print(f"📡 Downloading live batch data for {len(tickers)} tickers (Live requests in last 60s: {req_count}/{_limiter.max_requests})...")
+    try:
+        df = yf.download(tickers, **kwargs_copy)
+    except Exception as e:
+        err_msg = str(e)
+        if "too many requests" in err_msg.lower() or "rate limited" in err_msg.lower():
+            _limiter.report_rate_limit()
+        raise e
     
     if not df.empty:
         try:
@@ -226,7 +366,7 @@ def proxy_download(tickers, **kwargs):
         except Exception as e:
             print(f"⚠️ Failed to cache batch: {e}")
             
-    return df, False
+    return adjust_multi_splits(df), False
 
 def get_cached_list(list_key, fetch_func):
     """

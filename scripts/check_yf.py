@@ -1,7 +1,11 @@
 import yfinance as yf
 import sys
+import os
 
 def check_connectivity():
+    if os.environ.get('YF_DEBUG') == '1':
+        print("🌐 Offline debug mode active (YF_DEBUG=1). Bypassing real-time connectivity check.")
+        return True
     print("🌐 Checking Yahoo Finance connectivity (REAL-TIME)...")
     try:
         # We bypass the proxy here to verify actual network status

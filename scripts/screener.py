@@ -293,26 +293,29 @@ def main():
 
         console.print(table)
         
-        # Resolve output directory
-        project_root = Path(__file__).resolve().parent.parent
-        today_str = datetime.now().strftime("%Y%m%d")
-        report_dir = project_root / "report" / f"{today_str}_report"
-        report_dir.mkdir(parents=True, exist_ok=True)
-        console.print(f"[dim]Output directory: {report_dir}[/dim]")
+    # Resolve output directory
+    project_root = Path(__file__).resolve().parent.parent
+    today_str = datetime.now().strftime("%Y%m%d")
+    report_dir = project_root / "report" / f"{today_str}_report"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    console.print(f"[dim]Output directory: {report_dir}[/dim]")
 
-        # Save results to a CSV
-        try:
+    # Save results to a CSV
+    try:
+        if matches:
             df = pd.DataFrame(matches)
-            csv_path = report_dir / f"dma_200_screen_results_{args.market}.csv"
-            df.to_csv(csv_path, index=False)
-            console.print(f"\n[bold green]Results saved to {csv_path}[/bold green]")
-        except Exception as e:
-            console.print(f"\n[red]Could not save CSV: {e}[/red]")
-            
-        # Generate Premium HTML Report
-        try:
-            html_path = report_dir / f"dma_200_screen_results_{args.market}.html"
-            html_template = f"""<!DOCTYPE html>
+        else:
+            df = pd.DataFrame(columns=['Ticker', 'Name', 'Market Cap', 'Currency', 'Price', '200-DMA', '% Diff'])
+        csv_path = report_dir / f"dma_200_screen_results_{args.market}.csv"
+        df.to_csv(csv_path, index=False)
+        console.print(f"\n[bold green]Results saved to {csv_path}[/bold green]")
+    except Exception as e:
+        console.print(f"\n[red]Could not save CSV: {e}[/red]")
+        
+    # Generate Premium HTML Report
+    try:
+        html_path = report_dir / f"dma_200_screen_results_{args.market}.html"
+        html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -538,11 +541,11 @@ def main():
     </div>
 </body>
 </html>"""
-            with open(html_path, "w") as f:
-                f.write(html_template)
-            console.print(f"[bold green]Premium HTML report generated: {html_path}[/bold green]")
-        except Exception as e:
-            console.print(f"\n[red]Could not generate HTML: {e}[/red]")
+        with open(html_path, "w") as f:
+            f.write(html_template)
+        console.print(f"[bold green]Premium HTML report generated: {html_path}[/bold green]")
+    except Exception as e:
+        console.print(f"\n[red]Could not generate HTML: {e}[/red]")
 
     end_time = time.time()
     console.print(f"\n[dim]Screening completed in {end_time - start_time:.1f} seconds.[/dim]")

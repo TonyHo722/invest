@@ -66,7 +66,7 @@ all: check pipeline-us pipeline-tw pipeline-jp
 # ── Step 0: Check Connectivity ────────────────────────────────────────────────
 .PHONY: check
 check:
-	@$(PYTHON) $(CHECK_YF)
+	@$(DEBUG_ENV) $(PYTHON) $(CHECK_YF)
 
 # ── Full pipeline shortcuts ───────────────────────────────────────────────────
 .PHONY: pipeline-us
