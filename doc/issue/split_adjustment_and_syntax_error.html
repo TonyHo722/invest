@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Diagnosis: Screener Syntax Error & Split-Factor Selection Anomalies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #090d16;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --primary: #38bdf8;
+            --accent: #a855f7;
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+            --danger: #f87171;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --border: rgba(255, 255, 255, 0.08);
+            --code-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        p {
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .code-container {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header.before {
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .code-header.after {
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        pre {
+            background: var(--code-bg);
+            padding: 18px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            color: #cbd5e1;
+        }
+
+        .keyword { color: #f472b6; }
+        .function { color: #38bdf8; }
+        .comment { color: #64748b; font-style: italic; }
+        .string { color: #fbbf24; }
+        .number { color: #fb7185; }
+
+        .explanation-box {
+            background: rgba(251, 191, 36, 0.05);
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .explanation-box.success {
+            background: rgba(52, 211, 153, 0.05);
+            border-left: 4px solid var(--success);
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+
+        .explanation-desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Issue Diagnosis & Resolutions</h1>
+            <div class="meta">
+                <span><strong>Date:</strong> 2026-06-27</span>
+                <span><strong>Target:</strong> Mega-Cap Screener Pipeline</span>
+                <span><span class="badge">Resolved</span></span>
+            </div>
+        </header>
+
+        <!-- Issue 1: SyntaxError inside check_candidate -->
+        <div class="card">
+            <h2>1. Screener Helper Syntax Error</h2>
+            <p>During execution, the screener failed with <code>SyntaxError: 'continue' not properly in loop</code> on line 199. This error occurred because the filtering check was refactored into a helper function (<code>check_candidate</code>) which is submitted to a thread pool executor, rather than executing in a direct loop.</p>
+
+            <div class="explanation-box">
+                <div class="explanation-title">Why it failed:</div>
+                <div class="explanation-desc">The <code>continue</code> statement is only valid inside loop structures (e.g., <code>for</code> or <code>while</code>). Inside a function body that runs asynchronously, it raises a compile-time syntax error.</div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="code-container">
+                    <div class="code-header before">BEFORE (Buggy code)</div>
+                    <pre><code><span class="keyword">def</span> <span class="function">check_candidate</span>(c):
+    <span class="keyword">try</span>:
+        ...
+        pct_diff = ((c[<span class="string">'price'</span>] / c[<span class="string">'dma200'</span>]) - <span class="number">1</span>) * <span class="number">100</span>
+        
+        <span class="comment"># Exclude stocks with extreme anomalies</span>
+        <span class="keyword">if</span> pct_diff &lt;= -<span class="number">80.0</span>:
+            <span class="keyword">continue</span>  <span class="comment"># &lt;-- Raised SyntaxError!</span>
+            
+        results.append(...)
+    <span class="keyword">except</span> <span class="function">Exception</span>:
+        ...</code></pre>
+                </div>
+                <div class="code-container">
+                    <div class="code-header after">AFTER (Fixed code)</div>
+                    <pre><code><span class="keyword">def</span> <span class="function">check_candidate</span>(c):
+    <span class="keyword">try</span>:
+        ...
+        pct_diff = ((c[<span class="string">'price'</span>] / c[<span class="string">'dma200'</span>]) - <span class="number">1</span>) * <span class="number">100</span>
+        
+        <span class="comment"># Exclude stocks with extreme anomalies</span>
+        <span class="keyword">if</span> pct_diff &lt;= -<span class="number">80.0</span>:
+            <span class="keyword">return</span>  <span class="comment"># &lt;-- Correctly exits function execution</span>
+            
+        results.append(...)
+    <span class="keyword">except</span> <span class="function">Exception</span>:
+        ...</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issue 2: Sub-optimal Split Factor Selection -->
+        <div class="card">
+            <h2>2. Sub-optimal Split-Factor Selection</h2>
+            <p>During the automatic split-adjustment phase, Chikuho Bank (<code>7173.T</code>) experienced an 8-for-1 forward split. Its daily price dropped from 11,690.00 JPY to 1,528.75 JPY, which translates to a ratio of <strong>7.647</strong>. Under the original split detection algorithm, it was incorrectly matched as a <strong>7:1</strong> split instead of <strong>8:1</strong>.</p>
+
+            <div class="explanation-box">
+                <div class="explanation-title">Why it selected 7:1:</div>
+                <div class="explanation-desc">The original algorithm checked split factor candidates sequentially. Since <code>abs(7.647 - 7) / 7</code> = 9.2% (which is below the 15% threshold), the check for <code>7</code> succeeded and the loop immediately broke, ignoring the closer match of <code>8</code> (error: 4.4%).</div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="code-container">
+                    <div class="code-header before">BEFORE (Sequential Break)</div>
+                    <pre><code><span class="comment"># Checks factors sequentially; breaks at first match</span>
+<span class="keyword">for</span> R <span class="keyword">in</span> factors:
+    err = abs(ratio - R) / R
+    <span class="keyword">if</span> err &lt; <span class="number">0.15</span>:
+        split_factor = R
+        <span class="keyword">break</span>  <span class="comment"># Selected 7 immediately</span></code></pre>
+                </div>
+                <div class="code-container">
+                    <div class="code-header after">AFTER (Minimum Error Selection)</div>
+                    <pre><code><span class="comment"># Scans all factors to find the absolute minimum error</span>
+best_R = <span class="keyword">None</span>
+min_err = <span class="number">999.0</span>
+<span class="keyword">for</span> R <span class="keyword">in</span> factors:
+    err = abs(ratio - R) / R
+    <span class="keyword">if</span> err &lt; <span class="number">0.15</span> <span class="keyword">and</span> err &lt; min_err:
+        min_err = err
+        best_R = R
+<span class="keyword">if</span> best_R <span class="keyword">is not None</span>:
+    split_factor = best_R  <span class="comment"># Correctly selects 8</span></code></pre>
+                </div>
+            </div>
+
+            <div class="explanation-box success">
+                <div class="explanation-title">Effect of the Fix:</div>
+                <div class="explanation-desc">Chikuho Bank (<code>7173.T</code>) now has its history accurately split-adjusted by 8:1. This logic is generic and ensures all stocks undergoing unrecorded splits are adjusted using the mathematically closest integer split factor.</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
