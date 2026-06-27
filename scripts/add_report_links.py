@@ -272,6 +272,7 @@ def add_links_and_sorting(input_path, output_path, metrics_data=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Add links to screener report")
     parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all', 'test'], default='us', help='Market to process')
+    parser.add_argument('--quick', action='store_true', help='Use quick_<market> naming for input/output files')
     args = parser.parse_args()
 
     report_dir = get_report_dir()
@@ -291,8 +292,9 @@ if __name__ == "__main__":
     markets = ['us', 'tw', 'jp'] if args.market == 'all' else [args.market]
 
     for market_key in markets:
-        report_in  = report_dir / f"dma_200_screen_results_{market_key}.html"
-        report_out = report_dir / f"dma_200_screen_result_link_{market_key}.html"
+        file_market = f"quick_{market_key}" if args.quick else market_key
+        report_in  = report_dir / f"dma_200_screen_results_{file_market}.html"
+        report_out = report_dir / f"dma_200_screen_result_link_{file_market}.html"
         print(f"\n--- Processing {market_key.upper()} market ---")
         add_links_and_sorting(str(report_in), str(report_out), metrics_data)
 

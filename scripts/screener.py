@@ -224,6 +224,8 @@ def main():
     parser = argparse.ArgumentParser(description="Mega-Cap 200-DMA Screener")
     parser.add_argument('--market', choices=['us', 'tw', 'jp', 'all', 'test'], default='us', help='Market to scan')
     parser.add_argument('--min-mcap-jpy', type=float, default=100, help='Minimum market cap in billions of JPY (default 100)')
+    parser.add_argument('--top', type=int, default=0, help='Only keep the top N most discounted stocks (0 = all)')
+    parser.add_argument('--quick', action='store_true', help='Use quick_<market> naming for output files')
     args = parser.parse_args()
 
     console = Console()
@@ -268,6 +270,11 @@ def main():
     console.print(f"Unique tickers to scan: [bold cyan]{len(tickers)}[/bold cyan]\n")
     
     matches = screen_stocks(tickers, tw_names_map, min_mcap_jpy_billion=args.min_mcap_jpy)
+
+    # Apply --top filter: keep only the N most discounted stocks
+    if args.top > 0 and matches:
+        matches = sorted(matches, key=lambda x: x['% Diff'])[:args.top]
+        console.print(f"[cyan]Quick mode: showing top {args.top} most discounted stocks.[/cyan]")
     
     if not matches:
         console.print("[yellow]No companies match the criteria.[/yellow]")
@@ -306,7 +313,8 @@ def main():
             df = pd.DataFrame(matches)
         else:
             df = pd.DataFrame(columns=['Ticker', 'Name', 'Market Cap', 'Currency', 'Price', '200-DMA', '% Diff'])
-        csv_path = report_dir / f"dma_200_screen_results_{args.market}.csv"
+        file_market = f"quick_{args.market}" if args.quick else args.market
+        csv_path = report_dir / f"dma_200_screen_results_{file_market}.csv"
         df.to_csv(csv_path, index=False)
         console.print(f"\n[bold green]Results saved to {csv_path}[/bold green]")
     except Exception as e:
@@ -314,7 +322,8 @@ def main():
         
     # Generate Premium HTML Report
     try:
-        html_path = report_dir / f"dma_200_screen_results_{args.market}.html"
+        file_market = f"quick_{args.market}" if args.quick else args.market
+        html_path = report_dir / f"dma_200_screen_results_{file_market}.html"
         html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>

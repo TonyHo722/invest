@@ -10,6 +10,11 @@
 #   make pipeline-tw        Run the complete pipeline for TW only (auto-syncs to report/last)
 #   make pipeline-jp        Run the complete pipeline for JP only (auto-syncs to report/last)
 #
+#   make quick              Quick mode: top 10 most discounted stocks per market (screen only)
+#   make quick-us           Quick mode: US only
+#   make quick-tw           Quick mode: TW only
+#   make quick-jp           Quick mode: JP only
+#
 #   DEBUG=1 make ...        Run any command using the FROZEN debug cache (offline)
 #   make freeze-cache       Snapshot today's live data into the debug cache
 #   make clean              Clear old cache folders (preserves today and debug)
@@ -48,6 +53,7 @@ CHECK_YF   := scripts/check_yf.py
 LAST_DIR   := report/last
 TODAY      := $(shell date +%Y%m%d)
 TODAY_DIR  := report/$(TODAY)_report
+QUICK_TOP  := 10
 
 # Debug mode support
 ifdef DEBUG
@@ -69,18 +75,25 @@ check:
 	@$(DEBUG_ENV) $(PYTHON) $(CHECK_YF)
 
 # ── Full pipeline shortcuts ───────────────────────────────────────────────────
+# NOTE: update-last is called in the recipe (not as a prerequisite) so that
+#       Make executes it independently for each pipeline.  When it was a shared
+#       .PHONY prerequisite, Make only ran it once — leaving report/last with
+#       stale data from the first pipeline.
 .PHONY: pipeline-us
-pipeline-us: screen-us reports-us links-us update-last
+pipeline-us: screen-us reports-us links-us
+	@$(MAKE) update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for US market."
 
 .PHONY: pipeline-tw
-pipeline-tw: screen-tw reports-tw links-tw update-last
+pipeline-tw: screen-tw reports-tw links-tw
+	@$(MAKE) update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for TW market."
 
 .PHONY: pipeline-jp
-pipeline-jp: screen-jp reports-jp links-jp update-last
+pipeline-jp: screen-jp reports-jp links-jp
+	@$(MAKE) update-last
 	@echo ""
 	@echo "✅  Full pipeline complete for JP market."
 
@@ -117,6 +130,37 @@ screen-jp: check
 screen-test: check
 	@echo "🔍  Screening TEST market…"
 	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market test
+
+# ── Quick mode: Screen & link only, top N most discounted ─────────────────────
+# Runs the screener and link injector with --quick flag (default top 10), skipping report gen.
+.PHONY: quick
+quick: check quick-us quick-tw quick-jp
+	@echo ""
+	@echo "✅  Quick screen complete for ALL markets (top $(QUICK_TOP))."
+
+.PHONY: quick-us
+quick-us: check
+	@echo "⚡  Quick screening US market (top $(QUICK_TOP))…"
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market us --top $(QUICK_TOP) --quick
+	@echo "🔗  Injecting ticker links for quick US market…"
+	$(PYTHON) $(LINKS) --market us --quick
+	@$(MAKE) update-last
+
+.PHONY: quick-tw
+quick-tw: check
+	@echo "⚡  Quick screening TW market (top $(QUICK_TOP))…"
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market tw --top $(QUICK_TOP) --quick
+	@echo "🔗  Injecting ticker links for quick TW market…"
+	$(PYTHON) $(LINKS) --market tw --quick
+	@$(MAKE) update-last
+
+.PHONY: quick-jp
+quick-jp: check
+	@echo "⚡  Quick screening JP market (top $(QUICK_TOP))…"
+	$(DEBUG_ENV) $(PYTHON) $(SCREENER) --market jp --top $(QUICK_TOP) --quick
+	@echo "🔗  Injecting ticker links for quick JP market…"
+	$(PYTHON) $(LINKS) --market jp --quick
+	@$(MAKE) update-last
 
 # ── Step 2: Generate individual financial reports ─────────────────────────────
 # Reads screener CSV, fetches financial data from yfinance, writes per-ticker
@@ -220,6 +264,11 @@ help:
 	@echo "  make pipeline-us      Full pipeline for US only"
 	@echo "  make pipeline-tw      Full pipeline for TW only"
 	@echo "  make pipeline-jp      Full pipeline for JP only"
+	@echo ""
+	@echo "  make quick            Quick mode: top 10 most discounted — all markets"
+	@echo "  make quick-us         Quick mode — US only"
+	@echo "  make quick-tw         Quick mode — TW only"
+	@echo "  make quick-jp         Quick mode — JP only"
 	@echo ""
 	@echo "  make screen           Screener only — all markets"
 	@echo "  make screen-us        Screener only — US"
