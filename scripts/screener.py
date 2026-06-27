@@ -92,6 +92,71 @@ def get_tw_tickers(market_type='all'):
             print(f"Error fetching TW tickers for mode {mode}: {e}")
     return tickers
 
+def get_sp100_tickers():
+    """Fetches S&P 100 tickers from Wikipedia."""
+    url = "https://en.wikipedia.org/wiki/S%26P_100"
+    return fetch_wikipedia_tickers(url, "constituents")
+
+def get_nikkei225_tickers():
+    """Fetches Nikkei 225 tickers from the official Nikkei Indexes website."""
+    url = "https://indexes.nikkei.co.jp/en/nkave/index/component?idx=nk225"
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        response = requests.get(url, headers=headers, timeout=10)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        tickers = []
+        tables = soup.find_all('table')
+        for table in tables:
+            rows = table.find_all('tr')
+            if not rows:
+                continue
+            header = [c.text.strip() for c in rows[0].find_all(['td', 'th'])]
+            if 'Code' in header:
+                code_idx = header.index('Code')
+                for row in rows[1:]:
+                    cells = row.find_all(['td', 'th'])
+                    if len(cells) > code_idx:
+                        code_str = cells[code_idx].text.strip()
+                        if code_str.isdigit() and len(code_str) == 4:
+                            tickers.append(code_str + ".T")
+        return list(sorted(set(tickers)))
+    except Exception as e:
+        print(f"Error fetching Nikkei 225 tickers: {e}")
+        return []
+
+def get_taiwan50_tickers():
+    """Fetches Taiwan 50 (FTSE TWSE Taiwan 50) tickers and their Chinese names from Chinese Wikipedia."""
+    url = "https://zh.wikipedia.org/wiki/%E8%87%BA%E7%81%A350%E6%8C%87%E6%95%B8"
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        response = requests.get(url, headers=headers, timeout=10)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        tables = soup.find_all('table', class_='wikitable')
+        tickers = {}
+        
+        if tables:
+            table = tables[0]
+            rows = table.find_all('tr')[1:] # Skip header
+            for r in rows:
+                cells = r.find_all('td')
+                # The table has 6 columns: [code, name, weight, code, name, weight]
+                if len(cells) >= 3:
+                    txt1 = cells[0].text.strip()
+                    name1 = cells[1].text.strip()
+                    m1 = re.search(r'\d{4}', txt1)
+                    if m1:
+                        tickers[m1.group(0) + ".TW"] = name1
+                if len(cells) >= 6:
+                    txt2 = cells[3].text.strip()
+                    name2 = cells[4].text.strip()
+                    m2 = re.search(r'\d{4}', txt2)
+                    if m2:
+                        tickers[m2.group(0) + ".TW"] = name2
+        return tickers
+    except Exception as e:
+        print(f"Error fetching Taiwan 50 tickers: {e}")
+        return {}
+
 def fetch_wikipedia_tickers(url, table_id):
     """Generic helper to fetch tickers from a Wikipedia table."""
     try:
@@ -240,23 +305,41 @@ def main():
     
     tickers = []
     if args.market in ['us', 'all']:
-        sp500_tickers = get_cached_list('sp500', get_sp500_tickers)
-        nasdaq_tickers = get_cached_list('nasdaq100', get_nasdaq100_tickers)
-        tickers.extend(sp500_tickers)
-        tickers.extend(nasdaq_tickers)
-        console.print(f"Fetched {len(sp500_tickers)} S&P 500 and {len(nasdaq_tickers)} NASDAQ-100 tickers.")
+        if args.quick:
+            sp100_tickers = get_cached_list('sp100', get_sp100_tickers)
+            nasdaq_tickers = get_cached_list('nasdaq100', get_nasdaq100_tickers)
+            tickers.extend(sp100_tickers)
+            tickers.extend(nasdaq_tickers)
+            console.print(f"Fetched {len(sp100_tickers)} S&P 100 and {len(nasdaq_tickers)} NASDAQ-100 tickers for quick mode.")
+        else:
+            sp500_tickers = get_cached_list('sp500', get_sp500_tickers)
+            nasdaq_tickers = get_cached_list('nasdaq100', get_nasdaq100_tickers)
+            tickers.extend(sp500_tickers)
+            tickers.extend(nasdaq_tickers)
+            console.print(f"Fetched {len(sp500_tickers)} S&P 500 and {len(nasdaq_tickers)} NASDAQ-100 tickers.")
         
     tw_names_map = {}
     if args.market in ['tw', 'all']:
-        tw_tickers_dict = get_cached_list('tw', get_tw_tickers)
-        tw_names_map = tw_tickers_dict
-        tickers.extend(tw_tickers_dict.keys())
-        console.print(f"Fetched {len(tw_tickers_dict)} TWSE/TPEx tickers.")
+        if args.quick:
+            tw_tickers_dict = get_cached_list('taiwan50', get_taiwan50_tickers)
+            tw_names_map = tw_tickers_dict
+            tickers.extend(tw_tickers_dict.keys())
+            console.print(f"Fetched {len(tw_tickers_dict)} Taiwan 50 tickers for quick mode.")
+        else:
+            tw_tickers_dict = get_cached_list('tw', get_tw_tickers)
+            tw_names_map = tw_tickers_dict
+            tickers.extend(tw_tickers_dict.keys())
+            console.print(f"Fetched {len(tw_tickers_dict)} TWSE/TPEx tickers.")
 
     if args.market in ['jp', 'all']:
-        jp_tickers = get_cached_list('jp', get_all_jp_tickers)
-        tickers.extend(jp_tickers)
-        console.print(f"Fetched {len(jp_tickers)} JP tickers.")
+        if args.quick:
+            jp_tickers = get_cached_list('nikkei225', get_nikkei225_tickers)
+            tickers.extend(jp_tickers)
+            console.print(f"Fetched {len(jp_tickers)} Nikkei 225 tickers for quick mode.")
+        else:
+            jp_tickers = get_cached_list('jp', get_all_jp_tickers)
+            tickers.extend(jp_tickers)
+            console.print(f"Fetched {len(jp_tickers)} JP tickers.")
     
     # Merge, remove duplicates, and sort to ensure deterministic batching for the proxy
     tickers = sorted(list(set(tickers)))

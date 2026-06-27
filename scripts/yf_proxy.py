@@ -494,10 +494,29 @@ def proxy_download(tickers, **kwargs):
         raise e
     
     if not df.empty:
-        try:
-            df.to_pickle(cache_path)
-        except Exception as e:
-            print(f"⚠️ Failed to cache batch: {e}")
+        download_successful = True
+        if len(tickers) > 1:
+            cols = df.columns
+            present_tickers = []
+            if isinstance(cols, pd.MultiIndex):
+                for lvl in range(min(2, len(cols.levels))):
+                    l_vals = [str(x) for x in cols.levels[lvl]]
+                    if any(t in l_vals for t in tickers):
+                        present_tickers = [t for t in tickers if t in l_vals]
+                        break
+            else:
+                present_tickers = [t for t in tickers if t in cols]
+            
+            missing_tickers = [t for t in tickers if t not in present_tickers]
+            if missing_tickers:
+                print(f"⚠️ yf.download failed to download data for {len(missing_tickers)} tickers: {missing_tickers}. Not caching this batch to allow re-fetching.")
+                download_successful = False
+
+        if download_successful:
+            try:
+                df.to_pickle(cache_path)
+            except Exception as e:
+                print(f"⚠️ Failed to cache batch: {e}")
             
     return adjust_multi_splits(df), False
 
