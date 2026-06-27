@@ -193,6 +193,11 @@ def screen_stocks(tickers, names_map=None, min_mcap_usd_billion=5, min_mcap_twd_
             
             if mcap >= threshold:
                 pct_diff = ((c['price'] / c['dma200']) - 1) * 100
+                
+                # Exclude stocks with extreme anomalies or delisting-related split price drops (e.g. >80% below 200-DMA)
+                if pct_diff <= -80.0:
+                    return
+                    
                 company_name = info.get('shortName', c['symbol'])
                 if names_map and c['symbol'] in names_map:
                     company_name = f"{company_name} ({names_map[c['symbol']]})"

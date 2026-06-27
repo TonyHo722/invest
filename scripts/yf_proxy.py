@@ -45,50 +45,184 @@ class RateLimiter:
             # Fill the requests history to block immediate new requests
             self.requests = [now] * self.max_requests
 
+def auto_detect_splits_single(df):
+    if df.empty or 'Close' not in df.columns:
+        return df
+    df = df.copy()
+    if isinstance(df.index, pd.DatetimeIndex):
+        df = df.sort_index()
+        
+    factors = [2, 3, 4, 5, 6, 7, 8, 10, 20, 50, 100]
+    for i in range(1, len(df)):
+        p_prev = df.iloc[i-1]['Close']
+        p_curr = df.iloc[i]['Close']
+        
+        if pd.isna(p_prev) or pd.isna(p_curr) or p_prev <= 0 or p_curr <= 0:
+            continue
+            
+        ratio = p_prev / p_curr
+        
+        # Check forward split
+        for R in factors:
+            if abs(ratio - R) < 0.15 * R:
+                start_win = max(0, i - 5)
+                end_win = min(len(df), i + 6)
+                has_official_split = False
+                if 'Stock Splits' in df.columns:
+                    window_splits = df.iloc[start_win:end_win]['Stock Splits']
+                    if ((window_splits.notna()) & (window_splits > 0) & (window_splits != 1.0)).any():
+                        has_official_split = True
+                
+                if not has_official_split:
+                    drop_date = df.index[i]
+                    print(f"🔄 [yf_proxy] Auto-detected unrecorded forward split of {R}:1 on {drop_date.date()} (Price went from {p_prev:.2f} to {p_curr:.2f}). Adjusting history...")
+                    for metric in ['Open', 'High', 'Low', 'Close']:
+                        if metric in df.columns:
+                            df.iloc[:i, df.columns.get_loc(metric)] /= R
+                    break
+                    
+        # Check reverse split
+        rev_ratio = p_curr / p_prev
+        for R in factors:
+            if abs(rev_ratio - R) < 0.15 * R:
+                start_win = max(0, i - 5)
+                end_win = min(len(df), i + 6)
+                has_official_split = False
+                if 'Stock Splits' in df.columns:
+                    window_splits = df.iloc[start_win:end_win]['Stock Splits']
+                    if ((window_splits.notna()) & (window_splits > 0) & (window_splits != 1.0)).any():
+                        has_official_split = True
+                        
+                if not has_official_split:
+                    jump_date = df.index[i]
+                    print(f"🔄 [yf_proxy] Auto-detected unrecorded reverse split of 1:{R} on {jump_date.date()} (Price went from {p_prev:.2f} to {p_curr:.2f}). Adjusting history...")
+                    for metric in ['Open', 'High', 'Low', 'Close']:
+                        if metric in df.columns:
+                            df.iloc[:i, df.columns.get_loc(metric)] *= R
+                    break
+    return df
+
+def auto_detect_splits_multi(df):
+    if df.empty:
+        return df
+    df = df.copy()
+    if isinstance(df.index, pd.DatetimeIndex):
+        df = df.sort_index()
+        
+    if not isinstance(df.columns, pd.MultiIndex):
+        return auto_detect_splits_single(df)
+        
+    if 'Close' in df.columns.levels[0]:
+        ticker_level = 1
+        metric_level = 0
+    elif 'Close' in df.columns.levels[1]:
+        ticker_level = 0
+        metric_level = 1
+    else:
+        return df
+        
+    tickers = df.columns.levels[ticker_level]
+    factors = [2, 3, 4, 5, 6, 7, 8, 10, 20, 50, 100]
+    
+    for ticker in tickers:
+        close_col = ('Close', ticker) if metric_level == 0 else (ticker, 'Close')
+        splits_col = ('Stock Splits', ticker) if metric_level == 0 else (ticker, 'Stock Splits')
+        
+        if close_col not in df.columns:
+            continue
+            
+        for i in range(1, len(df)):
+            p_prev = df.iloc[i-1][close_col]
+            p_curr = df.iloc[i][close_col]
+            
+            if pd.isna(p_prev) or pd.isna(p_curr) or p_prev <= 0 or p_curr <= 0:
+                continue
+                
+            ratio = p_prev / p_curr
+            
+            # Check forward split
+            for R in factors:
+                if abs(ratio - R) < 0.15 * R:
+                    start_win = max(0, i - 5)
+                    end_win = min(len(df), i + 6)
+                    has_official_split = False
+                    if splits_col in df.columns:
+                        window_splits = df.iloc[start_win:end_win][splits_col]
+                        if ((window_splits.notna()) & (window_splits > 0) & (window_splits != 1.0)).any():
+                            has_official_split = True
+                            
+                    if not has_official_split:
+                        drop_date = df.index[i]
+                        print(f"🔄 [yf_proxy] Auto-detected unrecorded forward split of {R}:1 for {ticker} on {drop_date.date()} (Price went from {p_prev:.2f} to {p_curr:.2f}). Adjusting history...")
+                        for metric in ['Open', 'High', 'Low', 'Close']:
+                            metric_col = (metric, ticker) if metric_level == 0 else (ticker, metric)
+                            if metric_col in df.columns:
+                                df.iloc[:i, df.columns.get_loc(metric_col)] /= R
+                        break
+                        
+            # Check reverse split
+            rev_ratio = p_curr / p_prev
+            for R in factors:
+                if abs(rev_ratio - R) < 0.15 * R:
+                    start_win = max(0, i - 5)
+                    end_win = min(len(df), i + 6)
+                    has_official_split = False
+                    if splits_col in df.columns:
+                        window_splits = df.iloc[start_win:end_win][splits_col]
+                        if ((window_splits.notna()) & (window_splits > 0) & (window_splits != 1.0)).any():
+                            has_official_split = True
+                            
+                    if not has_official_split:
+                        jump_date = df.index[i]
+                        print(f"🔄 [yf_proxy] Auto-detected unrecorded reverse split of 1:{R} for {ticker} on {jump_date.date()} (Price went from {p_prev:.2f} to {p_curr:.2f}). Adjusting history...")
+                        for metric in ['Open', 'High', 'Low', 'Close']:
+                            metric_col = (metric, ticker) if metric_level == 0 else (ticker, metric)
+                            if metric_col in df.columns:
+                                df.iloc[:i, df.columns.get_loc(metric_col)] *= R
+                        break
+    return df
+
 def adjust_single_splits(df):
-    if df.empty or 'Stock Splits' not in df.columns:
+    if df.empty:
         return df
         
     df = df.copy()
     if isinstance(df.index, pd.DatetimeIndex):
         df = df.sort_index()
         
-    # Find all rows where 'Stock Splits' is not 0, not NaN, and not 1
-    split_rows = df[df['Stock Splits'].notna() & (df['Stock Splits'] > 0) & (df['Stock Splits'] != 1.0)]
-    
-    # Process from latest to earliest split
-    for date in sorted(split_rows.index, reverse=True):
-        R = split_rows.loc[date, 'Stock Splits']
-        
-        # Look around the split date to find where the unadjusted price drop happened
-        # We search from the split date backwards up to 5 trading days
-        try:
-            target_idx = df.index.get_loc(date)
-        except KeyError:
-            continue
-            
-        found_drop = False
-        for i in range(5):
-            idx = target_idx - i
-            if idx <= 0:
-                break
-            
-            p_curr = df.iloc[idx]['Close']
-            p_prev = df.iloc[idx-1]['Close']
-            if pd.isna(p_curr) or pd.isna(p_prev) or p_prev == 0:
+    # Process official splits if 'Stock Splits' exists
+    if 'Stock Splits' in df.columns:
+        split_rows = df[df['Stock Splits'].notna() & (df['Stock Splits'] > 0) & (df['Stock Splits'] != 1.0)]
+        for date in sorted(split_rows.index, reverse=True):
+            R = split_rows.loc[date, 'Stock Splits']
+            try:
+                target_idx = df.index.get_loc(date)
+            except KeyError:
                 continue
-            ratio = p_curr / p_prev
-            expected_ratio = 1.0 / R
-            
-            # Check if ratio is close to expected_ratio
-            if abs(ratio - expected_ratio) < 0.15:
-                drop_date = df.index[idx]
-                # Adjust all prices before drop_date
-                for metric in ['Open', 'High', 'Low', 'Close']:
-                    if metric in df.columns:
-                        df.loc[df.index < drop_date, metric] /= R
-                found_drop = True
-                break
+                
+            found_drop = False
+            for i in range(5):
+                idx = target_idx - i
+                if idx <= 0:
+                    break
+                
+                p_curr = df.iloc[idx]['Close']
+                p_prev = df.iloc[idx-1]['Close']
+                if pd.isna(p_curr) or pd.isna(p_prev) or p_prev == 0:
+                    continue
+                ratio = p_curr / p_prev
+                expected_ratio = 1.0 / R
+                
+                if abs(ratio - expected_ratio) < 0.15:
+                    drop_date = df.index[idx]
+                    for metric in ['Open', 'High', 'Low', 'Close']:
+                        if metric in df.columns:
+                            df.loc[df.index < drop_date, metric] /= R
+                    found_drop = True
+                    break
+                    
+    # Apply automatic split detection fallback
+    df = auto_detect_splits_single(df)
     return df
 
 def adjust_multi_splits(df):
@@ -99,11 +233,9 @@ def adjust_multi_splits(df):
     if isinstance(df.index, pd.DatetimeIndex):
         df = df.sort_index()
         
-    # Check if column is multi-index
     if not isinstance(df.columns, pd.MultiIndex):
         return adjust_single_splits(df)
         
-    # Detect level of Tickers and Metrics
     if 'Close' in df.columns.levels[0]:
         ticker_level = 1
         metric_level = 0
@@ -111,7 +243,6 @@ def adjust_multi_splits(df):
         ticker_level = 0
         metric_level = 1
     else:
-        # If 'Close' is not in either, return as is
         return df
         
     tickers = df.columns.levels[ticker_level]
@@ -127,7 +258,6 @@ def adjust_multi_splits(df):
         
         for date in sorted(split_rows.index, reverse=True):
             R = df.loc[date, stock_splits_col]
-            
             try:
                 target_idx = df.index.get_loc(date)
             except KeyError:
@@ -152,6 +282,9 @@ def adjust_multi_splits(df):
                             df.loc[df.index < drop_date, metric_col] /= R
                     found_drop = True
                     break
+                    
+    # Apply automatic split detection fallback
+    df = auto_detect_splits_multi(df)
     return df
 
 _limiter = RateLimiter(max_requests=default_max_requests, period=60.0)
