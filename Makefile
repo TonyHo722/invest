@@ -10,7 +10,7 @@
 #   make pipeline-tw        Run the complete pipeline for TW only (auto-syncs to report/last)
 #   make pipeline-jp        Run the complete pipeline for JP only (auto-syncs to report/last)
 #
-#   make quick              Quick mode: top 10 most discounted stocks per market (screen only)
+#   make quick              Quick mode: top 20 most discounted stocks per market (screen only)
 #   make quick-us           Quick mode: US only
 #   make quick-tw           Quick mode: TW only
 #   make quick-jp           Quick mode: JP only
@@ -53,7 +53,7 @@ CHECK_YF   := scripts/check_yf.py
 LAST_DIR   := report/last
 TODAY      := $(shell date +%Y%m%d)
 TODAY_DIR  := report/$(TODAY)_report
-QUICK_TOP  := 10
+QUICK_TOP  := 20
 
 # Debug mode support
 ifdef DEBUG
@@ -265,7 +265,7 @@ help:
 	@echo "  make pipeline-tw      Full pipeline for TW only"
 	@echo "  make pipeline-jp      Full pipeline for JP only"
 	@echo ""
-	@echo "  make quick            Quick mode: top 10 most discounted — all markets"
+	@echo "  make quick            Quick mode: top 20 most discounted — all markets"
 	@echo "  make quick-us         Quick mode — US only"
 	@echo "  make quick-tw         Quick mode — TW only"
 	@echo "  make quick-jp         Quick mode — JP only"
