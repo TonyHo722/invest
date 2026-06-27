@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener Target Comparison: Normal vs Quick Mode</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(20, 28, 47, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-us: #3b82f6;
+            --accent-tw: #10b981;
+            --accent-jp: #f43f5e;
+            --glass-glow: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.06) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.03em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Grid Layout */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3.5rem;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(180deg, var(--glass-glow) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Card Accents */
+        .card-us { border-top: 4px solid var(--accent-us); }
+        .card-tw { border-top: 4px solid var(--accent-tw); }
+        .card-jp { border-top: 4px solid var(--accent-jp); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .market-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .market-badge {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .badge-us { background-color: var(--accent-us); box-shadow: 0 0 12px var(--accent-us); }
+        .badge-tw { background-color: var(--accent-tw); box-shadow: 0 0 12px var(--accent-tw); }
+        .badge-jp { background-color: var(--accent-jp); box-shadow: 0 0 12px var(--accent-jp); }
+
+        .market-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .reduction-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-us .reduction-tag { color: #93c5fd; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.25); }
+        .card-tw .reduction-tag { color: #6ee7b7; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.25); }
+        .card-jp .reduction-tag { color: #fda4af; background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.25); }
+
+        .metrics-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .metric-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .source-details {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .source-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Speedup Highlight Row */
+        .speed-highlight {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fcd34d;
+            background: rgba(252, 211, 77, 0.08);
+            border: 1px solid rgba(252, 211, 77, 0.15);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            margin-top: auto;
+        }
+
+        /* Comparison Table Section */
+        .table-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 2rem;
+        }
+
+        .table-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:nth-child(1) { animation: fadeIn 0.5s ease-out 0.1s both; }
+        .card:nth-child(2) { animation: fadeIn 0.5s ease-out 0.2s both; }
+        .card:nth-child(3) { animation: fadeIn 0.5s ease-out 0.3s both; }
+        .table-section { animation: fadeIn 0.6s ease-out 0.4s both; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .market-grid { grid-template-columns: 1fr; }
+            .metrics-comparison { gap: 1rem; }
+            .metric-value { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Screener Target Comparison</h1>
+            <p>A performance comparison between Normal Mode and the newly optimized Quick Mode across global markets.</p>
+        </header>
+
+        <div class="market-grid">
+            <!-- US Market Card -->
+            <div class="card card-us">
+                <div>
+                    <div class="card-header">
+                        <div class="market-title">
+                            <span class="market-badge badge-us"></span>
+                            <span class="market-name">United States (US)</span>
+                        </div>
+                        <span class="reduction-tag">-72% Tickers</span>
+                    </div>
+
+                    <div class="source-details">
+                        <div><span class="source-label">Normal Mode:</span> S&P 500 + NASDAQ 100</div>
+                        <div><span class="source-label">Quick Mode:</span> S&P 100 + NASDAQ 100</div>
+                    </div>
+
+                    <div class="metrics-comparison">
+                        <div class="metric-box">
+                            <span class="metric-label">Normal</span>
+                            <span class="metric-value">~600</span>
+                            <span class="metric-sub">tickers</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Quick</span>
+                            <span class="metric-value" style="color: var(--accent-us);">168</span>
+                            <span class="metric-sub">unique tickers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speed-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>~3.3x screening acceleration</span>
+                </div>
+            </div>
+
+            <!-- Taiwan Market Card -->
+            <div class="card card-tw">
+                <div>
+                    <div class="card-header">
+                        <div class="market-title">
+                            <span class="market-badge badge-tw"></span>
+                            <span class="market-name">Taiwan (TW)</span>
+                        </div>
+                        <span class="reduction-tag">-97% Tickers</span>
+                    </div>
+
+                    <div class="source-details">
+                        <div><span class="source-label">Normal Mode:</span> TWSE + TPEx Prime (All)</div>
+                        <div><span class="source-label">Quick Mode:</span> FTSE TWSE Taiwan 50</div>
+                    </div>
+
+                    <div class="metrics-comparison">
+                        <div class="metric-box">
+                            <span class="metric-label">Normal</span>
+                            <span class="metric-value">~1,500+</span>
+                            <span class="metric-sub">tickers</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Quick</span>
+                            <span class="metric-value" style="color: var(--accent-tw);">50</span>
+                            <span class="metric-sub">key constituents</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speed-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>~30.0x screening acceleration</span>
+                </div>
+            </div>
+
+            <!-- Japan Market Card -->
+            <div class="card card-jp">
+                <div>
+                    <div class="card-header">
+                        <div class="market-title">
+                            <span class="market-badge badge-jp"></span>
+                            <span class="market-name">Japan (JP)</span>
+                        </div>
+                        <span class="reduction-tag">-86% Tickers</span>
+                    </div>
+
+                    <div class="source-details">
+                        <div><span class="source-label">Normal Mode:</span> JPX Prime (All)</div>
+                        <div><span class="source-label">Quick Mode:</span> Nikkei 225</div>
+                    </div>
+
+                    <div class="metrics-comparison">
+                        <div class="metric-box">
+                            <span class="metric-label">Normal</span>
+                            <span class="metric-value">~1,542</span>
+                            <span class="metric-sub">tickers</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Quick</span>
+                            <span class="metric-value" style="color: var(--accent-jp);">223</span>
+                            <span class="metric-sub">key constituents</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speed-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>~7.0x screening acceleration</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <h2 class="table-title">Full Comparison Matrix</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Normal Source</th>
+                            <th>Quick Source</th>
+                            <th>Normal Target</th>
+                            <th>Quick Target</th>
+                            <th>Reduction</th>
+                            <th>Est. Time (Quick)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600; color: #93c5fd;">US Market</td>
+                            <td>S&P 500 + NASDAQ 100</td>
+                            <td>S&P 100 + NASDAQ 100</td>
+                            <td>~600 stocks</td>
+                            <td><strong>168</strong> stocks</td>
+                            <td style="color: #fda4af; font-weight: 600;">-72.0%</td>
+                            <td>~3 min</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; color: #6ee7b7;">Taiwan (TW)</td>
+                            <td>TWSE + TPEx Listed</td>
+                            <td>FTSE TWSE Taiwan 50</td>
+                            <td>~1,500+ stocks</td>
+                            <td><strong>50</strong> stocks</td>
+                            <td style="color: #6ee7b7; font-weight: 600;">-96.6%</td>
+                            <td>~45 sec</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; color: #fda4af;">Japan (JP)</td>
+                            <td>JPX Prime Market</td>
+                            <td>Nikkei 225 Index</td>
+                            <td>~1,542 stocks</td>
+                            <td><strong>223</strong> stocks</td>
+                            <td style="color: #fda4af; font-weight: 600;">-85.5%</td>
+                            <td>~4 min</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
