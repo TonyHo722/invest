@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Analysis: Delisted Tickers & Yahoo Finance Anomalies (8303.T)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-primary: #ef4444; /* Alert red */
+            --accent-secondary: #f97316; /* Warning orange */
+            --accent-success: #10b981; /* Success emerald */
+            --accent-blue: #3b82f6; /* Info blue */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            --glow-color: rgba(239, 68, 68, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(239, 68, 68, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-white) 30%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        strong {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+
+        /* Alert/Callout Box */
+        .alert-box {
+            background: rgba(249, 115, 22, 0.08);
+            border-left: 4px solid var(--accent-secondary);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 24px;
+        }
+
+        .alert-box p {
+            margin: 0;
+            color: #fed7aa;
+            font-size: 0.95rem;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            position: relative;
+            background: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0 24px;
+            overflow-x: auto;
+        }
+
+        pre {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #f472b6; }
+        .string { color: #34d399; }
+        .comment { color: #64748b; font-style: italic; }
+        .number { color: #fb923c; }
+        .name { color: #38bdf8; }
+        .punctuation { color: #94a3b8; }
+        .added { background-color: rgba(16, 185, 129, 0.15); display: block; width: 100%; padding: 2px 4px; border-radius: 2px; }
+        .removed { background-color: rgba(239, 68, 68, 0.15); display: block; width: 100%; padding: 2px 4px; border-radius: 2px; }
+
+        /* Metrics Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-white);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight-ticker {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="badge">Anomaly Report</div>
+            <h1>Delisted Stock Screening Anomaly</h1>
+            <div class="meta">Ticker Focus: <span class="highlight-ticker">8303.T</span> (SBI Shinsei Bank) &bull; Resolved: 2026-06-27</div>
+        </header>
+
+        <div class="card">
+            <h2>🔍 The Issue Overview</h2>
+            <p>During the screening of the Japanese JPX Prime Market, <strong class="highlight-ticker">8303.T</strong> (SBI Shinsei Bank) was flagged as an attractive investment candidate matching the criteria for being significantly below its 200-Day Moving Average (200-DMA).</p>
+            <p>However, <strong>SBI Shinsei Bank was officially delisted from the Tokyo Stock Exchange (TSE) on September 28, 2023</strong>, following a privatization transaction by SBI Holdings.</p>
+        </div>
+
+        <div class="alert-box">
+            <p><strong>⚠️ Why was it still returning price data?</strong> Third-party data providers and platforms like Yahoo Finance often publish fixed settlement values (e.g. privatization bid levels near 1,380 - 1,400 JPY) as daily updates. This creates the illusion of active trading records when fetched programmatically.</p>
+        </div>
+
+        <div class="card">
+            <h2>📉 The Root Cause Analysis</h2>
+            <p>The root cause of this anomaly lies in the unadjusted split data provided by Yahoo Finance's historical price feeds:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric Type</th>
+                        <th>Value</th>
+                        <th>Explanation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Last Close Price</strong></td>
+                        <td style="color: var(--accent-success);">1,389.5 JPY</td>
+                        <td>The fixed settlement/privatization closing price.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unadjusted 200-DMA</strong></td>
+                        <td style="color: var(--accent-primary);">3,238,175,242.88 JPY</td>
+                        <td>Distorted by an unadjusted <strong>1-for-20,000,000 reverse split</strong> on September 27, 2023.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>% Difference</strong></td>
+                        <td style="color: var(--accent-primary); font-weight: bold;">-99.999957%</td>
+                        <td>The calculated difference between the close price and the distorted 200-DMA.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Because the historic price records prior to the split were multiplied by 20,000,000, the 200-DMA grew to a multi-billion JPY figure, creating a massive artificial price drop that bypassed normal screener logic.</p>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Technical Resolution</h2>
+            <p>To prevent delisted or highly distorted companies from appearing in active reports, we implemented a dual-layered protection mechanism in <span class="highlight-ticker">scripts/screener.py</span>:</p>
+            
+            <p><strong>Layer 1: Percentage Difference Anomaly Filter (Dynamic)</strong></p>
+            <p>We filter out any candidates that are extremely far below their 200-DMA (e.g., >80% below the DMA), which is statistically impossible under normal market conditions and always points to split errors or delisting settlements.</p>
+            
+            <p><strong>Layer 2: Hardcoded Blacklist (Pre-emptive)</strong></p>
+            <p>We maintain an explicit blacklist of known delisted tickers to filter them out instantly at the start of the execution, saving network requests and caching overhead.</p>
+
+            <h3 style="font-size: 1.1rem; margin: 20px 0 10px; color: var(--text-white);">Code Modifications:</h3>
+            
+            <div class="code-container">
+                <pre><code><span class="comment"># 1. Define the Blacklist at the top level</span>
+<span class="added"><span class="name">BLACKLIST_TICKERS</span> <span class="punctuation">=</span> <span class="punctuation">{</span>
+    <span class="string">"8303.T"</span><span class="punctuation">,</span>  <span class="comment"># SBI Shinsei Bank (Delisted)</span>
+<span class="punctuation">}</span></span>
+
+<span class="comment"># 2. Subtract blacklisted tickers in the main block</span>
+<span class="punctuation">def</span> <span class="name">main</span><span class="punctuation">():</span>
+    <span class="comment"># ... (ticker aggregation) ...</span>
+    
+    <span class="comment"># Merge, remove duplicates, and sort</span>
+<span class="removed">-   tickers = sorted(list(set(tickers)))</span>
+<span class="added">+   tickers = sorted(list(set(tickers) - BLACKLIST_TICKERS))</span>
+    
+    <span class="comment"># ...</span>
+
+<span class="comment"># 3. Dynamic anomaly protection in check_candidate()</span>
+<span class="punctuation">def</span> <span class="name">check_candidate</span><span class="punctuation">(</span>c<span class="punctuation">):</span>
+    <span class="comment"># ...</span>
+    <span class="punctuation">if</span> mcap <span class="punctuation">&gt;=</span> threshold<span class="punctuation">:</span>
+        pct_diff <span class="punctuation">=</span> <span class="punctuation">((</span>c<span class="punctuation">[</span><span class="string">'price'</span><span class="punctuation">]</span> <span class="punctuation">/</span> c<span class="punctuation">[</span><span class="string">'dma200'</span><span class="punctuation">])</span> <span class="punctuation">-</span> <span class="number">1</span><span class="punctuation">)</span> <span class="punctuation">*</span> <span class="number">100</span>
+        
+<span class="added">        <span class="comment"># Exclude stocks with extreme anomalies or delisting-related split price drops</span>
+        <span class="punctuation">if</span> pct_diff <span class="punctuation">&lt;=</span> <span class="number">-80.0</span><span class="punctuation">:</span>
+            <span class="punctuation">return</span></span></code></pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✅ Result Verification</h2>
+            <p>After implementing the blacklist and regenerating the reports, we verified that:</p>
+            <ul style="list-style-type: square; margin-left: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                <li style="margin-bottom: 8px;">The directory <span class="highlight-ticker">report/last/JP_stock/8303.T/</span> was deleted.</li>
+                <li style="margin-bottom: 8px;"><span class="highlight-ticker">8303.T</span> is completely removed from the CSV files and dashboard tables.</li>
+                <li style="margin-bottom: 8px;">The dynamic anomaly protection filters out any other listings facing split adjustments or delisting price drop issues.</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Stock Screener Diagnostics &bull; Internal Documentation</p>
+        </footer>
+    </div>
+</body>
+</html>

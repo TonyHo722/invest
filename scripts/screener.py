@@ -18,6 +18,11 @@ from datetime import datetime
 from pathlib import Path
 from yf_proxy import ProxyTicker, proxy_download, get_cached_list
 
+# Blacklist of delisted or inactive tickers to exclude from screening
+BLACKLIST_TICKERS = {
+    "8303.T",  # SBI Shinsei Bank (Delisted)
+}
+
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
     url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
@@ -342,7 +347,7 @@ def main():
             console.print(f"Fetched {len(jp_tickers)} JP tickers.")
     
     # Merge, remove duplicates, and sort to ensure deterministic batching for the proxy
-    tickers = sorted(list(set(tickers)))
+    tickers = sorted(list(set(tickers) - BLACKLIST_TICKERS))
     
     if args.market == 'test':
         test_tickers = ['7722.TW', '2886.TW', '2884.TW', '5269.TW', '2618.TW', '2330.TW', '2317.TW', '2454.TW', '2308.TW', '2382.TW']
@@ -410,6 +415,18 @@ def main():
         
     # Generate Premium HTML Report
     try:
+        # Determine target stock type and total count
+        if args.market == 'us':
+            target_stock_type = "S&P 100 + NASDAQ 100" if args.quick else "S&P 500 + NASDAQ 100"
+        elif args.market == 'tw':
+            target_stock_type = "FTSE TWSE Taiwan 50" if args.quick else "TWSE + TPEx Listed"
+        elif args.market == 'jp':
+            target_stock_type = "Nikkei 225 Index" if args.quick else "JPX Prime Market"
+        else:
+            target_stock_type = "Custom Test List"
+            
+        target_count = len(tickers)
+
         file_market = f"quick_{args.market}" if args.quick else args.market
         html_path = report_dir / f"dma_200_screen_results_{file_market}.html"
         html_template = f"""<!DOCTYPE html>
@@ -560,7 +577,7 @@ def main():
             .subtitle {{ font-size: 0.85rem; }}
 
             .stats-grid {{
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
                 gap: 10px;
                 margin-bottom: 20px;
             }}
@@ -587,14 +604,22 @@ def main():
 <body>
     <div class="container">
         <header>
-            <h1>Market Value Screener</h1>
-            <p class="subtitle">Mega-Cap ({args.market.upper()}) Below 200-DMA - Generated when {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <h1>Market Value Screener ({args.market.upper()})</h1>
+            <p class="subtitle">Target: {target_stock_type} ({target_count} stocks) | Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
         </header>
         
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value">{len(matches)}</div>
                 <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 1.25rem; line-height: 2.2rem; font-weight: 600;">{target_stock_type}</div>
+                <div class="stat-label">Target Index</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{target_count}</div>
+                <div class="stat-label">Scanned Targets</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">> $10B</div>

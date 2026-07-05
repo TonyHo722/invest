@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Guide: Stock Split Detection & History Adjustments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(22, 30, 49, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-primary: #3b82f6; /* Blue */
+            --accent-secondary: #a855f7; /* Purple */
+            --accent-success: #10b981; /* Emerald */
+            --accent-warn: #eab308; /* Amber */
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            --glow-color: rgba(59, 130, 246, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-primary);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-white) 40%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            position: relative;
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0 24px;
+            overflow-x: auto;
+        }
+
+        pre {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #f472b6; }
+        .string { color: #34d399; }
+        .comment { color: #64748b; font-style: italic; }
+        .number { color: #fb923c; }
+        .name { color: #38bdf8; }
+        .punctuation { color: #94a3b8; }
+        .decorator { color: #a855f7; }
+
+        .highlight-ticker {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+        }
+
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-primary);
+            color: var(--text-white);
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="badge">Development Guide</div>
+            <h1>Stock Split Detection & Price Adjustment</h1>
+            <div class="meta">Implementation Architecture in <span class="highlight-ticker">yf_proxy.py</span></div>
+        </header>
+
+        <div class="card">
+            <h2>📊 Introduction to the Split Problem</h2>
+            <p>A stock split changes the number of outstanding shares and the stock price proportionally, while leaving the company's total market value unchanged. For example, in a <strong>2-for-1 forward split</strong>, the stock price drops by 50% while the share count doubles.</p>
+            <p>If historical price databases are not adjusted backwards to reflect this split, historical technical indicators (like the <strong>200-Day Moving Average</strong>) will show artificial price jumps or drops, rendering technical screening results incorrect.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="color: var(--accent-success); font-size: 1.15rem; margin-bottom: 12px;">1. Official Split Adjustment</h3>
+                <p>Retrieves split occurrences using the official Yahoo Finance <code>Stock Splits</code> column. If a split date is matched, historical prices prior to that date are divided (or multiplied) by the split factor.</p>
+            </div>
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="color: var(--accent-primary); font-size: 1.15rem; margin-bottom: 12px;">2. Heuristic Auto-Detection Fallback</h3>
+                <p>Under international markets (like TWSE or JPX), Yahoo Finance often fails to record stock splits officially. The proxy uses a mathematical sliding-window algorithm to detect integer-ratio price jumps and adjust historical data retroactively.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Technical Implementation Flow</h2>
+            <p>The split adjustment sequence operates as follows:</p>
+            <ol>
+                <li><strong>Chronological Sort</strong>: Orders the historical data frame in ascending order (past to present).</li>
+                <li><strong>Ratio Scan</strong>: Iterates through the daily close prices, comparing today's price ($P_{curr}$) to yesterday's price ($P_{prev}$).</li>
+                <li><strong>Tolerance Filter</strong>: Checks if the ratio matches common split factors (e.g. 2, 3, 4, 5, 10) within a <strong>15% margin of tolerance</strong>.</li>
+                <li><strong>Conflict Verification</strong>: Evaluates an 11-day window surrounding the day of the price jump to ensure no official split was already recorded.</li>
+                <li><strong>Historical Correction</strong>: Multiplies or divides all historical prices ('Open', 'High', 'Low', 'Close') prior to that date to smooth out the transition.</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>💻 Code Snippet: Detection & Adjustment Logic</h2>
+            <p>The core python functions from <span class="highlight-ticker">scripts/yf_proxy.py</span> are structured below:</p>
+
+            <div class="code-container">
+                <pre><code><span class="keyword">def</span> <span class="name">auto_detect_splits_single</span><span class="punctuation">(</span>df<span class="punctuation">):</span>
+    <span class="keyword">if</span> df<span class="punctuation">.</span>empty <span class="keyword">or</span> <span class="string">'Close'</span> <span class="keyword">not in</span> df<span class="punctuation">.</span>columns<span class="punctuation">:</span>
+        <span class="keyword">return</span> df
+        
+    df <span class="punctuation">=</span> df<span class="punctuation">.</span>copy<span class="punctuation">()</span>
+    <span class="keyword">if</span> isinstance<span class="punctuation">(</span>df<span class="punctuation">.</span>index<span class="punctuation">,</span> pd<span class="punctuation">.</span>DatetimeIndex<span class="punctuation">):</span>
+        df <span class="punctuation">=</span> df<span class="punctuation">.</span>sort_index<span class="punctuation">()</span>
+        
+    <span class="comment"># Common forward/reverse split factors</span>
+    factors <span class="punctuation">=</span> <span class="punctuation">[</span><span class="number">2</span><span class="punctuation">,</span> <span class="number">3</span><span class="punctuation">,</span> <span class="number">4</span><span class="punctuation">,</span> <span class="number">5</span><span class="punctuation">,</span> <span class="number">6</span><span class="punctuation">,</span> <span class="number">7</span><span class="punctuation">,</span> <span class="number">8</span><span class="punctuation">,</span> <span class="number">10</span><span class="punctuation">,</span> <span class="number">20</span><span class="punctuation">,</span> <span class="number">50</span><span class="punctuation">,</span> <span class="number">100</span><span class="punctuation">]</span>
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range<span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span> len<span class="punctuation">(</span>df<span class="punctuation">)):</span>
+        p_prev <span class="punctuation">=</span> df<span class="punctuation">.</span>iloc<span class="punctuation">[</span>i<span class="punctuation">-</span><span class="number">1</span><span class="punctuation">][</span><span class="string">'Close'</span><span class="punctuation">]</span>
+        p_curr <span class="punctuation">=</span> df<span class="punctuation">.</span>iloc<span class="punctuation">[</span>i<span class="punctuation">][</span><span class="string">'Close'</span><span class="punctuation">]</span>
+        
+        <span class="keyword">if</span> pd<span class="punctuation">.</span>isna<span class="punctuation">(</span>p_prev<span class="punctuation">)</span> <span class="keyword">or</span> pd<span class="punctuation">.</span>isna<span class="punctuation">(</span>p_curr<span class="punctuation">)</span> <span class="keyword">or</span> p_prev <span class="punctuation">&lt;=</span> <span class="number">0</span> <span class="keyword">or</span> p_curr <span class="punctuation">&lt;=</span> <span class="number">0</span><span class="punctuation">:</span>
+            <span class="keyword">continue</span>
+            
+        ratio <span class="punctuation">=</span> p_prev <span class="punctuation">/</span> p_curr
+        
+        <span class="comment"># 1. Check for unrecorded FORWARD splits</span>
+        <span class="keyword">for</span> R <span class="keyword">in</span> factors<span class="punctuation">:</span>
+            <span class="keyword">if</span> abs<span class="punctuation">(</span>ratio <span class="punctuation">-</span> R<span class="punctuation">)</span> <span class="punctuation">&lt;</span> <span class="number">0.15</span> <span class="punctuation">*</span> R<span class="punctuation">:</span>
+                start_win <span class="punctuation">=</span> max<span class="punctuation">(</span><span class="number">0</span><span class="punctuation">,</span> i <span class="punctuation">-</span> <span class="number">5</span><span class="punctuation">)</span>
+                end_win <span class="punctuation">=</span> min<span class="punctuation">(</span>len<span class="punctuation">(</span>df<span class="punctuation">),</span> i <span class="punctuation">+</span> <span class="number">6</span><span class="punctuation">)</span>
+                has_official_split <span class="punctuation">=</span> <span class="keyword">False</span>
+                
+                <span class="keyword">if</span> <span class="string">'Stock Splits'</span> <span class="keyword">in</span> df<span class="punctuation">.</span>columns<span class="punctuation">:</span>
+                    window_splits <span class="punctuation">=</span> df<span class="punctuation">.</span>iloc<span class="punctuation">[</span>start_win<span class="punctuation">:</span>end_win<span class="punctuation">][</span><span class="string">'Stock Splits'</span><span class="punctuation]</span>
+                    <span class="keyword">if</span> <span class="punctuation">((</span>window_splits<span class="punctuation">.</span>notna<span class="punctuation">())</span> <span class="punctuation">&amp;</span> <span class="punctuation">(</span>window_splits <span class="punctuation">&gt;</span> <span class="number">0</span><span class="punctuation">)</span> <span class="punctuation">&amp;</span> <span class="punctuation">(</span>window_splits <span class="punctuation">!=</span> <span class="number">1.0</span><span class="punctuation">)).</span>any<span class="punctuation">():</span>
+                        has_official_split <span class="punctuation">=</span> <span class="keyword">True</span>
+                
+                <span class="keyword">if</span> <span class="keyword">not</span> has_official_split<span class="punctuation">:</span>
+                    drop_date <span class="punctuation">=</span> df<span class="punctuation">.</span>index<span class="punctuation">[</span>i<span class="punctuation">]</span>
+                    print(f"Auto-detected split of {R}:1 on {drop_date.date()}...")
+                    <span class="keyword">for</span> metric <span class="keyword">in</span> <span class="punctuation">[</span><span class="string">'Open'</span><span class="punctuation">,</span> <span class="string">'High'</span><span class="punctuation">,</span> <span class="string">'Low'</span><span class="punctuation">,</span> <span class="string">'Close'</span><span class="punctuation orbit">]:</span>
+                        <span class="keyword">if</span> metric <span class="keyword">in</span> df<span class="punctuation">.</span>columns<span class="punctuation">:</span>
+                            df<span class="punctuation">.</span>iloc<span class="punctuation">[:</span>i<span class="punctuation">,</span> df<span class="punctuation">.</span>columns<span class="punctuation">.</span>get_loc<span class="punctuation">(</span>metric<span class="punctuation">)]</span> <span class="punctuation">/=</span> R
+                    <span class="keyword">break</span>
+                    
+        <span class="comment"># 2. Check for unrecorded REVERSE splits</span>
+        rev_ratio <span class="punctuation">=</span> p_curr <span class="punctuation">/</span> p_prev
+        <span class="keyword">for</span> R <span class="keyword">in</span> factors<span class="punctuation">:</span>
+            <span class="keyword">if</span> abs<span class="punctuation">(</span>rev_ratio <span class="punctuation">-</span> R<span class="punctuation">)</span> <span class="punctuation">&lt;</span> <span class="number">0.15</span> <span class="punctuation">*</span> R<span class="punctuation">:</span>
+                start_win <span class="punctuation">=</span> max<span class="punctuation">(</span><span class="number">0</span><span class="punctuation">,</span> i <span class="punctuation">-</span> <span class="number">5</span><span class="punctuation">)</span>
+                end_win <span class="punctuation">=</span> min<span class="punctuation">(</span>len<span class="punctuation">(</span>df<span class="punctuation">),</span> i <span class="punctuation">+</span> <span class="number">6</span><span class="punctuation">)</span>
+                has_official_split <span class="punctuation">=</span> <span class="keyword">False</span>
+                
+                <span class="keyword">if</span> <span class="string">'Stock Splits'</span> <span class="keyword">in</span> df<span class="punctuation">.</span>columns<span class="punctuation">:</span>
+                    window_splits <span class="punctuation">=</span> df<span class="punctuation">.</span>iloc<span class="punctuation">[</span>start_win<span class="punctuation">:</span>end_win<span class="punctuation">][</span><span class="string">'Stock Splits'</span><span class="punctuation]</span>
+                    <span class="keyword">if</span> <span class="punctuation">((</span>window_splits<span class="punctuation">.</span>notna<span class="punctuation">())</span> <span class="punctuation">&amp;</span> <span class="punctuation">(</span>window_splits <span class="punctuation">&gt;</span> <span class="number">0</span><span class="punctuation">)</span> <span class="punctuation">&amp;</span> <span class="punctuation">(</span>window_splits <span class="punctuation">!=</span> <span class="number">1.0</span><span class="punctuation">)).</span>any<span class="punctuation">():</span>
+                        has_official_split <span class="punctuation">=</span> <span class="keyword">True</span>
+                        
+                <span class="keyword">if</span> <span class="keyword">not</span> has_official_split<span class="punctuation">:</span>
+                    jump_date <span class="punctuation">=</span> df<span class="punctuation">.</span>index<span class="punctuation">[</span>i<span class="punctuation">]</span>
+                    print(f"Auto-detected reverse split of 1:{R} on {jump_date.date()}...")
+                    <span class="keyword">for</span> metric <span class="keyword">in</span> <span class="punctuation">[</span><span class="string">'Open'</span><span class="punctuation">,</span> <span class="string">'High'</span><span class="punctuation">,</span> <span class="string">'Low'</span><span class="punctuation">,</span> <span class="string">'Close'</span><span class="punctuation">]:</span>
+                        <span class="keyword">if</span> metric <span class="keyword">in</span> df<span class="punctuation">.</span>columns<span class="punctuation">:</span>
+                            df<span class="punctuation">.</span>iloc<span class="punctuation">[:</span>i<span class="punctuation">,</span> df<span class="punctuation">.</span>columns<span class="punctuation">.</span>get_loc<span class="punctuation">(</span>metric<span class="punctuation">)]</span> <span class="punctuation">*=</span> R
+                    <span class="keyword">break</span>
+    <span class="keyword">return</span> df</code></pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 Benefits of This Approach</h2>
+            <ul style="list-style-type: square; margin-left: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                <li style="margin-bottom: 8px;"><strong>Robust Handshaking</strong>: Blends both official splits and raw price movement checks to avoid double-adjustments.</li>
+                <li style="margin-bottom: 8px;"><strong>Clean Moving Averages</strong>: Guarantees that indicator computations (like 200-DMA) are never corrupted by artificial splits.</li>
+                <li style="margin-bottom: 8px;"><strong>Multidimensional Safe</strong>: Works seamlessly on both single-ticker data frames and MultiIndex data structures (batch mode).</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Stock Screener Architecture Guides &bull; Internal Documentation</p>
+        </footer>
+    </div>
+</body>
+</html>
